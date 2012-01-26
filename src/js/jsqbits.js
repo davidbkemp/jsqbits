@@ -1,30 +1,30 @@
-var jsquantum;
-jsquantum = jsquantum || {};
+var jsqbits;
+jsqbits = jsqbits || {};
 
 new function() {
 
-    jsquantum.Complex = function(real, imaginary) {
+    jsqbits.Complex = function(real, imaginary) {
         this.real = real;
         this.imaginary = imaginary;
     };
 
-    jsquantum.Complex.prototype.add = function(other) {
-        return new jsquantum.Complex(this.real + other.real, this.imaginary + other.imaginary);
+    jsqbits.Complex.prototype.add = function(other) {
+        return new jsqbits.Complex(this.real + other.real, this.imaginary + other.imaginary);
     };
 
-    jsquantum.Complex.prototype.multiply = function(other) {
-        return new jsquantum.Complex(this.real * other.real - this.imaginary * other.imaginary,
+    jsqbits.Complex.prototype.multiply = function(other) {
+        return new jsqbits.Complex(this.real * other.real - this.imaginary * other.imaginary,
                     this.real * other.imaginary + this.imaginary * other.real);
     };
 
-    jsquantum.Complex.prototype.toString = function() {
+    jsqbits.Complex.prototype.toString = function() {
         if (this.imaginary == 0) return "" + this.real;
         if (this.real == 0) return "" + this.imaginary + 'i';
         var sign = (this.imaginary < 0) ? "" : "+";
         return this.real + sign + this.imaginary + "i";
     };
 
-    jsquantum.Complex.prototype.format = function(options) {
+    jsqbits.Complex.prototype.format = function(options) {
         var realValue = this.real;
         var imaginaryValue = this.imaginary;
         if (options && options.decimalPlaces != null) {
@@ -32,7 +32,7 @@ new function() {
             realValue = Math.round(realValue * roundingMagnitude) /roundingMagnitude;
             imaginaryValue = Math.round(imaginaryValue * roundingMagnitude) /roundingMagnitude;
         }
-        var objectToFormat = new jsquantum.Complex(realValue, imaginaryValue);
+        var objectToFormat = new jsqbits.Complex(realValue, imaginaryValue);
         var prefix = '';
         if (options && options.spacedSign) {
             if (objectToFormat.real > 0) {
@@ -50,22 +50,22 @@ new function() {
         return prefix + (objectToFormat.toString());
     }
 
-    jsquantum.Complex.prototype.negate = function() {
-        return new jsquantum.Complex(-this.real, -this.imaginary);
+    jsqbits.Complex.prototype.negate = function() {
+        return new jsqbits.Complex(-this.real, -this.imaginary);
     }
 
-    jsquantum.Complex.prototype.magnitude = function() {
+    jsqbits.Complex.prototype.magnitude = function() {
         return Math.sqrt(this.real * this.real + this.imaginary * this.imaginary);
     }
 
-    jsquantum.Complex.prototype.subtract = function(other) {
-        return new jsquantum.Complex(this.real - other.real, this.imaginary - other.imaginary);
+    jsqbits.Complex.prototype.subtract = function(other) {
+        return new jsqbits.Complex(this.real - other.real, this.imaginary - other.imaginary);
     }
 
-    jsquantum.Complex.ZERO = new jsquantum.Complex(0,0);
+    jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
 
 
-    var Complex = jsquantum.Complex;
+    var Complex = jsqbits.Complex;
     var complex = function(real, imaginary) {
         return new Complex(real, imaginary);
     };
@@ -84,24 +84,24 @@ new function() {
         }
     }
 
-    jsquantum.QState = function(numBits, amplitudes) {
+    jsqbits.QState = function(numBits, amplitudes) {
         this.numBits = numBits;
         this.amplitudes = amplitudes;
     };
 
-    jsquantum.QState.fromBits = function(bitString) {
+    jsqbits.QState.fromBits = function(bitString) {
         var parsedBitString = parseBitString(bitString);
         var amplitudes = [];
         amplitudes[parsedBitString.value] = complex(1,0);
-        return new jsquantum.QState(parsedBitString.length, amplitudes);
+        return new jsqbits.QState(parsedBitString.length, amplitudes);
     }
 
-    jsquantum.QState.prototype.amplitude = function(index) {
+    jsqbits.QState.prototype.amplitude = function(index) {
         var numericIndex = (typeof index == 'string') ? parseBitString(index).value : index;
         return this.amplitudes[numericIndex] || Complex.ZERO;
     };
 
-    jsquantum.QState.prototype.singleQbitOperation = function(bit, qbitFunction) {
+    jsqbits.QState.prototype.singleQbitOperation = function(bit, qbitFunction) {
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
         var mask = 1 << bit;
@@ -115,10 +115,10 @@ new function() {
             sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
             sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
         }
-        return new jsquantum.QState(this.numBits, newAmplitudes);
+        return new jsqbits.QState(this.numBits, newAmplitudes);
     };
 
-    jsquantum.QState.prototype.hadamard = function(bit) {
+    jsqbits.QState.prototype.hadamard = function(bit) {
         return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
             var newAmplitudeOf0 = amplitudeOf0.add(amplitudeOf1).multiply(squareRootOfOneHalf);
             var newAmplitudeOf1 = amplitudeOf0.subtract(amplitudeOf1).multiply(squareRootOfOneHalf);
@@ -126,7 +126,7 @@ new function() {
         });
     };
 
-    jsquantum.QState.prototype.rotateX = function(bit, angle) {
+    jsqbits.QState.prototype.rotateX = function(bit, angle) {
         return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
@@ -137,7 +137,7 @@ new function() {
         });
     };
 
-    jsquantum.QState.prototype.rotateY = function(bit, angle) {
+    jsqbits.QState.prototype.rotateY = function(bit, angle) {
         return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
@@ -148,7 +148,7 @@ new function() {
         });
     };
 
-    jsquantum.QState.prototype.rotateZ = function(bit, angle) {
+    jsqbits.QState.prototype.rotateZ = function(bit, angle) {
         return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
@@ -159,7 +159,7 @@ new function() {
         });
     };
 
-    jsquantum.QState.prototype.cnot = function(controlBit, targetBit) {
+    jsqbits.QState.prototype.cnot = function(controlBit, targetBit) {
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
         var controlBitMask = 1 << controlBit;
@@ -178,10 +178,10 @@ new function() {
                 sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf1));
             }
         }
-        return new jsquantum.QState(this.numBits, newAmplitudes);
+        return new jsqbits.QState(this.numBits, newAmplitudes);
     };
 
-    jsquantum.QState.prototype.toString = function() {
+    jsqbits.QState.prototype.toString = function() {
         var padState = function(state, numBits) {
             var paddingLength = numBits - state.length;
             for (i = 0; i < paddingLength; i++) {

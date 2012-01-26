@@ -1,7 +1,7 @@
 
 describe('Complex', function() {
     var complex = function(real, imaginary) {
-        return new jsquantum.Complex(real, imaginary);
+        return new jsqbits.Complex(real, imaginary);
     };
 
     var w;
@@ -11,7 +11,7 @@ describe('Complex', function() {
         w = complex(-4, 3);
         x = complex(1, 3);
         y = complex(10, 30);
-        this.addMatchers(jsquantum.JasmineMatchers);
+        this.addMatchers(jsqbits.JasmineMatchers);
     });
 
     describe('#add', function() {

@@ -137,18 +137,22 @@ new function() {
             return new jsqbits.QState(qState.numBits, newAmplitudes);
         }
 
-        var applyToAllBits = function(qState) {
+        var applyToBitRange = function(from, to, qState) {
             var result = qState;
-            for (var bit = 0; bit < qState.numBits; bit++) {
+            for (var bit = from; bit <= to; bit++) {
                 result = applyToOneBit(bit, result);
             }
             return result;
         }
 
         if (bits == jsqbits.ALL) {
-            return applyToAllBits(this);
-        } else {
+            return applyToBitRange(0, this.numBits - 1, this);
+        } else if (bits.from != null && bits.to != null) {
+            return applyToBitRange(bits.from, bits.to, this);
+        } else if (typeof bits == 'number') {
             return applyToOneBit(bits, this);
+        } else {
+            throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
         }
 
     };

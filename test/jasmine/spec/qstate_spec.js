@@ -45,12 +45,24 @@ describe('QState', function() {
             expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
         });
 
-        it("is accepts an ALL parameter", function() {
+        it("accepts an ALL parameter", function() {
             var x = qstate('|00>').hadamard(jsqbits.ALL);
             expect(x.amplitude('|00>')).toBeApprox(complex(0.5, 0));
             expect(x.amplitude('|01>')).toBeApprox(complex(0.5, 0));
             expect(x.amplitude('|10>')).toBeApprox(complex(0.5, 0));
             expect(x.amplitude('|11>')).toBeApprox(complex(0.5, 0));
+        });
+
+        it("accepts a bit range", function() {
+            var x = qstate('|000>').hadamard({from:1, to:2});
+            expect(x.amplitude('|000>')).toBeApprox(complex(0.5, 0));
+            expect(x.amplitude('|001>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|010>')).toBeApprox(complex(0.5, 0));
+            expect(x.amplitude('|011>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|100>')).toBeApprox(complex(0.5, 0));
+            expect(x.amplitude('|101>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|110>')).toBeApprox(complex(0.5, 0));
+            expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
         });
 
     });

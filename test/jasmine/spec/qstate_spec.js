@@ -130,17 +130,61 @@ describe('QState', function() {
     });
 
     describe('#cnot', function() {
-        it("flips does nothing when the control bit is zero", function() {
+        it("does nothing when the control bit is zero", function() {
             var x = qstate('|000>').cnot(2, 0);
             expect(x).toEqual(qstate('|000>'));
         });
-        it("flips the target amplitude from zero to one when the control bit is one", function() {
+        it("flips the target bit from zero to one when the control bit is one", function() {
             var x = qstate('|100>').cnot(2, 0);
             expect(x).toEqual(qstate('|101>'));
         });
-        it("flips the target amplitude from one to zero when the control bit is one", function() {
+        it("flips the target bit from one to zero when the control bit is one", function() {
             var x = qstate('|101>').cnot(2, 0);
             expect(x).toEqual(qstate('|100>'));
+        });
+    });
+
+    describe('#applyFunction', function() {
+        it("invokes function with states (bit range)", function() {
+            var valuesFunctionCalledWith = [];
+            var f = function(x) {
+                valuesFunctionCalledWith.push(x);
+                return 1;
+            };
+            var x = qstate('|1000>').hadamard(2);
+            x.applyFunction({from:1, to:2}, 0, f);
+            expect(valuesFunctionCalledWith).toContain(0);
+            expect(valuesFunctionCalledWith).toContain(2);
+        });
+
+        it("invokes function with states (single bit)", function() {
+            var valuesFunctionCalledWith = [];
+            var f = function(x) {
+                valuesFunctionCalledWith.push(x);
+                return 1;
+            };
+            var x = qstate('|1000>').hadamard(2);
+            x.applyFunction(2, 0, f);
+            expect(valuesFunctionCalledWith).toContain(0);
+            expect(valuesFunctionCalledWith).toContain(1);
+        });
+
+        it ("does nothing when the funciton returns zero", function() {
+            var f = function(x) { return 0; };
+            var x = qstate('|00>').applyFunction(1, 0, f);
+            expect(x).toEqual(qstate('|00>'));
+        });
+
+        it ("flips the target bit from zero to one when the function returns one", function() {
+            var f = function(x) { return 1; };
+            var x = qstate('|00>').applyFunction(1, 0, f);
+            expect(x).toEqual(qstate('|01>'));
+        });
+
+        it ("flips the target bit from one to zero when the function returns one", function() {
+            var f = function(x) { return 1; };
+            var x = qstate('|01>').applyFunction(1, 0, f);
+            expect(x).toEqual(qstate('|00>'));
         });
     });
 

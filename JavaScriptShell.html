@@ -732,9 +732,11 @@ form { margin: 0; padding: 0; }
 <body onload="init()">
 
 <div id="output"><h3>JavaScript jsqbits quantum computer simulation shell</h3>
-<div>For the original JavaScript Shell from which this was derived, please go to <a href="http://www.squarefree.com/shell/">http://www.squarefree.com/shell/</a></div>
+<div>For the original JavaScript Shell from which this was derived, please go to <a href="http://www.squarefree.com/shell/">http://www.squarefree.com/shell/</a>.
+The original shell (and hence is derivation) is GPL/LGPL/MPL tri-licensed.
+The jsqbits library (which no dependency on JavaScript shell) is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)</div>
 <div>Features: autocompletion of property names with Tab, multiline input with Shift+Enter, input history with (Ctrl+) Up/Down, <a accesskey="M" href="javascript:go('scope(Math); mathHelp();');" title="Accesskey: M">Math</a>, <a accesskey="H" href="http://www.squarefree.com/shell/?ignoreReferrerFrom=shell1.4" title="Accesskey: H">help</a></div><div>Values and functions: ans, print(string), <a accesskey="P" href="javascript:go('props(ans)')" title="Accesskey: P">props(object)</a>, <a accesskey="B" href="javascript:go('blink(ans)')" title="Accesskey: B">blink(node)</a>, <a accesskey="C" href="javascript:go('clear()')" title="Accesskey: C">clear()</a>, load(scriptURL), scope(object)</div>
-<div>Try some quantum computation operations like: qstate('|01>').hadamard(0).hadamard(1).cnot(1, 0)</div>
+<div>Try some quantum computation operations like: qstate('|01>').hadamard(jsqbits.ALL).cnot(1, 0)</div>
 </div>
 
 

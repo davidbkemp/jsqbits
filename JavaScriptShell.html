@@ -1,7 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<!-- saved from url=(0042)http://www.squarefree.com/shell/shell.html -->
-<html onclick="keepFocusInTextbox(event)"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 
+<html onclick="keepFocusInTextbox(event)">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>jsqbits quantum computer simulation shell</title>
 <script type="text/javascript" src="src/js/jsqbits.js"></script>
 
@@ -16,7 +17,7 @@
 </script>
 
 <script type="text/javascript">
-var 
+var
 histList = [""], 
 histPos = 0, 
 _scope = {}, 
@@ -729,22 +730,20 @@ form { margin: 0; padding: 0; }
 .message { color: green; background: white; }
 .tabcomplete { color: purple; background: white; }
 </style>
-<script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/document_iterator.js"></script><script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/find_proxy.js"></script><script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/get_html_text.js"></script><script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/global_constants.js"></script><script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/name_injection_builder.js"></script><script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/number_injection_builder.js"></script><script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/string_finder.js"></script><script src="chrome-extension://lifbcibllhkdhoafpjfnlhfpfgnpldfl/change_sink.js"></script><meta name="document_iterator.js"><meta name="find_proxy.js"><meta name="get_html_text.js"><meta name="global_constants.js"><meta name="name_injection_builder.js"><meta name="number_injection_builder.js"><meta name="string_finder.js"><meta name="change_sink.js"></head>
+</head>
 
 <body onload="init()">
 
 <div id="output"><h3>JavaScript jsqbits quantum computer simulation shell</h3>
 <div>For the original JavaScript Shell from which this was derived, please go to <a href="http://www.squarefree.com/shell/">http://www.squarefree.com/shell/</a>.
 The original shell (and hence is derivation) is GPL/LGPL/MPL tri-licensed.
-The jsqbits library (which no dependency on JavaScript shell) is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)</div>
+The jsqbits library (which has no dependency on JavaScript shell) is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)</div>
 <div>Features: autocompletion of property names with Tab, multiline input with Shift+Enter, input history with (Ctrl+) Up/Down, <a accesskey="M" href="javascript:go('scope(Math); mathHelp();');" title="Accesskey: M">Math</a>, <a accesskey="H" href="http://www.squarefree.com/shell/?ignoreReferrerFrom=shell1.4" title="Accesskey: H">help</a></div><div>Values and functions: ans, print(string), <a accesskey="P" href="javascript:go('props(ans)')" title="Accesskey: P">props(object)</a>, <a accesskey="B" href="javascript:go('blink(ans)')" title="Accesskey: B">blink(node)</a>, <a accesskey="C" href="javascript:go('clear()')" title="Accesskey: C">clear()</a>, load(scriptURL), scope(object)</div>
 <div>Try some quantum computation operations like: qstate('|001>').hadamard(ALL).rotateX({from:1, to:2}, Math.PI/8).cnot(1,0)</div>
 </div>
 
+<div><textarea id="input" class="input" wrap="off" onkeydown="inputKeydown(event)" rows="1"></textarea></div>
 
+</body>
 
-<div><textarea id="input" class="input" wrap="off" onkeydown="inputKeydown(event)" rows="2"></textarea></div>
-
-
-
-</body><span id="skype_highlighting_settings" display="none" autoextractnumbers="1"></span><object id="skype_plugin_object" location.href="http://www.squarefree.com/shell/shell.html" location.hostname="www.squarefree.com" style="position: absolute; visibility: hidden; left: -100px; top: -100px; " width="0" height="0" type="application/x-vnd.skype.toolbars.npplugin.4.2.0"></object></html>
+</html>

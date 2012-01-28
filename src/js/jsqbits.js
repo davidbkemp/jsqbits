@@ -100,6 +100,8 @@ new function() {
         }
     }
 
+    jsqbits.ALL = 'ALL';
+
     jsqbits.QState = function(numBits, amplitudes) {
         this.numBits = numBits;
         this.amplitudes = amplitudes;
@@ -117,21 +119,38 @@ new function() {
         return this.amplitudes[numericIndex] || Complex.ZERO;
     };
 
-    jsqbits.QState.prototype.singleQbitOperation = function(bit, qbitFunction) {
-        var newAmplitudes = [];
-        var statesThatCanBeSkipped = [];
-        var mask = 1 << bit;
-        for(var stateString in this.amplitudes) {
-            var state = parseInt(stateString);
-            if (statesThatCanBeSkipped[state]) continue;
-            statesThatCanBeSkipped[state^mask] = true;
-            var indexOf1 = state | mask;
-            var indexOf0 = indexOf1 - mask;
-            var result = qbitFunction(this.amplitude(indexOf0), this.amplitude(indexOf1));
-            sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
-            sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
+    jsqbits.QState.prototype.singleQbitOperation = function(bits, qbitFunction) {
+        var applyToOneBit = function(bit, qState) {
+            var newAmplitudes = [];
+            var statesThatCanBeSkipped = [];
+            var mask = 1 << bit;
+            for(var stateString in qState.amplitudes) {
+                var state = parseInt(stateString);
+                if (statesThatCanBeSkipped[state]) continue;
+                statesThatCanBeSkipped[state^mask] = true;
+                var indexOf1 = state | mask;
+                var indexOf0 = indexOf1 - mask;
+                var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
+                sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
+                sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
+            }
+            return new jsqbits.QState(qState.numBits, newAmplitudes);
         }
-        return new jsqbits.QState(this.numBits, newAmplitudes);
+
+        var applyToAllBits = function(qState) {
+            var result = qState;
+            for (var bit = 0; bit < qState.numBits; bit++) {
+                result = applyToOneBit(bit, result);
+            }
+            return result;
+        }
+
+        if (bits == jsqbits.ALL) {
+            return applyToAllBits(this);
+        } else {
+            return applyToOneBit(bits, this);
+        }
+
     };
 
     jsqbits.QState.prototype.hadamard = function(bit) {

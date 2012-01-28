@@ -32,9 +32,7 @@ describe('QState', function() {
             expect(x.amplitude('|110>')).toBe(jsqbits.Complex.ZERO);
             expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
         });
-    });
 
-    describe('#hadamard', function() {
         it("is it's own inverse", function() {
             var x = qstate('|000>').hadamard(2).hadamard(2);
             expect(x.amplitude('|000>')).toBeApprox(complex(1, 0));
@@ -46,11 +44,21 @@ describe('QState', function() {
             expect(x.amplitude('|110>')).toBe(jsqbits.Complex.ZERO);
             expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
         });
+
+        it("is accepts an ALL parameter", function() {
+            var x = qstate('|00>').hadamard(jsqbits.ALL);
+            expect(x.amplitude('|00>')).toBeApprox(complex(0.5, 0));
+            expect(x.amplitude('|01>')).toBeApprox(complex(0.5, 0));
+            expect(x.amplitude('|10>')).toBeApprox(complex(0.5, 0));
+            expect(x.amplitude('|11>')).toBeApprox(complex(0.5, 0));
+        });
+
     });
 
     describe('#rotateX', function() {
         it("rotates about the X axis", function() {
             var x = qstate('|00>').rotateX(1, Math.PI/4);
+
             expect(x.amplitude('|00>')).toBeApprox(complex(Math.cos(Math.PI/8), 0));
             expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
             expect(x.amplitude('|10>')).toBeApprox(complex(0, -Math.sin(Math.PI/8)));
@@ -58,10 +66,19 @@ describe('QState', function() {
         });
         it("can be applied multiple times", function() {
             var x = qstate('|00>').rotateX(1, Math.PI/4).rotateX(1, Math.PI/4).rotateX(1, Math.PI/4);
+
             expect(x.amplitude('|00>')).toBeApprox(complex(Math.cos(3*Math.PI/8), 0));
             expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
             expect(x.amplitude('|10>')).toBeApprox(complex(0, -Math.sin(3*Math.PI/8)));
             expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+        });
+        it("is accepts an ALL parameter", function() {
+            var x = qstate('|00>').rotateX(jsqbits.ALL, Math.PI/4);
+
+            expect(x.amplitude('|00>')).toBeApprox(complex(Math.cos(Math.PI/8) * Math.cos(Math.PI/8), 0));
+            expect(x.amplitude('|01>')).toBeApprox(complex(Math.cos(Math.PI/8), 0).multiply(complex(0, -Math.sin(Math.PI/8))));
+            expect(x.amplitude('|10>')).toBeApprox(complex(Math.cos(Math.PI/8), 0).multiply(complex(0, -Math.sin(Math.PI/8))));
+            expect(x.amplitude('|11>')).toBeApprox(complex(-Math.sin(Math.PI/8) * Math.sin(Math.PI/8), 0));
         });
     });
 

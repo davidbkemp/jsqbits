@@ -214,6 +214,26 @@ new function() {
         });
     };
 
+    jsqbits.QState.prototype.x = function(bit) {
+        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
+            return {amplitudeOf0: amplitudeOf1, amplitudeOf1: amplitudeOf0};
+        });
+    };
+
+    jsqbits.QState.prototype.z = function(bit) {
+        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
+            return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.negate()};
+        });
+    };
+
+    jsqbits.QState.prototype.y = function(bit) {
+        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
+            return {amplitudeOf0: amplitudeOf1.multiply(complex(0, -1)), amplitudeOf1: amplitudeOf0.multiply(complex(0, 1))};
+        });
+    };
+
+    jsqbits.QState.prototype.not = jsqbits.QState.prototype.x;
+
     jsqbits.QState.prototype.cnot = function(controlBit, targetBit) {
         return this.applyFunction(controlBit, targetBit, function(x) {return x;});
     };

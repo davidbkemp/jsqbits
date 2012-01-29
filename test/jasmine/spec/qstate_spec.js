@@ -129,6 +129,52 @@ describe('QState', function() {
         });
     });
 
+    describe('#x', function() {
+        it("applies the Pauli x operator to (|0>)", function() {
+            var x = qstate('|0>').x(0);
+            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEqual(complex(1, 0));
+        });
+        it("applies the Pauli x operator to (|1>)", function() {
+            var x = qstate('|1>').x(0);
+            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
+            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+        });
+    });
+
+    describe('#z', function() {
+        it("applies the Pauli z operator to (|0>)", function() {
+            var x = qstate('|0>').z(0);
+            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
+            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+        });
+        it("applies the Pauli z operator to (|1>)", function() {
+            var x = qstate('|1>').z(0);
+            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEqual(complex(-1, 0));
+        });
+    });
+
+    describe('#y', function() {
+        it("applies the Pauli y operator to (|0>)", function() {
+            var x = qstate('|0>').y(0);
+            expect(x.amplitude('|0>')).toEqual(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEqual(complex(0, 1));
+        });
+        it("applies the Pauli y operator to (|1>)", function() {
+            var x = qstate('|1>').y(0);
+            expect(x.amplitude('|0>')).toEqual(complex(0, -1));
+            expect(x.amplitude('|1>')).toEqual(jsqbits.Complex.ZERO);
+        });
+    });
+
+    describe('#not', function() {
+        it("is an alias for x()", function() {
+            expect(jsqbits.QState.prototype.not).toBe(jsqbits.QState.prototype.x);
+        });
+    });
+
+
     describe('#cnot', function() {
         it("does nothing when the control bit is zero", function() {
             var x = qstate('|000>').cnot(2, 0);

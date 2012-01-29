@@ -255,7 +255,7 @@ new function() {
         }
     };
 
-    jsqbits.QState.prototype.projectOnto = function(bits, targetBit, functionToApply) {
+    jsqbits.QState.prototype.projectOnto = function(bits) {
         var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
         var highBitMask = (1 << (bitRange.to+1)) - 1;
 
@@ -269,6 +269,39 @@ new function() {
 
         normalize(newAmplitudes);
         return new jsqbits.QState(bitRange.to - bitRange.from + 1, newAmplitudes);
+    };
+
+    jsqbits.QState.prototype.random = Math.random;
+
+    jsqbits.QState.prototype.measure = function(bits) {
+        var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
+        var randomNumber = this.random();
+        var randomStateString;
+        var accumulativeSquareAmplitudeMagnitude = 0;
+        for (var stateString in this.amplitudes) {
+            var magnitude = this.amplitudes[stateString].magnitude();
+            accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
+            randomStateString = stateString;
+            if (accumulativeSquareAmplitudeMagnitude > randomNumber) {
+                break;
+            }
+        }
+        var randomState = parseInt(randomStateString);
+
+        var highBitMask = (1 << (bitRange.to+1)) - 1;
+        var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
+
+        var newAmplitudes = [];
+        for(var stateString in this.amplitudes) {
+            var state = parseInt(stateString);
+            var comparisonState = (state & highBitMask) >> bitRange.from;
+            if (comparisonState == measurementOutcome) {
+                newAmplitudes[state] = this.amplitudes[state];
+            }
+        }
+
+        normalize(newAmplitudes);
+        return {measurement: measurementOutcome, newState: new jsqbits.QState(this.numBits, newAmplitudes)};
     };
 
     jsqbits.QState.prototype.toString = function() {

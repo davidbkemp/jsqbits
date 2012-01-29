@@ -144,6 +144,15 @@ describe('QState', function() {
         });
     });
 
+    describe('Simple combination of hadamard and cnot', function() {
+        it("results in a phase kick back", function() {
+            var x = qstate('|01>').hadamard(0).hadamard(1).cnot(1, 0).hadamard(0).hadamard(1);
+            expect(x.amplitude('|00>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|10>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|11>')).toBeApprox(complex(1,0));
+        });
+    });
     describe('#applyFunction', function() {
         it("invokes function with states (bit range)", function() {
             var valuesFunctionCalledWith = [];
@@ -188,37 +197,26 @@ describe('QState', function() {
         });
     });
 
-    describe("Deutsch's algorithm", function() {
-        it("should compute 0 for fixed function returning 1", function() {
-            var f = function(x) {return 1;};
-            var x = qstate('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL);
-            expect(x.amplitude('|01>')).toBeApprox(complex(-1, 0));
-        });
-        it("should compute 0 for fixed function returning 0", function() {
-            var f = function(x) {return 0;};
-            var x = qstate('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL);
-            expect(x.amplitude('|01>')).toBeApprox(complex(1, 0));
-        });
-        it("should compute 1 for identity function", function() {
-            var f = function(x) {return x;};
-            var x = qstate('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL);
-            expect(x.amplitude('|11>')).toBeApprox(complex(1, 0));
-        });
-        it("should compute 1 for not function", function() {
-            var f = function(x) {return (x + 1) % 2;};
-            var x = qstate('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL);
-            expect(x.amplitude('|11>')).toBeApprox(complex(-1, 0));
-        });
-
-    });
-
-    describe('Simple combination of hadamard and cnot', function() {
-        it("results in a phase kick back", function() {
-            var x = qstate('|01>').hadamard(0).hadamard(1).cnot(1, 0).hadamard(0).hadamard(1);
-            expect(x.amplitude('|00>')).toBe(jsqbits.Complex.ZERO);
+    describe('#projectOnto', function(){
+        it ("should project onto the specified bits (normalization not required)", function() {
+            var bitRange = {from:1, to:2};
+            var x = qstate('|1000>').rotateX(2, Math.PI/4).rotateX(0, Math.PI/4).projectOnto(bitRange);
+            expect(x.numBits).toBe(2);
+            var cosPiOn8 = Math.cos(Math.PI/8);
+            var sinPiOn8 = Math.sin(Math.PI/8);
+            expect(x.amplitude('|00>')).toBeApprox(complex(cosPiOn8 * cosPiOn8, -cosPiOn8 * sinPiOn8));
             expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|10>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|11>')).toBeApprox(complex(1,0));
+            expect(x.amplitude('|10>')).toBeApprox(complex(-sinPiOn8 * sinPiOn8, -cosPiOn8 * sinPiOn8));
+            expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+        });
+        it ("should project onto the specified bits (with normalization required)", function() {
+            var bitRange = {from:1, to:2};
+            var x = qstate('|1000>').hadamard(2).hadamard(0).projectOnto(bitRange);
+            expect(x.numBits).toBe(2);
+            expect(x.amplitude('|00>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
+            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|10>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
+            expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
         });
     });
 });

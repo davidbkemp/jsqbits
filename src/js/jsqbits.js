@@ -25,10 +25,16 @@ new function() {
     };
 
     jsqbits.Complex.prototype.add = function(other) {
+        if (typeof other == 'number') {
+            return new jsqbits.Complex(this.real + other, this.imaginary);
+        }
         return new jsqbits.Complex(this.real + other.real, this.imaginary + other.imaginary);
     };
 
     jsqbits.Complex.prototype.multiply = function(other) {
+        if (typeof other == 'number') {
+            return new jsqbits.Complex(this.real * other, this.imaginary * other);
+        }
         return new jsqbits.Complex(this.real * other.real - this.imaginary * other.imaginary,
                     this.real * other.imaginary + this.imaginary * other.real);
     };
@@ -75,6 +81,9 @@ new function() {
     }
 
     jsqbits.Complex.prototype.subtract = function(other) {
+        if (typeof other == 'number') {
+            return new jsqbits.Complex(this.real - other, this.imaginary);
+        }
         return new jsqbits.Complex(this.real - other.real, this.imaginary - other.imaginary);
     }
 
@@ -123,6 +132,9 @@ new function() {
         if (bits == jsqbits.ALL) {
             return {from: 0, to: numBits - 1};
         } else if (bits.from != null && bits.to != null) {
+            if (bits.from > bits.to) {
+                throw "bit range must have 'from' being less than or equal to 'to'"
+            }
             return bits
         } else if (typeof bits == 'number') {
             return {from: bits, to: bits};
@@ -208,15 +220,9 @@ new function() {
 
     jsqbits.QState.prototype.applyFunction = function(bits, targetBit, functionToApply) {
         var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
-        var from = bitRange.from;
-        var to = bitRange.to;
-
-        if (from > to) {
-            throw "bit range must have 'from' being less than or equal to 'to'"
-        }
-
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
+        var highBitMask = (1 << (bitRange.to+1)) - 1;
         var targetBitMask = 1 << targetBit;
 
         for(var stateString in this.amplitudes) {
@@ -225,7 +231,7 @@ new function() {
             statesThatCanBeSkipped[state^targetBitMask] = true;
             var indexOf1 = state | targetBitMask;
             var indexOf0 = indexOf1 - targetBitMask;
-            var input = (state % (1 << (to+1))) >> from;
+            var input = (state & highBitMask) >> bitRange.from;
             if (functionToApply(input) == 1) {
                 sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf1));
                 sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf0));
@@ -235,6 +241,34 @@ new function() {
             }
         }
         return new jsqbits.QState(this.numBits, newAmplitudes);
+    };
+
+    var normalize = function(amplitudes) {
+        var sumOfMagnitudeSqaures = 0;
+        for(var state in amplitudes) {
+            var magnitude = amplitudes[state].magnitude();
+            sumOfMagnitudeSqaures += magnitude * magnitude;
+        }
+        var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
+        for(var state in amplitudes) {
+            amplitudes[state] = amplitudes[state].multiply(scale);
+        }
+    };
+
+    jsqbits.QState.prototype.projectOnto = function(bits, targetBit, functionToApply) {
+        var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
+        var highBitMask = (1 << (bitRange.to+1)) - 1;
+
+        var newAmplitudes = [];
+        for(var stateString in this.amplitudes) {
+            var state = parseInt(stateString);
+            var newState = (state & highBitMask) >> bitRange.from;
+            var currentValueOfNewState = newAmplitudes[newState] || Complex.ZERO;
+            sparseAssign(newAmplitudes, newState, currentValueOfNewState.add(this.amplitudes[state]));
+        }
+
+        normalize(newAmplitudes);
+        return new jsqbits.QState(bitRange.to - bitRange.from + 1, newAmplitudes);
     };
 
     jsqbits.QState.prototype.toString = function() {

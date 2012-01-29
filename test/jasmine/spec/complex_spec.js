@@ -20,6 +20,12 @@ describe('Complex', function() {
             expect(z.real).toEqual(11);
             expect(z.imaginary).toEqual(33);
         });
+
+        it ("adds real numbers", function(){
+            var z = x.add(5);
+            expect(z.real).toEqual(6);
+            expect(z.imaginary).toEqual(x.imaginary);
+        });
     });
 
     describe('#multiply', function() {
@@ -27,6 +33,11 @@ describe('Complex', function() {
             var z = x.multiply(y);
             expect(z.real).toEqual(10 - 90);
             expect(z.imaginary).toEqual(60);
+        });
+        it("multiplies real numbers", function() {
+            var z = y.multiply(5);
+            expect(z.real).toEqual(50);
+            expect(z.imaginary).toEqual(150);
         });
     });
 
@@ -45,7 +56,10 @@ describe('Complex', function() {
     });
 
     describe('#subtract', function() {
-        it('subtracts its argument from itself', function(){
+        it('subtracts real numbers', function(){
+            expect(y.subtract(2)).toEqual(complex(8, 30));
+        });
+        it('subtracts complex numbers', function(){
             expect(y.subtract(w)).toEqual(complex(14, 27));
         });
     });

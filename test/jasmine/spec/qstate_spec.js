@@ -277,6 +277,18 @@ describe('QState', function() {
             expect(newState.amplitude('|1101>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
         });
 
+        it ("Can measure all bits", function() {
+            stateToMeasure.random = function() {return 0.49};
+            var result = stateToMeasure.measure(jsqbits.ALL);
+            var newState = result.newState;
+            expect(newState.numBits).toBe(4);
+            expect(result.measurement).toBe(parseInt('1001', 2));
+            expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1001>')).toBeApprox(complex(1, 0));
+            expect(newState.amplitude('|1100>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1101>')).toBe(jsqbits.Complex.ZERO);
+        });
+
         it ("actually calls Math.random", function() {
             var result = stateToMeasure.measure(3);
             var newState = result.newState;

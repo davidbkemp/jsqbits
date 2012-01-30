@@ -129,7 +129,9 @@ new function() {
     };
 
     var convertBitQualifierToBitRange = function(bits, numBits) {
-        if (bits == jsqbits.ALL) {
+        if (bits == null) {
+            throw "bit qualification must be supplied";
+        } else if (bits == jsqbits.ALL) {
             return {from: 0, to: numBits - 1};
         } else if (bits.from != null && bits.to != null) {
             if (bits.from > bits.to) {

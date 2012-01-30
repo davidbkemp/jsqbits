@@ -174,7 +174,6 @@ describe('QState', function() {
         });
     });
 
-
     describe('#cnot', function() {
         it("does nothing when the control bit is zero", function() {
             var x = qstate('|000>').cnot(2, 0);
@@ -187,6 +186,21 @@ describe('QState', function() {
         it("flips the target bit from one to zero when the control bit is one", function() {
             var x = qstate('|101>').cnot(2, 0);
             expect(x).toEqual(qstate('|100>'));
+        });
+    });
+
+    describe('controlled phase flip', function(){
+        it("does nothing when the control bit is zero", function() {
+            var x = qstate('|000>').controlledZ(2, 0);
+            expect(x).toEqual(qstate('|000>'));
+        });
+        it("does nothing when the target bit is 0", function() {
+            var x = qstate('|100>').controlledZ(2, 0);
+            expect(x).toEqual(qstate('|100>'));
+        });
+        it("flips the phase of the target bit when both the control and target bits are one", function() {
+            var x = qstate('|101>').controlledZ(2, 0);
+            expect(x.amplitude('|101>')).toBeApprox(complex(-1,0));
         });
     });
 

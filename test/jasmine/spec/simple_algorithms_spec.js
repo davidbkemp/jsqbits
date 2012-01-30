@@ -27,9 +27,8 @@ describe('Simple Quantum Algorithms', function() {
 //            Alice sends her qbit to Bob
             var bob = 0;
             state = state.cnot(alice, bob).hadamard(alice);
-            result = state.measure(ALL).measurement.toString(2);
-            result = result.length == 1 ? '0' + result : result;
-            return result;
+            var result = state.measure(ALL).measurement.toString(2);
+            return result.length == 1 ? '0' + result : result;
         };
 
         it ("should transmit 00", function() {
@@ -46,6 +45,40 @@ describe('Simple Quantum Algorithms', function() {
 
         it ("should transmit 11", function() {
             expect(superDense('11')).toBe('11');
+        });
+    });
+
+    describe("Simple search", function(){
+        var createOracle = function(match) { return function(x) {return x == match ? 1 : 0} };
+
+        var simpleSearch = function(f) {
+            var inputBits = {from: 1, to: 2};
+            var result = qstate('|001>')
+                    .hadamard(ALL)
+                    .applyFunction(inputBits, 0, f)
+                    .hadamard(inputBits)
+                    .z(inputBits)
+                    .controlledZ(2, 1)
+                    .hadamard(inputBits)
+                    .measure(inputBits)
+                    .measurement.toString(2);
+            return result = result.length == 1 ? '0' + result : result;
+        };
+
+        it ("should find f00", function() {
+            expect(simpleSearch(createOracle(0))).toBe('00');
+        });
+
+        it ("should find f01", function() {
+            expect(simpleSearch(createOracle(1))).toBe('01');
+        });
+
+        it ("should find f10", function() {
+            expect(simpleSearch(createOracle(2))).toBe('10');
+        });
+
+        it ("should find f11", function() {
+            expect(simpleSearch(createOracle(3))).toBe('11');
         });
     });
 

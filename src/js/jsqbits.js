@@ -228,6 +228,31 @@ new function() {
         });
     };
 
+    jsqbits.QState.prototype.controlledZ = function(controlBit, targetBit) {
+//        TODO: Generalize and remove duplication!
+        var newAmplitudes = [];
+        var statesThatCanBeSkipped = [];
+        var targetBitMask = 1 << targetBit;
+        var controlBitMask = 1 << controlBit;
+
+        for(var stateString in this.amplitudes) {
+         var state = parseInt(stateString);
+         if (statesThatCanBeSkipped[state]) continue;
+         statesThatCanBeSkipped[state^targetBitMask] = true;
+         var indexOf1 = state | targetBitMask;
+         var indexOf0 = indexOf1 - targetBitMask;
+         if (state & controlBitMask) {
+             sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf0));
+             sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf1).negate());
+         } else {
+             sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf0));
+             sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf1));
+         }
+        }
+        return new jsqbits.QState(this.numBits, newAmplitudes);
+
+    };
+
     jsqbits.QState.prototype.y = function(bit) {
         return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf1.multiply(complex(0, -1)), amplitudeOf1: amplitudeOf0.multiply(complex(0, 1))};

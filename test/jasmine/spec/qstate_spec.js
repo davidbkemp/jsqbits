@@ -20,6 +20,123 @@ describe('QState', function() {
         });
     });
 
+    describe('#x', function() {
+        it("applies the Pauli x operator to (|0>)", function() {
+            var x = qstate('|0>').x(0);
+            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEqual(complex(1, 0));
+        });
+        it("applies the Pauli x operator to (|1>)", function() {
+            var x = qstate('|1>').x(0);
+            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
+            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+        });
+    });
+
+    describe('#controlledX', function(){
+        it("does nothing when the control bit is zero (one target)", function() {
+            var x = qstate('|001>').controlledX(2, 0);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("does nothing when the control bit is zero (multiple targets)", function() {
+            var targetBits = {from: 0, to: 1};
+            var x = qstate('|001>').controlledX(2, targetBits);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("flips the target bit when the control bit is one", function() {
+            var x = qstate('|100>').controlledX(2, 0);
+           expect(x.amplitude('|101>')).toBeApprox(complex(1,0));
+        });
+        it("flips the target bit when the control bit specifier is null", function() {
+            var x = qstate('|100>').controlledX(null, 2);
+            expect(x.amplitude('|000>')).toBeApprox(complex(1,0));
+        });
+        it("flips the target bits when the control bit is one", function() {
+            var targetBits = {from: 0, to: 1};
+            var x = qstate('|101>').controlledX(2, targetBits);
+            expect(x.amplitude('|110>')).toBeApprox(complex(1,0));
+        });
+    });
+
+    describe('#z', function() {
+        it("applies the Pauli z operator to (|0>)", function() {
+            var x = qstate('|0>').z(0);
+            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
+            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+        });
+        it("applies the Pauli z operator to (|1>)", function() {
+            var x = qstate('|1>').z(0);
+            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEqual(complex(-1, 0));
+        });
+    });
+
+    describe('#controlledZ', function(){
+        it("does nothing when the control bit is zero (one target)", function() {
+            var x = qstate('|001>').controlledZ(2, 0);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("does nothing when the control bit is zero (multiple targets)", function() {
+            var targetBits = {from: 0, to: 1};
+            var x = qstate('|001>').controlledZ(2, targetBits);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("does nothing when the target bit is 0", function() {
+            var x = qstate('|100>').controlledZ(2, 0);
+            expect(x).toEqual(qstate('|100>'));
+        });
+        it("does nothing when the control bit specifier is null and the target bit is 0", function() {
+            var x = qstate('|100>').controlledZ(null, 0);
+            expect(x).toEqual(qstate('|100>'));
+        });
+        it("flips the phase when both the control and target bits are one", function() {
+            var x = qstate('|101>').controlledZ(2, 0);
+            expect(x.amplitude('|101>')).toBeApprox(complex(-1,0));
+        });
+        it("flips the phase when the control bit specifier is null and the target bit is one", function() {
+            var x = qstate('|100>').controlledZ(null, 2);
+            expect(x.amplitude('|100>')).toBeApprox(complex(-1,0));
+        });
+        it("flips the phase when an odd number of the target bits are 1 when the control bit is one", function() {
+            var targetBits = {from: 0, to: 1};
+            var x = qstate('|101>').controlledZ(2, targetBits);
+            expect(x.amplitude('|101>')).toBeApprox(complex(-1,0));
+        });
+
+        it("does nothing when an even number of the target bits are 1 when the control bit is one", function() {
+            var targetBits = {from: 0, to: 1};
+            var x = qstate('|111>').controlledZ(2, targetBits);
+            expect(x.amplitude('|111>')).toBeApprox(complex(1,0));
+        });
+
+    });
+
+    describe('#y', function() {
+        it("applies the Pauli y operator to (|0>)", function() {
+            var x = qstate('|0>').y(0);
+            expect(x.amplitude('|0>')).toEqual(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEqual(complex(0, 1));
+        });
+        it("applies the Pauli y operator to (|1>)", function() {
+            var x = qstate('|1>').y(0);
+            expect(x.amplitude('|0>')).toEqual(complex(0, -1));
+            expect(x.amplitude('|1>')).toEqual(jsqbits.Complex.ZERO);
+        });
+    });
+
+    describe('#controlledY', function(){
+        it("does nothing when the control bit is zero", function() {
+            var x = qstate('|001>').controlledY(2, 0);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("applies the Pauli y operator when the control bit is one",  function() {
+            var x = qstate('|101>').controlledY(2, 0);
+            expect(x.amplitude('|100>')).toEqual(complex(0, -1));
+            expect(x.amplitude('|101>')).toEqual(jsqbits.Complex.ZERO);
+        });
+    });
+
+
     describe('#hadamard', function() {
         it("applies the hadamard operation", function() {
             var x = qstate('|000>').hadamard(2);
@@ -64,7 +181,18 @@ describe('QState', function() {
             expect(x.amplitude('|110>')).toBeApprox(complex(0.5, 0));
             expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
         });
+    });
 
+    describe('#controlledHadamard', function() {
+        it("does nothing when the control bit is zero", function() {
+            var x = qstate('|001>').controlledHadamard(2, 0);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("applies the Hadamard operator when the control bit is one", function() {
+            var x = qstate('|101>').controlledHadamard(2, 0);
+            expect(x.amplitude('|100>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
+            expect(x.amplitude('|101>')).toBeApprox(complex(-1 / Math.sqrt(2), 0));
+        });
     });
 
     describe('#rotateX', function() {
@@ -94,6 +222,18 @@ describe('QState', function() {
         });
     });
 
+    describe('#controlledXRotation', function() {
+        it("does nothing when the control bit is zero", function() {
+            var x = qstate('|001>').controlledXRotation(2, 0, Math.PI/4);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("rotates around the x axis when the control bit is one", function() {
+            var x = qstate('|100>').controlledXRotation(2, 0, Math.PI/4);
+            expect(x.amplitude('|100>')).toBeApprox(complex(Math.cos(Math.PI/8), 0));
+            expect(x.amplitude('|101>')).toBeApprox(complex(0, -Math.sin(Math.PI/8)));
+        });
+    });
+
     describe('#rotateY', function() {
         it("rotates about the Y axis", function() {
             var x = qstate('|00>').rotateY(1, Math.PI/4);
@@ -108,6 +248,18 @@ describe('QState', function() {
             expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
             expect(x.amplitude('|10>')).toBeApprox(complex(Math.sin(3*Math.PI/8), 0));
             expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+        });
+    });
+
+    describe('#controlledYRotation', function() {
+        it("does nothing when the control bit is zero", function() {
+            var x = qstate('|001>').controlledYRotation(2, 0, Math.PI/4);
+            expect(x).toEqual(qstate('|001>'));
+        });
+        it("rotates around the y axis when the control bit is one", function() {
+            var x = qstate('|100>').controlledYRotation(2, 0, Math.PI/4);
+            expect(x.amplitude('|100>')).toBeApprox(complex(Math.cos(Math.PI/8), 0));
+            expect(x.amplitude('|101>')).toBeApprox(complex(Math.sin(Math.PI/8), 0));
         });
     });
 
@@ -129,42 +281,15 @@ describe('QState', function() {
         });
     });
 
-    describe('#x', function() {
-        it("applies the Pauli x operator to (|0>)", function() {
-            var x = qstate('|0>').x(0);
-            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|1>')).toEqual(complex(1, 0));
+    describe('#controlledZRotation', function() {
+        it("does nothing when the control bit is zero", function() {
+            var x = qstate('|001>').controlledZRotation(2, 0, Math.PI/4);
+            expect(x).toEqual(qstate('|001>'));
         });
-        it("applies the Pauli x operator to (|1>)", function() {
-            var x = qstate('|1>').x(0);
-            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
-            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
-        });
-    });
-
-    describe('#z', function() {
-        it("applies the Pauli z operator to (|0>)", function() {
-            var x = qstate('|0>').z(0);
-            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
-            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
-        });
-        it("applies the Pauli z operator to (|1>)", function() {
-            var x = qstate('|1>').z(0);
-            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|1>')).toEqual(complex(-1, 0));
-        });
-    });
-
-    describe('#y', function() {
-        it("applies the Pauli y operator to (|0>)", function() {
-            var x = qstate('|0>').y(0);
-            expect(x.amplitude('|0>')).toEqual(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|1>')).toEqual(complex(0, 1));
-        });
-        it("applies the Pauli y operator to (|1>)", function() {
-            var x = qstate('|1>').y(0);
-            expect(x.amplitude('|0>')).toEqual(complex(0, -1));
-            expect(x.amplitude('|1>')).toEqual(jsqbits.Complex.ZERO);
+        it("rotates around the z axis when the control bit is one", function() {
+            var x = qstate('|100>').controlledZRotation(2, 0, Math.PI/4);
+            expect(x.amplitude('|100>')).toBeApprox(complex(Math.cos(Math.PI/8), -Math.sin(Math.PI/8)));
+            expect(x.amplitude('|101>')).toBe(jsqbits.Complex.ZERO);
         });
     });
 
@@ -186,21 +311,6 @@ describe('QState', function() {
         it("flips the target bit from one to zero when the control bit is one", function() {
             var x = qstate('|101>').cnot(2, 0);
             expect(x).toEqual(qstate('|100>'));
-        });
-    });
-
-    describe('controlled phase flip', function(){
-        it("does nothing when the control bit is zero", function() {
-            var x = qstate('|000>').controlledZ(2, 0);
-            expect(x).toEqual(qstate('|000>'));
-        });
-        it("does nothing when the target bit is 0", function() {
-            var x = qstate('|100>').controlledZ(2, 0);
-            expect(x).toEqual(qstate('|100>'));
-        });
-        it("flips the phase of the target bit when both the control and target bits are one", function() {
-            var x = qstate('|101>').controlledZ(2, 0);
-            expect(x.amplitude('|101>')).toBeApprox(complex(-1,0));
         });
     });
 

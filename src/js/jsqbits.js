@@ -145,20 +145,118 @@ new function() {
         }
     };
 
-    jsqbits.QState.prototype.singleQbitOperation = function(bits, qbitFunction) {
-        var applyToOneBit = function(bit, qState) {
+    jsqbits.QState.prototype.controlledHadamard = function(controlBit, targetBits, angle) {
+        return this.performControlledApplicatinOfqBitFunctionToQbits(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+            var newAmplitudeOf0 = amplitudeOf0.add(amplitudeOf1).multiply(squareRootOfOneHalf);
+            var newAmplitudeOf1 = amplitudeOf0.subtract(amplitudeOf1).multiply(squareRootOfOneHalf);
+            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
+        });
+    };
+
+    jsqbits.QState.prototype.hadamard = function(targetBits) {
+        return this.controlledHadamard(null, targetBits);
+    };
+
+    jsqbits.QState.prototype.controlledXRotation = function(controlBit, targetBits, angle) {
+        return this.performControlledApplicatinOfqBitFunctionToQbits(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+            var halfAngle = angle / 2;
+            var cos = complex(Math.cos(halfAngle), 0);
+            var negative_i_sin = complex(0, -Math.sin(halfAngle));
+            var newAmplitudeOf0 = amplitudeOf0.multiply(cos).add(amplitudeOf1.multiply(negative_i_sin));
+            var newAmplitudeOf1 = amplitudeOf0.multiply(negative_i_sin).add(amplitudeOf1.multiply(cos));
+            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
+        });
+    };
+
+    jsqbits.QState.prototype.rotateX = function(targetBits, angle) {
+        return this.controlledXRotation(null, targetBits, angle);
+    }
+
+    jsqbits.QState.prototype.controlledYRotation = function(controlBit, targetBits, angle) {
+        return this.performControlledApplicatinOfqBitFunctionToQbits(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+            var halfAngle = angle / 2;
+            var cos = complex(Math.cos(halfAngle), 0);
+            var sin = complex(Math.sin(halfAngle), 0);
+            var newAmplitudeOf0 = amplitudeOf0.multiply(cos).add(amplitudeOf1.multiply(sin.negate()));
+            var newAmplitudeOf1 = amplitudeOf0.multiply(sin).add(amplitudeOf1.multiply(cos));
+            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
+        });
+    };
+
+    jsqbits.QState.prototype.rotateY = function(targetBits, angle) {
+        return this.controlledYRotation(null, targetBits, angle);
+    }
+
+    jsqbits.QState.prototype.controlledZRotation = function(controlBit, targetBits, angle) {
+        return this.performControlledApplicatinOfqBitFunctionToQbits(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+            var halfAngle = angle / 2;
+            var cos = complex(Math.cos(halfAngle), 0);
+            var i_sin = complex(0, Math.sin(halfAngle));
+            var newAmplitudeOf0 = amplitudeOf0.multiply(cos.subtract(i_sin));
+            var newAmplitudeOf1 = amplitudeOf1.multiply(cos.add(i_sin));
+            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
+        });
+    };
+
+    jsqbits.QState.prototype.rotateZ = function(targetBits, angle) {
+        return this.controlledZRotation(null, targetBits, angle);
+    }
+
+    jsqbits.QState.prototype.controlledX = function(controlBit, targetBits) {
+        return this.performControlledApplicatinOfqBitFunctionToQbits(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+            return {amplitudeOf0: amplitudeOf1, amplitudeOf1: amplitudeOf0};
+        });
+    }
+
+    jsqbits.QState.prototype.cnot = jsqbits.QState.prototype.controlledX;
+
+    jsqbits.QState.prototype.x = function(targetBits) {
+        return this.controlledX(null, targetBits);
+    };
+
+    jsqbits.QState.prototype.not = jsqbits.QState.prototype.x;
+
+    jsqbits.QState.prototype.controlledY = function(controlBit, targetBits) {
+        return this.performControlledApplicatinOfqBitFunctionToQbits(controlBit, targetBits,  function(amplitudeOf0, amplitudeOf1){
+            return {amplitudeOf0: amplitudeOf1.multiply(complex(0, -1)), amplitudeOf1: amplitudeOf0.multiply(complex(0, 1))};
+        });
+    };
+
+    jsqbits.QState.prototype.y = function(targetBits) {
+        return this.controlledY(null, targetBits);
+    };
+
+    jsqbits.QState.prototype.controlledZ = function(controlBit, targetBits) {
+        return this.performControlledApplicatinOfqBitFunctionToQbits(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+            return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.negate()};
+        });
+    };
+
+    jsqbits.QState.prototype.z = function(targetBits) {
+        return this.controlledZ(null, targetBits);
+    };
+
+    jsqbits.QState.prototype.performControlledApplicatinOfqBitFunctionToQbits = function(controlBit, targetBits, qbitFunction) {
+        var applyToOneBit = function(targetBit, qState) {
             var newAmplitudes = [];
             var statesThatCanBeSkipped = [];
-            var mask = 1 << bit;
-            for(var stateString in qState.amplitudes) {
+            var targetBitMask = 1 << targetBit;
+            var controlBitMask = controlBit == null ? 0 : 1 << controlBit;
+
+            for (var stateString in qState.amplitudes) {
                 var state = parseInt(stateString);
                 if (statesThatCanBeSkipped[state]) continue;
-                statesThatCanBeSkipped[state^mask] = true;
-                var indexOf1 = state | mask;
-                var indexOf0 = indexOf1 - mask;
-                var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
-                sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
-                sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
+                statesThatCanBeSkipped[state ^ targetBitMask] = true;
+                var indexOf1 = state | targetBitMask;
+                var indexOf0 = indexOf1 - targetBitMask;
+                if (controlBit == null || (state & controlBitMask)) {
+                    var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
+                    sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
+                    sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
+                } else {
+                    sparseAssign(newAmplitudes, indexOf0, qState.amplitude(indexOf0));
+                    sparseAssign(newAmplitudes, indexOf1, qState.amplitude(indexOf1));
+                }
             }
             return new jsqbits.QState(qState.numBits, newAmplitudes);
         }
@@ -171,98 +269,8 @@ new function() {
             return result;
         }
 
-        var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
+        var bitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
         return applyToBitRange(bitRange.from, bitRange.to, this);
-    };
-
-    jsqbits.QState.prototype.hadamard = function(bit) {
-        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
-            var newAmplitudeOf0 = amplitudeOf0.add(amplitudeOf1).multiply(squareRootOfOneHalf);
-            var newAmplitudeOf1 = amplitudeOf0.subtract(amplitudeOf1).multiply(squareRootOfOneHalf);
-            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
-        });
-    };
-
-    jsqbits.QState.prototype.rotateX = function(bit, angle) {
-        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
-            var halfAngle = angle / 2;
-            var cos = complex(Math.cos(halfAngle), 0);
-            var negative_i_sin = complex(0, -Math.sin(halfAngle));
-            var newAmplitudeOf0 = amplitudeOf0.multiply(cos).add(amplitudeOf1.multiply(negative_i_sin));
-            var newAmplitudeOf1 = amplitudeOf0.multiply(negative_i_sin).add(amplitudeOf1.multiply(cos));
-            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
-        });
-    };
-
-    jsqbits.QState.prototype.rotateY = function(bit, angle) {
-        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
-            var halfAngle = angle / 2;
-            var cos = complex(Math.cos(halfAngle), 0);
-            var sin = complex(Math.sin(halfAngle), 0);
-            var newAmplitudeOf0 = amplitudeOf0.multiply(cos).add(amplitudeOf1.multiply(sin.negate()));
-            var newAmplitudeOf1 = amplitudeOf0.multiply(sin).add(amplitudeOf1.multiply(cos));
-            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
-        });
-    };
-
-    jsqbits.QState.prototype.rotateZ = function(bit, angle) {
-        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
-            var halfAngle = angle / 2;
-            var cos = complex(Math.cos(halfAngle), 0);
-            var i_sin = complex(0, Math.sin(halfAngle));
-            var newAmplitudeOf0 = amplitudeOf0.multiply(cos.subtract(i_sin));
-            var newAmplitudeOf1 = amplitudeOf1.multiply(cos.add(i_sin));
-            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
-        });
-    };
-
-    jsqbits.QState.prototype.x = function(bit) {
-        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
-            return {amplitudeOf0: amplitudeOf1, amplitudeOf1: amplitudeOf0};
-        });
-    };
-
-    jsqbits.QState.prototype.z = function(bit) {
-        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
-            return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.negate()};
-        });
-    };
-
-    jsqbits.QState.prototype.controlledZ = function(controlBit, targetBit) {
-//        TODO: Generalize and remove duplication!
-        var newAmplitudes = [];
-        var statesThatCanBeSkipped = [];
-        var targetBitMask = 1 << targetBit;
-        var controlBitMask = 1 << controlBit;
-
-        for(var stateString in this.amplitudes) {
-         var state = parseInt(stateString);
-         if (statesThatCanBeSkipped[state]) continue;
-         statesThatCanBeSkipped[state^targetBitMask] = true;
-         var indexOf1 = state | targetBitMask;
-         var indexOf0 = indexOf1 - targetBitMask;
-         if (state & controlBitMask) {
-             sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf0));
-             sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf1).negate());
-         } else {
-             sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf0));
-             sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf1));
-         }
-        }
-        return new jsqbits.QState(this.numBits, newAmplitudes);
-
-    };
-
-    jsqbits.QState.prototype.y = function(bit) {
-        return this.singleQbitOperation(bit, function(amplitudeOf0, amplitudeOf1){
-            return {amplitudeOf0: amplitudeOf1.multiply(complex(0, -1)), amplitudeOf1: amplitudeOf0.multiply(complex(0, 1))};
-        });
-    };
-
-    jsqbits.QState.prototype.not = jsqbits.QState.prototype.x;
-
-    jsqbits.QState.prototype.cnot = function(controlBit, targetBit) {
-        return this.applyFunction(controlBit, targetBit, function(x) {return x;});
     };
 
     jsqbits.QState.prototype.applyFunction = function(bits, targetBit, functionToApply) {

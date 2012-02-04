@@ -18,6 +18,52 @@ describe('QState', function() {
         });
     });
 
+    describe('#controlledApplicatinOfqBitOperator', function(){
+        it("does nothing when the control bit is zero (one target)", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction');
+            var x = jsqbits('|001>').controlledApplicatinOfqBitOperator(2, 0, qbitFunction);
+            expect(qbitFunction).not.toHaveBeenCalled();
+            expect(x).toEqual(jsqbits('|001>'));
+        });
+        it("does nothing when the control bit is zero (multiple targets)", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction');
+            var targetBits = {from: 0, to: 1};
+            var x = jsqbits('|001>').controlledApplicatinOfqBitOperator(2, targetBits, qbitFunction);
+            expect(qbitFunction).not.toHaveBeenCalled();
+            expect(x).toEqual(jsqbits('|001>'));
+        });
+        it("invokes the qbitFunction when the control bit is one", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction')
+                .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
+            var x = jsqbits('|100>').controlledApplicatinOfqBitOperator(2, 0, qbitFunction);
+            expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+            expect(x.amplitude('|100>')).toBeApprox(complex(0.2,0));
+            expect(x.amplitude('|101>')).toBeApprox(complex(0.3,0));
+        });
+        it("flips the target bit when the control bit specifier is null", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction')
+                .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
+            var x = jsqbits('|000>').controlledApplicatinOfqBitOperator(null, 0, qbitFunction);
+            expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+            expect(x.amplitude('|000>')).toBeApprox(complex(0.2,0));
+            expect(x.amplitude('|001>')).toBeApprox(complex(0.3,0));
+        });
+        it("flips the target bits when the control bit is one (target bit range)", function() {
+            var targetBits = {from: 0, to: 1};
+            var qbitFunction = jasmine.createSpy('qbitFunction')
+                .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
+            var x = jsqbits('|101>').controlledApplicatinOfqBitOperator(2, targetBits, qbitFunction);
+            expect(qbitFunction).toHaveBeenCalled();
+            expect(qbitFunction.argsForCall[0]).toEqual([complex(0,0), complex(1,0)]);
+            expect(qbitFunction.argsForCall[1]).toEqual([complex(0.2,0), complex(0,0)]);
+            expect(qbitFunction.argsForCall[2]).toEqual([complex(0.3,0), complex(0,0)]);
+            expect(x.amplitude('|100>')).toBeApprox(complex(0.2,0));
+            expect(x.amplitude('|101>')).toBeApprox(complex(0.2,0));
+            expect(x.amplitude('|110>')).toBeApprox(complex(0.3,0));
+            expect(x.amplitude('|111>')).toBeApprox(complex(0.3,0));
+        });
+    });
+
     describe('#x', function() {
         it("applies the Pauli x operator to (|0>)", function() {
             var x = jsqbits('|0>').x(0);
@@ -32,27 +78,13 @@ describe('QState', function() {
     });
 
     describe('#controlledX', function(){
-        it("does nothing when the control bit is zero (one target)", function() {
-            var x = jsqbits('|001>').controlledX(2, 0);
-            expect(x).toEqual(jsqbits('|001>'));
+        it("does nothing when the control bit is zero", function() {
+            var x = jsqbits('|000>').controlledX(2, 0);
+           expect(x.amplitude('|000>')).toBeApprox(complex(1,0));
         });
-        it("does nothing when the control bit is zero (multiple targets)", function() {
-            var targetBits = {from: 0, to: 1};
-            var x = jsqbits('|001>').controlledX(2, targetBits);
-            expect(x).toEqual(jsqbits('|001>'));
-        });
-        it("flips the target bit when the control bit is one", function() {
+       it("flips the target bit when the control bit is one", function() {
             var x = jsqbits('|100>').controlledX(2, 0);
            expect(x.amplitude('|101>')).toBeApprox(complex(1,0));
-        });
-        it("flips the target bit when the control bit specifier is null", function() {
-            var x = jsqbits('|100>').controlledX(null, 2);
-            expect(x.amplitude('|000>')).toBeApprox(complex(1,0));
-        });
-        it("flips the target bits when the control bit is one", function() {
-            var targetBits = {from: 0, to: 1};
-            var x = jsqbits('|101>').controlledX(2, targetBits);
-            expect(x.amplitude('|110>')).toBeApprox(complex(1,0));
         });
     });
 
@@ -70,43 +102,19 @@ describe('QState', function() {
     });
 
     describe('#controlledZ', function(){
-        it("does nothing when the control bit is zero (one target)", function() {
+        it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|001>').controlledZ(2, 0);
             expect(x).toEqual(jsqbits('|001>'));
-        });
-        it("does nothing when the control bit is zero (multiple targets)", function() {
-            var targetBits = {from: 0, to: 1};
-            var x = jsqbits('|001>').controlledZ(2, targetBits);
-            expect(x).toEqual(jsqbits('|001>'));
-        });
-        it("does nothing when the target bit is 0", function() {
-            var x = jsqbits('|100>').controlledZ(2, 0);
-            expect(x).toEqual(jsqbits('|100>'));
-        });
-        it("does nothing when the control bit specifier is null and the target bit is 0", function() {
-            var x = jsqbits('|100>').controlledZ(null, 0);
-            expect(x).toEqual(jsqbits('|100>'));
         });
         it("flips the phase when both the control and target bits are one", function() {
             var x = jsqbits('|101>').controlledZ(2, 0);
             expect(x.amplitude('|101>')).toBeApprox(complex(-1,0));
         });
-        it("flips the phase when the control bit specifier is null and the target bit is one", function() {
-            var x = jsqbits('|100>').controlledZ(null, 2);
-            expect(x.amplitude('|100>')).toBeApprox(complex(-1,0));
-        });
-        it("flips the phase when an odd number of the target bits are 1 when the control bit is one", function() {
-            var targetBits = {from: 0, to: 1};
-            var x = jsqbits('|101>').controlledZ(2, targetBits);
-            expect(x.amplitude('|101>')).toBeApprox(complex(-1,0));
-        });
-
         it("does nothing when an even number of the target bits are 1 when the control bit is one", function() {
             var targetBits = {from: 0, to: 1};
             var x = jsqbits('|111>').controlledZ(2, targetBits);
             expect(x.amplitude('|111>')).toBeApprox(complex(1,0));
         });
-
     });
 
     describe('#y', function() {

@@ -234,18 +234,6 @@ new function() {
         return new jsqbits.QState(this.numBits, newAmplitudes);
     };
 
-    var normalize = function(amplitudes) {
-        var sumOfMagnitudeSqaures = 0;
-        for(var state in amplitudes) {
-            var magnitude = amplitudes[state].magnitude();
-            sumOfMagnitudeSqaures += magnitude * magnitude;
-        }
-        var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
-        for(var state in amplitudes) {
-            amplitudes[state] = amplitudes[state].multiply(scale);
-        }
-    };
-
     jsqbits.QState.prototype.projectOnto = function(bits) {
         var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
         var highBitMask = (1 << (bitRange.to+1)) - 1;
@@ -318,6 +306,18 @@ new function() {
         // Strip optional 'ket' characters to support |0101>
         bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
         return {value: parseInt(bitString, 2), length: bitString.length};
+    };
+
+    var normalize = function(amplitudes) {
+        var sumOfMagnitudeSqaures = 0;
+        for(var state in amplitudes) {
+            var magnitude = amplitudes[state].magnitude();
+            sumOfMagnitudeSqaures += magnitude * magnitude;
+        }
+        var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
+        for(var state in amplitudes) {
+            amplitudes[state] = amplitudes[state].multiply(scale);
+        }
     };
 
     var sparseAssign = function(array, index, value) {

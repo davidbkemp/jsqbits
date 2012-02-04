@@ -5,3 +5,11 @@ Some user documentation will need to be written for starters.
 
 But you can still try it out now in your browser now using
 the jsqbits runner http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
+
+TODO before first release:
+* Documentation
+* Tofolli gate
+* Allow control bits for all operations to be multiple bits.
+* Implement Simon's algorithm
+
+

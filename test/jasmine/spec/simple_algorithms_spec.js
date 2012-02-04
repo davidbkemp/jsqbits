@@ -11,10 +11,10 @@ describe('Simple Quantum Algorithms', function() {
 
 //            Alice prepares her qbit
             var alice = 1;
-            if (input[0] === '1') {
+            if (input.charAt(0) === '1') {
                 state = state.z(alice);
             }
-            if (input[1] === '1') {
+            if (input.charAt(1) === '1') {
                 state = state.x(alice);
             }
 

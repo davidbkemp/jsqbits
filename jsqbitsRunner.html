@@ -1,0 +1,53 @@
+<html>
+<head>
+    <title>jsqbits runner</title>
+    <script type="text/javascript" src="doc/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="src/js/jsqbits.js"></script>
+    <script type="text/javascript">
+        ALL = jsqbits.ALL;
+        $(function() {
+            $('#run').click(function() {
+                $('#result').text('');
+                try {
+                    var result = eval($('#code').get(0).value);
+                    if ((typeof result == 'object') && result.toString) {
+                        result = result.toString();
+                    }
+                } catch (e) {
+                    var result = e.message;
+                }
+                if (result) {
+                    $('#result').text(result);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>jsqbits runner</h1>
+
+<p>
+    This is a crude JavaScript runner preloaded with
+    the <a href="index.html">jsqbits library</a>
+    with <em>ALL</em> aliased to <em>jsqbits.ALL</em> for your convenience.
+</p>
+
+<p>Try some quantum computation operations like:
+    jsqbits('|001>').hadamard(ALL).rotateX(1, Math.PI/8).cnot(1,0)</p>
+
+<textarea id="code" rows="8" cols="80" def>
+jsqbits('|001>').hadamard(ALL).rotateX(1, Math.PI/8).cnot(1,0)
+</textarea>
+<button id="run" style="display:block; margin-top:1em;">Run</button>
+<div style="margin-top:1em; min-height:2em; border-style:solid; border-width:1px;">
+    <div id="result"></div>
+</div>
+
+<p>Making the JavaScript shell run properly in different browsers was proving more
+    effort than it is currently worth,
+    and so it has been parked <a href="OldJavaScriptShell.html">here</a>.
+    In the mean time, please feel free to use this crude JavaScript runner to try out jsqbits.
+</p>
+
+</body>
+</html>

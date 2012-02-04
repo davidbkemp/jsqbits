@@ -14,8 +14,9 @@
    limitations under the License.
  */
 
-var jsqbits;
-jsqbits = jsqbits || {};
+function jsqbits(bitString) {
+    return jsqbits.QState.fromBits(bitString)
+};
 
 new function() {
 

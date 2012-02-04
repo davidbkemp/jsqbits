@@ -1,6 +1,3 @@
-var jsqbits;
-jsqbits = jsqbits || {};
-
 jsqbits.JasmineMatchers = jsqbits.JasmineMatchers || {};
 
 jsqbits.JasmineMatchers.toBeApprox = function(expected) {

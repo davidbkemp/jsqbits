@@ -1,11 +1,5 @@
 describe('Simple Quantum Algorithms', function() {
-    var complex = function(real, imaginary) {
-        return new jsqbits.Complex(real, imaginary);
-    };
-
-    var qstate = jsqbits.QState.fromBits;
     var ALL = jsqbits.ALL;
-
     beforeEach(function() {
         this.addMatchers(jsqbits.JasmineMatchers);
     });
@@ -13,7 +7,7 @@ describe('Simple Quantum Algorithms', function() {
     describe("Super dense coding", function() {
 
         var superDense = function(input) {
-            var state = qstate('|00>').hadamard(0).cnot(0,1);
+            var state = jsqbits('|00>').hadamard(0).cnot(0,1);
 
 //            Alice prepares her qbit
             var alice = 1;
@@ -53,7 +47,7 @@ describe('Simple Quantum Algorithms', function() {
 
         var simpleSearch = function(f) {
             var inputBits = {from: 1, to: 2};
-            return qstate('|001>')
+            return jsqbits('|001>')
                     .hadamard(ALL)
                     .applyFunction(inputBits, 0, f)
                     .hadamard(inputBits)
@@ -96,7 +90,7 @@ describe('Simple Quantum Algorithms', function() {
         };
 
         it ("should support transmition of quantum state from Alice to Bob", function(){
-            var initialState = qstate("|000>").hadamard(1).cnot(1,0).rotateX(2, Math.PI/3).rotateZ(2, Math.PI/5);
+            var initialState = jsqbits("|000>").hadamard(1).cnot(1,0).rotateX(2, Math.PI/3).rotateZ(2, Math.PI/5);
             var stateToBeTransmitted = initialState.projectOnto(2);
             var stateToBeTransmitted0 = stateToBeTransmitted.amplitude('|0>');
             var stateToBeTransmitted1 = stateToBeTransmitted.amplitude('|1>');
@@ -110,7 +104,7 @@ describe('Simple Quantum Algorithms', function() {
     describe("Deutsch's algorithm", function() {
 
         var deutsch = function(f) {
-           return qstate('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL).measure(1).measurement;
+           return jsqbits('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL).measure(1).measurement;
         };
 
         it("should compute 0 for fixed function returning 1", function() {
@@ -134,7 +128,7 @@ describe('Simple Quantum Algorithms', function() {
     describe("Deutsch-Jozsa algorithm", function() {
         var deutschJozsa = function(f) {
             var inputBits = {from: 1, to: 3};
-            var result = qstate('|0001>')
+            var result = jsqbits('|0001>')
                     .hadamard(ALL)
                     .applyFunction(inputBits, 0, f)
                     .hadamard(inputBits)

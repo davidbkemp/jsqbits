@@ -90,26 +90,6 @@ new function() {
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
 
-
-    var Complex = jsqbits.Complex;
-    var complex = function(real, imaginary) {
-        return new Complex(real, imaginary);
-    };
-    var squareRootOfOneHalf = complex(1/Math.sqrt(2),0);
-
-    var parseBitString = function(bitString) {
-        // Strip optional 'ket' characters to support |0101>
-        bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
-        return {value: parseInt(bitString, 2), length: bitString.length};
-    };
-
-    var sparseAssign = function(array, index, value) {
-        // Try to avoid assigning values and try to make zero exactly zero.
-        if (value.magnitude() > 0.0000001) {
-            array[index] = value;
-        }
-    }
-
     jsqbits.ALL = 'ALL';
 
     jsqbits.QState = function(numBits, amplitudes) {
@@ -127,23 +107,6 @@ new function() {
     jsqbits.QState.prototype.amplitude = function(index) {
         var numericIndex = (typeof index == 'string') ? parseBitString(index).value : index;
         return this.amplitudes[numericIndex] || Complex.ZERO;
-    };
-
-    var convertBitQualifierToBitRange = function(bits, numBits) {
-        if (bits == null) {
-            throw "bit qualification must be supplied";
-        } else if (bits == jsqbits.ALL) {
-            return {from: 0, to: numBits - 1};
-        } else if (bits.from != null && bits.to != null) {
-            if (bits.from > bits.to) {
-                throw "bit range must have 'from' being less than or equal to 'to'"
-            }
-            return bits
-        } else if (typeof bits == 'number') {
-            return {from: bits, to: bits};
-        } else {
-            throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
-        }
     };
 
     jsqbits.QState.prototype.controlledHadamard = function(controlBit, targetBits, angle) {
@@ -238,40 +201,12 @@ new function() {
     };
 
     jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = function(controlBit, targetBits, qbitFunction) {
-        var applyToOneBit = function(targetBit, qState) {
-            var newAmplitudes = [];
-            var statesThatCanBeSkipped = [];
-            var targetBitMask = 1 << targetBit;
-            var controlBitMask = controlBit == null ? 0 : 1 << controlBit;
-
-            for (var stateString in qState.amplitudes) {
-                var state = parseInt(stateString);
-                if (statesThatCanBeSkipped[state]) continue;
-                statesThatCanBeSkipped[state ^ targetBitMask] = true;
-                var indexOf1 = state | targetBitMask;
-                var indexOf0 = indexOf1 - targetBitMask;
-                if (controlBit == null || (state & controlBitMask)) {
-                    var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
-                    sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
-                    sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
-                } else {
-                    sparseAssign(newAmplitudes, indexOf0, qState.amplitude(indexOf0));
-                    sparseAssign(newAmplitudes, indexOf1, qState.amplitude(indexOf1));
-                }
-            }
-            return new jsqbits.QState(qState.numBits, newAmplitudes);
-        }
-
-        var applyToBitRange = function(from, to, qState) {
-            var result = qState;
-            for (var bit = from; bit <= to; bit++) {
-                result = applyToOneBit(bit, result);
-            }
-            return result;
-        }
-
         var bitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
-        return applyToBitRange(bitRange.from, bitRange.to, this);
+        var result = this;
+        for (var bit = bitRange.from; bit <= bitRange.to; bit++) {
+            result = applyToOneBit(controlBit, bit, qbitFunction, result);
+        }
+        return result;
     };
 
     jsqbits.QState.prototype.applyFunction = function(bits, targetBit, functionToApply) {
@@ -361,14 +296,6 @@ new function() {
     };
 
     jsqbits.QState.prototype.toString = function() {
-        var padState = function(state, numBits) {
-            var paddingLength = numBits - state.length;
-            for (i = 0; i < paddingLength; i++) {
-                state = '0' + state;
-            }
-            return state;
-        };
-
         var result = '';
         var formatFlags = {decimalPlaces: 4};
         for(var stateString in this.amplitudes) {
@@ -378,4 +305,75 @@ new function() {
         }
         return result;
     }
+
+    var Complex = jsqbits.Complex;
+
+    var complex = function(real, imaginary) {
+        return new Complex(real, imaginary);
+    };
+
+    var squareRootOfOneHalf = complex(1/Math.sqrt(2),0);
+
+    var parseBitString = function(bitString) {
+        // Strip optional 'ket' characters to support |0101>
+        bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
+        return {value: parseInt(bitString, 2), length: bitString.length};
+    };
+
+    var sparseAssign = function(array, index, value) {
+        // Try to avoid assigning values and try to make zero exactly zero.
+        if (value.magnitude() > 0.0000001) {
+            array[index] = value;
+        }
+    }
+
+    var convertBitQualifierToBitRange = function(bits, numBits) {
+        if (bits == null) {
+            throw "bit qualification must be supplied";
+        } else if (bits == jsqbits.ALL) {
+            return {from: 0, to: numBits - 1};
+        } else if (bits.from != null && bits.to != null) {
+            if (bits.from > bits.to) {
+                throw "bit range must have 'from' being less than or equal to 'to'"
+            }
+            return bits
+        } else if (typeof bits == 'number') {
+            return {from: bits, to: bits};
+        } else {
+            throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
+        }
+    };
+
+    var padState = function(state, numBits) {
+        var paddingLength = numBits - state.length;
+        for (i = 0; i < paddingLength; i++) {
+            state = '0' + state;
+        }
+        return state;
+    };
+
+    var applyToOneBit = function(controlBit, targetBit, qbitFunction, qState) {
+        var newAmplitudes = [];
+        var statesThatCanBeSkipped = [];
+        var targetBitMask = 1 << targetBit;
+        var controlBitMask = controlBit == null ? 0 : 1 << controlBit;
+
+        for (var stateString in qState.amplitudes) {
+            var state = parseInt(stateString);
+            if (statesThatCanBeSkipped[state]) continue;
+            statesThatCanBeSkipped[state ^ targetBitMask] = true;
+            var indexOf1 = state | targetBitMask;
+            var indexOf0 = indexOf1 - targetBitMask;
+            if (controlBit == null || (state & controlBitMask)) {
+                var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
+                sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
+                sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
+            } else {
+                sparseAssign(newAmplitudes, indexOf0, qState.amplitude(indexOf0));
+                sparseAssign(newAmplitudes, indexOf1, qState.amplitude(indexOf1));
+            }
+        }
+        return new jsqbits.QState(qState.numBits, newAmplitudes);
+    };
+
 }();

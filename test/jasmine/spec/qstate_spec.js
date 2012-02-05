@@ -62,6 +62,38 @@ describe('QState', function() {
             expect(x.amplitude('|110>')).toBeApprox(complex(0.3,0));
             expect(x.amplitude('|111>')).toBeApprox(complex(0.3,0));
         });
+        it("does nothing when any of the control bits are zero (control bit range)", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction');
+            var controlBits = {from: 1, to: 2};
+            var x = jsqbits('|101>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
+            expect(qbitFunction).not.toHaveBeenCalled();
+            expect(x).toEqual(jsqbits('|101>'));
+        });
+        it("does nothing when any of the control bits are zero (control bit array)", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction');
+            var controlBits = [1,2];
+            var x = jsqbits('|101>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
+            expect(qbitFunction).not.toHaveBeenCalled();
+            expect(x).toEqual(jsqbits('|101>'));
+        });
+        it("invokes the qbitFunction when the control bits are all one (control bit range)", function() {
+             var qbitFunction = jasmine.createSpy('qbitFunction')
+                 .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
+             var controlBits = {from: 1, to: 2};
+             var x = jsqbits('|110>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
+             expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+             expect(x.amplitude('|110>')).toBeApprox(complex(0.2,0));
+             expect(x.amplitude('|111>')).toBeApprox(complex(0.3,0));
+         });
+        it("invokes the qbitFunction when the control bits are all one (control bit array)", function() {
+             var qbitFunction = jasmine.createSpy('qbitFunction')
+                 .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
+             var controlBits =  [1,3];
+             var x = jsqbits('|1010>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
+             expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+             expect(x.amplitude('|1010>')).toBeApprox(complex(0.2,0));
+             expect(x.amplitude('|1011>')).toBeApprox(complex(0.3,0));
+         });
     });
 
     describe('#x', function() {

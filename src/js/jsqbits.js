@@ -26,14 +26,14 @@ new function() {
     };
 
     jsqbits.Complex.prototype.add = function(other) {
-        if (typeof other == 'number') {
+        if (typeof other === 'number') {
             return new jsqbits.Complex(this.real + other, this.imaginary);
         }
         return new jsqbits.Complex(this.real + other.real, this.imaginary + other.imaginary);
     };
 
     jsqbits.Complex.prototype.multiply = function(other) {
-        if (typeof other == 'number') {
+        if (typeof other === 'number') {
             return new jsqbits.Complex(this.real * other, this.imaginary * other);
         }
         return new jsqbits.Complex(this.real * other.real - this.imaginary * other.imaginary,
@@ -41,8 +41,8 @@ new function() {
     };
 
     jsqbits.Complex.prototype.toString = function() {
-        if (this.imaginary == 0) return "" + this.real;
-        if (this.real == 0) return "" + this.imaginary + 'i';
+        if (this.imaginary === 0) return "" + this.real;
+        if (this.real === 0) return "" + this.imaginary + 'i';
         var sign = (this.imaginary < 0) ? "" : "+";
         return this.real + sign + this.imaginary + "i";
     };
@@ -82,7 +82,7 @@ new function() {
     }
 
     jsqbits.Complex.prototype.subtract = function(other) {
-        if (typeof other == 'number') {
+        if (typeof other === 'number') {
             return new jsqbits.Complex(this.real - other, this.imaginary);
         }
         return new jsqbits.Complex(this.real - other.real, this.imaginary - other.imaginary);
@@ -105,7 +105,7 @@ new function() {
     }
 
     jsqbits.QState.prototype.amplitude = function(index) {
-        var numericIndex = (typeof index == 'string') ? parseBitString(index).value : index;
+        var numericIndex = (typeof index === 'string') ? parseBitString(index).value : index;
         return this.amplitudes[numericIndex] || Complex.ZERO;
     };
 
@@ -200,11 +200,15 @@ new function() {
         return this.controlledZ(null, targetBits);
     };
 
-    jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = function(controlBit, targetBits, qbitFunction) {
-        var bitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
+    jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = function(controlBits, targetBits, qbitFunction) {
+        var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
+        var controlBitsArray = null;
+        if (controlBits != null) {
+            controlBitsArray = convertBitQualifierToBitArray(controlBits, this.numBits);
+        }
         var result = this;
-        for (var bit = bitRange.from; bit <= bitRange.to; bit++) {
-            result = applyToOneBit(controlBit, bit, qbitFunction, result);
+        for (var bit = targetBitRange.from; bit <= targetBitRange.to; bit++) {
+            result = applyToOneBit(controlBitsArray, bit, qbitFunction, result);
         }
         return result;
     };
@@ -223,7 +227,7 @@ new function() {
             var indexOf1 = state | targetBitMask;
             var indexOf0 = indexOf1 - targetBitMask;
             var input = (state & highBitMask) >> bitRange.from;
-            if (functionToApply(input) == 1) {
+            if (functionToApply(input) === 1) {
                 sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf1));
                 sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf0));
             } else {
@@ -274,7 +278,7 @@ new function() {
         for(var stateString in this.amplitudes) {
             var state = parseInt(stateString);
             var comparisonState = (state & highBitMask) >> bitRange.from;
-            if (comparisonState == measurementOutcome) {
+            if (comparisonState === measurementOutcome) {
                 newAmplitudes[state] = this.amplitudes[state];
             }
         }
@@ -330,18 +334,48 @@ new function() {
     var convertBitQualifierToBitRange = function(bits, numBits) {
         if (bits == null) {
             throw "bit qualification must be supplied";
-        } else if (bits == jsqbits.ALL) {
+        } else if (bits === jsqbits.ALL) {
             return {from: 0, to: numBits - 1};
         } else if (bits.from != null && bits.to != null) {
             if (bits.from > bits.to) {
                 throw "bit range must have 'from' being less than or equal to 'to'"
             }
             return bits
-        } else if (typeof bits == 'number') {
+        } else if (typeof bits === 'number') {
             return {from: bits, to: bits};
         } else {
             throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
         }
+    };
+
+    var bitRangeAsArray = function(low, high) {
+        if (low > high) {
+            throw "bit range must have 'from' being less than or equal to 'to'"
+        }
+        var result = [];
+        for (var i = low; i <= high; i++) {
+            result.push(i);
+        }
+        return result;
+    };
+
+    var convertBitQualifierToBitArray = function(bits, numBits) {
+        if (bits == null) {
+            throw "bit qualification must be supplied";
+        }
+        if (bits instanceof Array) {
+            return bits;
+        }
+        if (typeof bits === 'number') {
+            return [bits];
+        }
+        if (bits === jsqbits.ALL) {
+            return bitRangeAsArray(0, numBits - 1);
+        }
+        if (bits.from != null && bits.to != null) {
+            return bitRangeAsArray(bits.from, bits.to);
+        }
+        throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";
     };
 
     var padState = function(state, numBits) {
@@ -352,11 +386,17 @@ new function() {
         return state;
     };
 
-    var applyToOneBit = function(controlBit, targetBit, qbitFunction, qState) {
+    var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
         var targetBitMask = 1 << targetBit;
-        var controlBitMask = controlBit == null ? 0 : 1 << controlBit;
+        var controlBitMask = null;
+        if (controlBits) {
+            controlBitMask = 0;
+            for (var i = 0; i < controlBits.length; i++) {
+                controlBitMask += (1 << controlBits[i]);
+            }
+        }
 
         for (var stateString in qState.amplitudes) {
             var state = parseInt(stateString);
@@ -364,7 +404,7 @@ new function() {
             statesThatCanBeSkipped[state ^ targetBitMask] = true;
             var indexOf1 = state | targetBitMask;
             var indexOf0 = indexOf1 - targetBitMask;
-            if (controlBit == null || (state & controlBitMask)) {
+            if (controlBits == null || ((state & controlBitMask) === controlBitMask)) {
                 var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
                 sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
                 sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);

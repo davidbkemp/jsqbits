@@ -16,7 +16,7 @@
                         result = '' + result;
                     }
                 } catch (e) {
-                    var result = e.message;
+                    var result = e.message ? e.message : e;
                 }
                 if (result) {
                     $('#result').text(result);

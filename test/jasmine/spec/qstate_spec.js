@@ -411,7 +411,13 @@ describe('QState', function() {
 
         it ("can flip multiple target bits", function() {
             var f = function(x) { return parseInt('101', 2); };
-            var x = jsqbits('|1011>').applyFunction(1, {from: 0, to: 2}, f);
+            var x = jsqbits('|1011>').applyFunction(3, {from: 0, to: 2}, f);
+            expect(x).toEqual(jsqbits('|1110>'));
+        });
+
+        it ("restricts flipping of target bits to those specified", function() {
+            var f = function(x) { return parseInt('1101', 2); };
+            var x = jsqbits('|1011>').applyFunction(3, {from: 0, to: 2}, f);
             expect(x).toEqual(jsqbits('|1110>'));
         });
     });

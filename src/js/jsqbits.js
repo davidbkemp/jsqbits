@@ -20,12 +20,29 @@ function jsqbits(bitString) {
 
 new function() {
 
+    var validateArgs = function(args, minimum) {
+        var maximum = 10000;
+        var message = 'Must supply at least ' + minimum + ' parameters.';
+        if (arguments.length > 4) throw "Internal error: too many arguments to validateArgs";
+        if (arguments.length === 4) {
+            maximum = arguments[2];
+            message = arguments[3];
+        } else if (arguments.length === 3) {
+            message = arguments[2];
+        }
+        if (args.length < minimum || args.length > maximum) {
+            throw message;
+        }
+    }
+
     jsqbits.Complex = function(real, imaginary) {
+        validateArgs(arguments, 2, 2, 'Must supply real and imaginary parameters to Complex()');
         this.real = real;
         this.imaginary = imaginary;
     };
 
     jsqbits.Complex.prototype.add = function(other) {
+        validateArgs(arguments, 1, 1, 'Must 1 parameter to add()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real + other, this.imaginary);
         }
@@ -33,6 +50,7 @@ new function() {
     };
 
     jsqbits.Complex.prototype.multiply = function(other) {
+        validateArgs(arguments, 1, 1, 'Must 1 parameter to multiply()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real * other, this.imaginary * other);
         }
@@ -82,6 +100,7 @@ new function() {
     }
 
     jsqbits.Complex.prototype.subtract = function(other) {
+        validateArgs(arguments, 1, 1, 'Must 1 parameter to subtract()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real - other, this.imaginary);
         }
@@ -93,11 +112,13 @@ new function() {
     jsqbits.ALL = 'ALL';
 
     jsqbits.QState = function(numBits, amplitudes) {
+        validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
         this.numBits = numBits;
         this.amplitudes = amplitudes;
     };
 
     jsqbits.QState.fromBits = function(bitString) {
+        validateArgs(arguments, 1, 1, 'Must supply a bit string');
         var parsedBitString = parseBitString(bitString);
         var amplitudes = [];
         amplitudes[parsedBitString.value] = complex(1,0);
@@ -105,11 +126,13 @@ new function() {
     }
 
     jsqbits.QState.prototype.amplitude = function(index) {
+        validateArgs(arguments, 1, 1, 'Must supply an index to amplitude()');
         var numericIndex = (typeof index === 'string') ? parseBitString(index).value : index;
         return this.amplitudes[numericIndex] || Complex.ZERO;
     };
 
     jsqbits.QState.prototype.controlledHadamard = function(controlBits, targetBits) {
+        validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledHadamard()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var newAmplitudeOf0 = amplitudeOf0.add(amplitudeOf1).multiply(squareRootOfOneHalf);
             var newAmplitudeOf1 = amplitudeOf0.subtract(amplitudeOf1).multiply(squareRootOfOneHalf);
@@ -118,10 +141,12 @@ new function() {
     };
 
     jsqbits.QState.prototype.hadamard = function(targetBits) {
+        validateArgs(arguments, 1, 1, 'Must supply target bits to hadamard() as either a single index or a range.');
         return this.controlledHadamard(null, targetBits);
     };
 
     jsqbits.QState.prototype.controlledXRotation = function(controlBits, targetBits, angle) {
+        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledXRotation()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
@@ -133,10 +158,12 @@ new function() {
     };
 
     jsqbits.QState.prototype.rotateX = function(targetBits, angle) {
+        validateArgs(arguments, 2, 2, 'Must supply target bits and angle to rotateX.');
         return this.controlledXRotation(null, targetBits, angle);
     }
 
     jsqbits.QState.prototype.controlledYRotation = function(controlBits, targetBits, angle) {
+        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledYRotation()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
@@ -148,10 +175,12 @@ new function() {
     };
 
     jsqbits.QState.prototype.rotateY = function(targetBits, angle) {
+        validateArgs(arguments, 2, 2, 'Must supply target bits and angle to rotateY.');
         return this.controlledYRotation(null, targetBits, angle);
     }
 
     jsqbits.QState.prototype.controlledZRotation = function(controlBits, targetBits, angle) {
+        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledZRotation()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
@@ -163,10 +192,12 @@ new function() {
     };
 
     jsqbits.QState.prototype.rotateZ = function(targetBits, angle) {
+        validateArgs(arguments, 2, 2, 'Must supply target bits and angle to rotateZ.');
         return this.controlledZRotation(null, targetBits, angle);
     }
 
     jsqbits.QState.prototype.controlledX = function(controlBits, targetBits) {
+        validateArgs(arguments, 2, 2, 'Must supply control and target bits to cnot() / controlledX().');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf1, amplitudeOf1: amplitudeOf0};
         });
@@ -175,38 +206,46 @@ new function() {
     jsqbits.QState.prototype.cnot = jsqbits.QState.prototype.controlledX;
 
     jsqbits.QState.prototype.x = function(targetBits) {
+        validateArgs(arguments, 1, 1, 'Must supply target bits to x() / not().');
         return this.controlledX(null, targetBits);
     };
 
     jsqbits.QState.prototype.not = jsqbits.QState.prototype.x;
+    jsqbits.QState.prototype.X = jsqbits.QState.prototype.x;
 
     jsqbits.QState.prototype.controlledY = function(controlBits, targetBits) {
+        validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledY().');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits,  function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf1.multiply(complex(0, -1)), amplitudeOf1: amplitudeOf0.multiply(complex(0, 1))};
         });
     };
 
     jsqbits.QState.prototype.y = function(targetBits) {
+        validateArgs(arguments, 1, 1, 'Must supply target bits to y().');
         return this.controlledY(null, targetBits);
     };
 
+    jsqbits.QState.prototype.Y = jsqbits.QState.prototype.y;
+
     jsqbits.QState.prototype.controlledZ = function(controlBits, targetBits) {
+        validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledZ().');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.negate()};
         });
     };
 
     jsqbits.QState.prototype.z = function(targetBits) {
+        validateArgs(arguments, 1, 1, 'Must supply target bits to z().');
         return this.controlledZ(null, targetBits);
     };
+
+    jsqbits.QState.prototype.Z = jsqbits.QState.prototype.z;
 
     /**
      * Toffoli takes one or more control bits (conventionally two) and one target bit.
      */
     jsqbits.QState.prototype.toffoli = function(/* controlBit, controlBit, ..., targetBit */) {
-        if (arguments.length < 2) {
-            throw "At least one control bit and target bit must be supplied to calls to toffoli"
-        }
+        validateArgs(arguments, 2, 'At least one control bit and a target bit must be supplied to calls to toffoli()');
         var targetBit = arguments[arguments.length - 1];
         var controlBits = [];
         for (var i = 0; i < arguments.length - 1; i++) {
@@ -216,10 +255,12 @@ new function() {
     };
 
     jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = function(controlBits, targetBits, qbitFunction) {
+        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and qbitFunction to controlledApplicatinOfqBitOperator().');
         var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
         var controlBitsArray = null;
         if (controlBits != null) {
             controlBitsArray = convertBitQualifierToBitArray(controlBits, this.numBits);
+            validateTargetBitsAreDifferentToControlBits(controlBitsArray, targetBitRange);
         }
         var result = this;
         for (var bit = targetBitRange.from; bit <= targetBitRange.to; bit++) {
@@ -229,8 +270,10 @@ new function() {
     };
 
     jsqbits.QState.prototype.applyFunction = function(inputBits, targetBits, functionToApply) {
+        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and functionToApply to applyFunction().');
         var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
         var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
+        validateTargetBitsAreDifferentToControlBits(inputBitRange, targetBitRange);
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
         var highBitMask = (1 << (inputBitRange.to+1)) - 1;
@@ -240,7 +283,7 @@ new function() {
             var state = parseInt(stateString);
             if (statesThatCanBeSkipped[state]) continue;
             var input = (state & highBitMask) >> inputBitRange.from;
-            var result = functionToApply(input) << targetBitRange.from;
+            var result = (functionToApply(input) << targetBitRange.from) & targetBitMask;
             var resultingState = state^result;
             if (resultingState === state) {
                 sparseAssign(newAmplitudes, state, this.amplitude(state));
@@ -256,6 +299,7 @@ new function() {
     jsqbits.QState.prototype.random = Math.random;
 
     jsqbits.QState.prototype.measure = function(bits) {
+        validateArgs(arguments, 1, 1, 'Must supply bits to be measured to measure().');
         var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
         var randomNumber = this.random();
         var randomStateString;
@@ -415,4 +459,18 @@ new function() {
         return new jsqbits.QState(qState.numBits, newAmplitudes);
     };
 
+    var validateTargetBitsAreDifferentToControlBits = function(controlBits, targetBits) {
+      if (controlBits instanceof Array) {
+          for (var i = 0; i < controlBits.length; i++) {
+              var controlBit = controlBits[i];
+              if (controlBit >= targetBits.from && controlBit <= targetBits.to) {
+                  throw "control and target bits must not be the same nor overlap";
+              }
+          }
+      } else {
+          if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
+              throw "control and target bits must not be the same nor overlap";
+          }
+      }
+    };
 }();

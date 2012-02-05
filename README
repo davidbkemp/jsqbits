@@ -9,7 +9,11 @@ the jsqbits runner http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 TODO before first release:
 * Documentation
 * Tofolli gate
-* Allow control bits for all operations to be multiple bits.
 * Implement Simon's algorithm
+* Argument validation (including checks that control and target bits do not overlap)
+* Check 0 is not being treated as null
+* JSLint?
 
-
+Nice to have:
+* Allow target bit spec to be an array.
+* Allow array of bits anywhere we currently allow a bit range.

@@ -228,45 +228,29 @@ new function() {
         return result;
     };
 
-    jsqbits.QState.prototype.applyFunction = function(bits, targetBit, functionToApply) {
-        var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
+    jsqbits.QState.prototype.applyFunction = function(inputBits, targetBits, functionToApply) {
+        var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
+        var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
-        var highBitMask = (1 << (bitRange.to+1)) - 1;
-        var targetBitMask = 1 << targetBit;
+        var highBitMask = (1 << (inputBitRange.to+1)) - 1;
+        var targetBitMask = ((1 << (1 + targetBitRange.to - targetBitRange.from)) - 1) << targetBitRange.from;
 
         for(var stateString in this.amplitudes) {
             var state = parseInt(stateString);
             if (statesThatCanBeSkipped[state]) continue;
-            statesThatCanBeSkipped[state^targetBitMask] = true;
-            var indexOf1 = state | targetBitMask;
-            var indexOf0 = indexOf1 - targetBitMask;
-            var input = (state & highBitMask) >> bitRange.from;
-            if (functionToApply(input) === 1) {
-                sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf1));
-                sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf0));
+            var input = (state & highBitMask) >> inputBitRange.from;
+            var result = functionToApply(input) << targetBitRange.from;
+            var resultingState = state^result;
+            if (resultingState === state) {
+                sparseAssign(newAmplitudes, state, this.amplitude(state));
             } else {
-                sparseAssign(newAmplitudes, indexOf0, this.amplitude(indexOf0));
-                sparseAssign(newAmplitudes, indexOf1, this.amplitude(indexOf1));
+                statesThatCanBeSkipped[resultingState] = true;
+                sparseAssign(newAmplitudes, state, this.amplitude(resultingState));
+                sparseAssign(newAmplitudes, resultingState, this.amplitude(state));
             }
         }
         return new jsqbits.QState(this.numBits, newAmplitudes);
-    };
-
-    jsqbits.QState.prototype.projectOnto = function(bits) {
-        var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
-        var highBitMask = (1 << (bitRange.to+1)) - 1;
-
-        var newAmplitudes = [];
-        for(var stateString in this.amplitudes) {
-            var state = parseInt(stateString);
-            var newState = (state & highBitMask) >> bitRange.from;
-            var currentValueOfNewState = newAmplitudes[newState] || Complex.ZERO;
-            sparseAssign(newAmplitudes, newState, currentValueOfNewState.add(this.amplitudes[state]));
-        }
-
-        normalize(newAmplitudes);
-        return new jsqbits.QState(bitRange.to - bitRange.from + 1, newAmplitudes);
     };
 
     jsqbits.QState.prototype.random = Math.random;

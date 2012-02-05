@@ -408,17 +408,11 @@ describe('QState', function() {
             var x = jsqbits('|01>').applyFunction(1, 0, f);
             expect(x).toEqual(jsqbits('|00>'));
         });
-    });
 
-    describe('#projectOnto', function(){
-        it ("should project onto the specified bits", function() {
-            var bitRange = {from:1, to:2};
-            var x = jsqbits('|1000>').hadamard(2).hadamard(0).projectOnto(bitRange);
-            expect(x.numBits).toBe(2);
-            expect(x.amplitude('|00>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|10>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+        it ("can flip multiple target bits", function() {
+            var f = function(x) { return parseInt('101', 2); };
+            var x = jsqbits('|1011>').applyFunction(1, {from: 0, to: 2}, f);
+            expect(x).toEqual(jsqbits('|1110>'));
         });
     });
 

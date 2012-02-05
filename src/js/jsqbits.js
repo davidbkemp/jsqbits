@@ -109,8 +109,8 @@ new function() {
         return this.amplitudes[numericIndex] || Complex.ZERO;
     };
 
-    jsqbits.QState.prototype.controlledHadamard = function(controlBit, targetBits, angle) {
-        return this.controlledApplicatinOfqBitOperator(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+    jsqbits.QState.prototype.controlledHadamard = function(controlBits, targetBits) {
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var newAmplitudeOf0 = amplitudeOf0.add(amplitudeOf1).multiply(squareRootOfOneHalf);
             var newAmplitudeOf1 = amplitudeOf0.subtract(amplitudeOf1).multiply(squareRootOfOneHalf);
             return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
@@ -121,8 +121,8 @@ new function() {
         return this.controlledHadamard(null, targetBits);
     };
 
-    jsqbits.QState.prototype.controlledXRotation = function(controlBit, targetBits, angle) {
-        return this.controlledApplicatinOfqBitOperator(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+    jsqbits.QState.prototype.controlledXRotation = function(controlBits, targetBits, angle) {
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
             var negative_i_sin = complex(0, -Math.sin(halfAngle));
@@ -136,8 +136,8 @@ new function() {
         return this.controlledXRotation(null, targetBits, angle);
     }
 
-    jsqbits.QState.prototype.controlledYRotation = function(controlBit, targetBits, angle) {
-        return this.controlledApplicatinOfqBitOperator(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+    jsqbits.QState.prototype.controlledYRotation = function(controlBits, targetBits, angle) {
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
             var sin = complex(Math.sin(halfAngle), 0);
@@ -151,8 +151,8 @@ new function() {
         return this.controlledYRotation(null, targetBits, angle);
     }
 
-    jsqbits.QState.prototype.controlledZRotation = function(controlBit, targetBits, angle) {
-        return this.controlledApplicatinOfqBitOperator(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+    jsqbits.QState.prototype.controlledZRotation = function(controlBits, targetBits, angle) {
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = complex(Math.cos(halfAngle), 0);
             var i_sin = complex(0, Math.sin(halfAngle));
@@ -166,8 +166,8 @@ new function() {
         return this.controlledZRotation(null, targetBits, angle);
     }
 
-    jsqbits.QState.prototype.controlledX = function(controlBit, targetBits) {
-        return this.controlledApplicatinOfqBitOperator(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+    jsqbits.QState.prototype.controlledX = function(controlBits, targetBits) {
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf1, amplitudeOf1: amplitudeOf0};
         });
     }
@@ -180,8 +180,8 @@ new function() {
 
     jsqbits.QState.prototype.not = jsqbits.QState.prototype.x;
 
-    jsqbits.QState.prototype.controlledY = function(controlBit, targetBits) {
-        return this.controlledApplicatinOfqBitOperator(controlBit, targetBits,  function(amplitudeOf0, amplitudeOf1){
+    jsqbits.QState.prototype.controlledY = function(controlBits, targetBits) {
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits,  function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf1.multiply(complex(0, -1)), amplitudeOf1: amplitudeOf0.multiply(complex(0, 1))};
         });
     };
@@ -190,14 +190,29 @@ new function() {
         return this.controlledY(null, targetBits);
     };
 
-    jsqbits.QState.prototype.controlledZ = function(controlBit, targetBits) {
-        return this.controlledApplicatinOfqBitOperator(controlBit, targetBits, function(amplitudeOf0, amplitudeOf1){
+    jsqbits.QState.prototype.controlledZ = function(controlBits, targetBits) {
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.negate()};
         });
     };
 
     jsqbits.QState.prototype.z = function(targetBits) {
         return this.controlledZ(null, targetBits);
+    };
+
+    /**
+     * Toffoli takes one or more control bits (conventionally two) and one target bit.
+     */
+    jsqbits.QState.prototype.toffoli = function(/* controlBit, controlBit, ..., targetBit */) {
+        if (arguments.length < 2) {
+            throw "At least one control bit and target bit must be supplied to calls to toffoli"
+        }
+        var targetBit = arguments[arguments.length - 1];
+        var controlBits = [];
+        for (var i = 0; i < arguments.length - 1; i++) {
+            controlBits.push(arguments[i]);
+        }
+        return this.controlledX(controlBits, targetBit);
     };
 
     jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = function(controlBits, targetBits, qbitFunction) {

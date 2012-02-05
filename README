@@ -8,7 +8,6 @@ the jsqbits runner http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 
 TODO before first release:
 * Documentation
-* Tofolli gate
 * Implement Simon's algorithm
 * Argument validation (including checks that control and target bits do not overlap)
 * Check 0 is not being treated as null

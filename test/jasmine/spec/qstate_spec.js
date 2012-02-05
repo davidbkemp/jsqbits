@@ -112,12 +112,23 @@ describe('QState', function() {
     describe('#controlledX', function(){
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|000>').controlledX(2, 0);
-           expect(x.amplitude('|000>')).toBeApprox(complex(1,0));
+            expect(x.amplitude('|000>')).toBeApprox(complex(1,0));
         });
        it("flips the target bit when the control bit is one", function() {
             var x = jsqbits('|100>').controlledX(2, 0);
            expect(x.amplitude('|101>')).toBeApprox(complex(1,0));
         });
+    });
+
+    describe("#toffoli", function(){
+        it("does nothing if any of the control bits are zero", function() {
+            var x = jsqbits('|0010>').toffoli(3, 1, 0);
+            expect(x.amplitude('|0010>')).toBeApprox(complex(1,0));
+        });
+        it("flips the target bit when all of the control bits are one", function() {
+            var x = jsqbits('|1010>').toffoli(3, 1, 0);
+            expect(x.amplitude('|1011>')).toBeApprox(complex(1,0));
+         });
     });
 
     describe('#z', function() {
@@ -168,8 +179,8 @@ describe('QState', function() {
             expect(x).toEqual(jsqbits('|001>'));
         });
         it("applies the Pauli y operator when the control bit is one",  function() {
-            var x = jsqbits('|101>').controlledY(2, 0);
-            expect(x.amplitude('|100>')).toEqual(complex(0, -1));
+            var x = jsqbits('|101>').controlledY(0, 2);
+            expect(x.amplitude('|001>')).toEqual(complex(0, -1));
             expect(x.amplitude('|101>')).toEqual(jsqbits.Complex.ZERO);
         });
     });
@@ -226,10 +237,10 @@ describe('QState', function() {
             var x = jsqbits('|001>').controlledHadamard(2, 0);
             expect(x).toEqual(jsqbits('|001>'));
         });
-        it("applies the Hadamard operator when the control bit is one", function() {
-            var x = jsqbits('|101>').controlledHadamard(2, 0);
-            expect(x.amplitude('|100>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(x.amplitude('|101>')).toBeApprox(complex(-1 / Math.sqrt(2), 0));
+        it("applies the Hadamard operator when the control bits are one", function() {
+            var x = jsqbits('|111>').controlledHadamard({from: 1, to: 2}, 0);
+            expect(x.amplitude('|110>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
+            expect(x.amplitude('|111>')).toBeApprox(complex(-1 / Math.sqrt(2), 0));
         });
     });
 

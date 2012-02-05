@@ -374,32 +374,26 @@ describe('QState', function() {
     });
     describe('#applyFunction', function() {
         it("invokes function with states (bit range)", function() {
-            var valuesFunctionCalledWith = [];
-            var f = function(x) {
-                valuesFunctionCalledWith.push(x);
-                return 1;
-            };
+            var f = jasmine.createSpy('f').andReturn(1);
             var x = jsqbits('|1000>').hadamard(2);
             x.applyFunction({from:1, to:2}, 0, f);
-            expect(valuesFunctionCalledWith).toContain(0);
-            expect(valuesFunctionCalledWith).toContain(2);
+            expect(f).toHaveBeenCalled();
+            expect(f.argsForCall).toContain([0]);
+            expect(f.argsForCall).toContain([2]);
         });
 
         it("invokes function with states (single bit)", function() {
-            var valuesFunctionCalledWith = [];
-            var f = function(x) {
-                valuesFunctionCalledWith.push(x);
-                return 1;
-            };
+            var f = jasmine.createSpy('f').andReturn(1);
             var x = jsqbits('|1000>').hadamard(2);
             x.applyFunction(2, 0, f);
-            expect(valuesFunctionCalledWith).toContain(0);
-            expect(valuesFunctionCalledWith).toContain(1);
+            expect(f.argsForCall).toContain([0]);
+            expect(f.argsForCall).toContain([1]);
         });
 
         it ("does nothing when the funciton returns zero", function() {
-            var f = function(x) { return 0; };
+            var f = jasmine.createSpy('f').andReturn(0);
             var x = jsqbits('|00>').applyFunction(1, 0, f);
+            expect(f).toHaveBeenCalled();
             expect(x).toEqual(jsqbits('|00>'));
         });
 

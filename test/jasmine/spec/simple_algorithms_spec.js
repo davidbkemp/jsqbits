@@ -21,7 +21,7 @@ describe('Simple Quantum Algorithms', function() {
 //            Alice sends her qbit to Bob
             var bob = 0;
             state = state.cnot(alice, bob).hadamard(alice);
-            var result = state.measure(ALL).measurement.toString(2);
+            var result = state.measure(ALL).result.toString(2);
             return result.length == 1 ? '0' + result : result;
         };
 
@@ -55,7 +55,7 @@ describe('Simple Quantum Algorithms', function() {
                     .controlledZ(2, 1)
                     .hadamard(inputBits)
                     .measure(inputBits)
-                    .measurement;
+                    .result;
         };
 
         it ("should find f00", function() {
@@ -78,12 +78,12 @@ describe('Simple Quantum Algorithms', function() {
     describe("Quantum Teleportation", function(){
 
         var applyTeleportation = function(state) {
-            var alicesResult = state.cnot(2, 1).hadamard(2).measure({from: 1, to: 2});
-            var resultingState = alicesResult.newState;
-            if (alicesResult.measurement & 1) {
+            var alicesMeasurement = state.cnot(2, 1).hadamard(2).measure({from: 1, to: 2});
+            var resultingState = alicesMeasurement.newState;
+            if (alicesMeasurement.result & 1) {
                 resultingState = resultingState.x(0);
             }
-            if (alicesResult.measurement & 2) {
+            if (alicesMeasurement.result & 2) {
                 resultingState = resultingState.z(0);
             }
             return resultingState;
@@ -116,7 +116,7 @@ describe('Simple Quantum Algorithms', function() {
     describe("Deutsch's algorithm", function() {
 
         var deutsch = function(f) {
-           return jsqbits('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL).measure(1).measurement;
+           return jsqbits('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL).measure(1).result;
         };
 
         it("should compute 0 for fixed function returning 1", function() {
@@ -145,7 +145,7 @@ describe('Simple Quantum Algorithms', function() {
                     .applyFunction(inputBits, 0, f)
                     .hadamard(inputBits)
                     .measure(inputBits)
-                    .measurement;
+                    .result;
             return result === 0;
         };
 
@@ -179,10 +179,10 @@ describe('Simple Quantum Algorithms', function() {
 //                    .applyFunction(inputBits, targetBits, f)
 //                    .hadamard(inputBits);
 //            // Take advantage of the fact that QState objects are actually not modified by measurement.
-//            var y1 = qbits.measure(inputBits).measurement;
+//            var y1 = qbits.measure(inputBits).result;
 //            var y2 = null;
 //            for (var i = 0; i < 100; i++) {
-//                var nextY = qbits.measure(inputBits).measurement;
+//                var nextY = qbits.measure(inputBits).result;
 //                if (y1 !== nextY) {
 //                    y2 = nextY;
 //                    break;

@@ -328,7 +328,7 @@ new function() {
         }
 
         normalize(newAmplitudes);
-        return {measurement: measurementOutcome, newState: new jsqbits.QState(this.numBits, newAmplitudes)};
+        return {result: measurementOutcome, newState: new jsqbits.QState(this.numBits, newAmplitudes)};
     };
 
     jsqbits.QState.prototype.toString = function() {

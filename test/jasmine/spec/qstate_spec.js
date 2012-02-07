@@ -25,12 +25,18 @@ describe('QState', function() {
             expect(qbitFunction).not.toHaveBeenCalled();
             expect(x).toEqual(jsqbits('|001>'));
         });
-        it("does nothing when the control bit is zero (multiple targets)", function() {
+        it("does nothing when the control bit is zero (target range)", function() {
             var qbitFunction = jasmine.createSpy('qbitFunction');
             var targetBits = {from: 0, to: 1};
             var x = jsqbits('|001>').controlledApplicatinOfqBitOperator(2, targetBits, qbitFunction);
             expect(qbitFunction).not.toHaveBeenCalled();
             expect(x).toEqual(jsqbits('|001>'));
+        });
+        it("does nothing when the control bit is zero (target array)", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction');
+            var x = jsqbits('|0001>').controlledApplicatinOfqBitOperator(3, [0, 2], qbitFunction);
+            expect(qbitFunction).not.toHaveBeenCalled();
+            expect(x).toEqual(jsqbits('|0001>'));
         });
         it("invokes the qbitFunction when the control bit is one", function() {
             var qbitFunction = jasmine.createSpy('qbitFunction')
@@ -61,6 +67,19 @@ describe('QState', function() {
             expect(x.amplitude('|101>')).toBeApprox(complex(0.2,0));
             expect(x.amplitude('|110>')).toBeApprox(complex(0.3,0));
             expect(x.amplitude('|111>')).toBeApprox(complex(0.3,0));
+        });
+        it("flips the target bits when the control bit is one (target bit array)", function() {
+            var qbitFunction = jasmine.createSpy('qbitFunction')
+                .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
+            var x = jsqbits('|1001>').controlledApplicatinOfqBitOperator(3, [0, 2], qbitFunction);
+            expect(qbitFunction).toHaveBeenCalled();
+            expect(qbitFunction.argsForCall[0]).toEqual([complex(0,0), complex(1,0)]);
+            expect(qbitFunction.argsForCall[1]).toEqual([complex(0.2,0), complex(0,0)]);
+            expect(qbitFunction.argsForCall[2]).toEqual([complex(0.3,0), complex(0,0)]);
+            expect(x.amplitude('|1000>')).toBeApprox(complex(0.2,0));
+            expect(x.amplitude('|1001>')).toBeApprox(complex(0.2,0));
+            expect(x.amplitude('|1100>')).toBeApprox(complex(0.3,0));
+            expect(x.amplitude('|1101>')).toBeApprox(complex(0.3,0));
         });
         it("does nothing when any of the control bits are zero (control bit range)", function() {
             var qbitFunction = jasmine.createSpy('qbitFunction');

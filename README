@@ -3,15 +3,16 @@ Javascript library for quantum computation simulation.
 jsqbits is not quite ready for release.
 Some user documentation will need to be written for starters.
 
-But you can still try it out now in your browser now using
+But you can still try it out now in your browser using
 the jsqbits runner http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 
 TODO before first release:
 * Documentation
-* Implement Simon's algorithm
-* Implement a projectOnto method.
-* JSLint?
 
 Nice to have:
-* Allow target bit spec to be an array.
-* Allow array of bits anywhere we currently allow a bit range.
+* Allow array of bits anywhere we currently allow a bit range (measure() and applyFunction())
+* Implementation of Simon's algorithm
+* Include a 'remainingQbits' field on measurement outcomes.
+* Include a 'toString' method on measurement outcomes.
+* JSLint?
+* Coverage?

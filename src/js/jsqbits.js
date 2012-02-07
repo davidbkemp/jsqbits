@@ -256,15 +256,16 @@ new function() {
 
     jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = function(controlBits, targetBits, qbitFunction) {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and qbitFunction to controlledApplicatinOfqBitOperator().');
-        var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
-        var controlBitsArray = null;
+        var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits);
+        var controlBitArray = null;
         if (controlBits != null) {
-            controlBitsArray = convertBitQualifierToBitArray(controlBits, this.numBits);
-            validateTargetBitsAreDifferentToControlBits(controlBitsArray, targetBitRange);
+            controlBitArray = convertBitQualifierToBitArray(controlBits, this.numBits);
+            validateTargetBitRangesDontOverlap(controlBitArray, targetBitArray);
         }
         var result = this;
-        for (var bit = targetBitRange.from; bit <= targetBitRange.to; bit++) {
-            result = applyToOneBit(controlBitsArray, bit, qbitFunction, result);
+        for (var i = 0; i < targetBitArray.length; i++) {
+            var targetBit = targetBitArray[i];
+            result = applyToOneBit(controlBitArray, targetBit, qbitFunction, result);
         }
         return result;
     };
@@ -273,7 +274,7 @@ new function() {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and functionToApply to applyFunction().');
         var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
         var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
-        validateTargetBitsAreDifferentToControlBits(inputBitRange, targetBitRange);
+        validateBitRangesAreDistinct(inputBitRange, targetBitRange);
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
         var highBitMask = (1 << (inputBitRange.to+1)) - 1;
@@ -327,7 +328,7 @@ new function() {
         }
 
         normalize(newAmplitudes);
-        return {measurement: measurementOutcome, newState: new jsqbits.QState(this.numBits, newAmplitudes)};
+        return {result: measurementOutcome, newState: new jsqbits.QState(this.numBits, newAmplitudes)};
     };
 
     jsqbits.QState.prototype.toString = function() {
@@ -459,18 +460,22 @@ new function() {
         return new jsqbits.QState(qState.numBits, newAmplitudes);
     };
 
-    var validateTargetBitsAreDifferentToControlBits = function(controlBits, targetBits) {
-      if (controlBits instanceof Array) {
-          for (var i = 0; i < controlBits.length; i++) {
-              var controlBit = controlBits[i];
-              if (controlBit >= targetBits.from && controlBit <= targetBits.to) {
-                  throw "control and target bits must not be the same nor overlap";
-              }
-          }
-      } else {
-          if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
-              throw "control and target bits must not be the same nor overlap";
-          }
-      }
+    var validateTargetBitRangesDontOverlap = function(controlBits, targetBits) {
+        if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
+            throw "control and target bits must not be the same nor overlap";
+        }
+    };
+
+    var validateBitRangesAreDistinct = function(controlBits, targetBits) {
+        // TODO: Find out if it would sometimes be faster to put one of the bit collections into a hash-set first.
+        // Also consider allowing validation to be disabled.
+        for (var i = 0; i < controlBits.length; i++) {
+            var controlBit = controlBits[i];
+            for (var j = 0; j < targetBits.length; i++) {
+                if (controlBit === targetBits[j]) {
+                    throw "control and target bits must not be the same nor overlap";
+                }
+            }
+        }
     };
 }();

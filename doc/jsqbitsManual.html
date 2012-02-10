@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>jsqbits User Manual</title>
+    <link rel="stylesheet" type="text/css" href="jsqbitsManual.css" />
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="../src/js/jsqbits.js"></script>
+    <script src="jsqbitsManual.js"></script>
+</head>
+<body>
+<p id="topErrorMessage" class="error" style="display: none;">
+    Automatic error checking has picked up some errors (highlighted in red).
+</p>
+<h1>jsqbits User Manual</h1>
+<p>
+    <a href="http://jsqbits.com">jsqbits</a> is a simple JavaScript library for quantum computation simulation.
+    Using it is as simple as creating an initial state, applying various quantum gates,
+    and then performing a measurement or simply analysing the final state. eg.
+</p>
+
+<code class="block">
+    jsqbits('|01>')
+        .hadamard(jsqbits.ALL)
+        .cnot(1, 0)
+        .hadamard(jsqbits.ALL)
+        .measure(1)
+        .result
+</code>
+
+<h2>jsqbits.QState</h2>
+<p>
+    QState is used to encapsulate the state of a quantum computer.
+    You create one by either calling its constructor or using the convenient <code>jsqbits</code> function.
+</p>
+<p>
+    The jsqbits function takes a string zeros and ones representing the state of its qbits.
+    The string may optionally be a "ket" in the <a href="http://en.wikipedia.org/wiki/Bra-ket_notation">bra-ket</a> notation.
+</p>
+<table class="samples">
+    <tbody>
+    <tr>
+        <td class="code" id="jsqbits">jsqbits("0101")</td>
+        <td>creates a 4 qbit QState in the simple basis state of</td>
+        <td class="code" data-sampleref="jsqbits">1 |0101></td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    If you want your initial state to be in a super-position of states, then you can use the QState constructor directly,
+    passing it the number of qbits, and a (sparse) array of complex number amplitudes.  For example
+</p>
+
+
+<code class="block" id="QState">
+    var a = []; a[0] = a[1] = a[4] = a[5] = jsqbits.complex(0.5,0);
+    new jsqbits.QState(4, a)
+</code>
+<p>creates the following 4 qbit QState:</p>
+<code class="block"  data-sampleref="QState">
+    0.5 |0000> + 0.5 |0001> + 0.5 |0100> + 0.5 |0101>
+</code>
+</body>
+</html>

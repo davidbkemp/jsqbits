@@ -1,4 +1,4 @@
-Javascript library for quantum computation simulation.
+JavaScript library for quantum computation simulation.
 
 jsqbits is not quite ready for release.
 Some user documentation will need to be written for starters.
@@ -16,3 +16,9 @@ Nice to have:
 * Include a 'toString' method on measurement outcomes.
 * JSLint?
 * Coverage?
+
+Future releases:
+* Quantum Fourier Transform
+* Shor's Algorithm
+* Grover's Algorithm
+* Mermin-Peres magic square

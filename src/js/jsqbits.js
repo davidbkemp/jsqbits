@@ -109,6 +109,10 @@ new function() {
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
 
+    jsqbits.complex = function(real, imaginary) {
+        return new Complex(real, imaginary);
+    };
+
     jsqbits.ALL = 'ALL';
 
     jsqbits.QState = function(numBits, amplitudes) {
@@ -344,9 +348,7 @@ new function() {
 
     var Complex = jsqbits.Complex;
 
-    var complex = function(real, imaginary) {
-        return new Complex(real, imaginary);
-    };
+    var complex = jsqbits.complex;
 
     var squareRootOfOneHalf = complex(1/Math.sqrt(2),0);
 

@@ -9,7 +9,11 @@
 </head>
 <body>
 <p id="topErrorMessage" class="error" style="display: none;">
-    Automatic error checking has picked up some errors (highlighted in red).
+    Automatic error checking of sample code has picked up some errors (highlighted in red).
+</p>
+<p id="topWarningMessage" class="warning">
+    Performing automatic error checking of sample code.
+    If you can still see this message after a few seconds, then you probably have JavaScript disabled.
 </p>
 <h1>jsqbits User Manual</h1>
 <p>
@@ -39,12 +43,21 @@
 <table class="samples">
     <tbody>
     <tr>
-        <td class="code" id="jsqbits">jsqbits("0101")</td>
+        <td class="code" id="jsqbits1">jsqbits("0101")</td>
         <td>creates a 4 qbit QState in the simple basis state of</td>
-        <td class="code" data-sampleref="jsqbits">1 |0101></td>
+        <td class="code" data-sampleref="jsqbits1">1 |0101></td>
+    </tr>
+    <tr>
+        <td class="code" id="jsqbits2">jsqbits("|0101>")</td>
+        <td>also creates a 4 qbit QState of</td>
+        <td class="code" data-sampleref="jsqbits2">1 |0101></td>
     </tr>
     </tbody>
 </table>
+
+<p>
+    Note the "1" out the front of <code>1 |0101></code> indicates that the amplitude of  <code>|0101></code> is 1.
+</p>
 
 <p>
     If you want your initial state to be in a super-position of states, then you can use the QState constructor directly,
@@ -53,12 +66,122 @@
 
 
 <code class="block" id="QState">
-    var a = []; a[0] = a[1] = a[4] = a[5] = jsqbits.complex(0.5,0);
+    var a = []; a[0] = a[1] = a[4] = a[5] = jsqbits.complex(0.5, 0);
     new jsqbits.QState(4, a)
 </code>
 <p>creates the following 4 qbit QState:</p>
 <code class="block"  data-sampleref="QState">
     0.5 |0000> + 0.5 |0001> + 0.5 |0100> + 0.5 |0101>
 </code>
+
+<h2>Single qbit operators</h2>
+
+<p>
+    A number of operators operate on a single qbit (the Pauli operators and the Hadamard gate).
+    For these, you must specify the index bit to be operated on, with the right most bit being bit 0,
+    and the left most bit being bit n-1 for an n bit state.
+    As a convenience, you can also specify a range of bits using an object with "from" and "to" attributes,
+    and the operator will be applied to each of the bits in that range (inclusive).
+    The constant <code>jsqbits.ALL</code> can be used to apply the operator to all the bits.
+    For most operators (except where indicated), you may also use an array of bit indexes.
+</p>
+
+<p>
+    Here are some examples using the Pauli X operator.
+</p>
+
+<table class="samples">
+    <tbody>
+    <tr>
+        <td class="code" id="singel1">jsqbits("|0000>").X(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="singel1">1 |0001></td>
+    </tr>
+    <tr>
+        <td class="code" id="singel2">jsqbits("|0000>").X({from: 0, to: 2})</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="singel2">1 |0111></td>
+    </tr>
+    <tr>
+        <td class="code" id="singele3">jsqbits("|0000>").X(jsqbits.ALL)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="singele3">1 |1111></td>
+    </tr>
+    <tr>
+        <td class="code" id="singele4">jsqbits("|0000>").X([0,2])</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="singele4">1 |0101></td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    There are single bit operators for the Pauli operators X, Y, and Z.
+    There is also a Hadamard operator.
+    There is a "not" function, which is just an alias for X.
+</p>
+
+<table class="samples">
+    <tbody>
+    <tr>
+        <td class="code" id="x0">jsqbits("|00>").X(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="x0">1 |01></td>
+    </tr>
+    <tr>
+        <td class="code" id="x1">jsqbits("|01>").X(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="x1">1 |00></td>
+    </tr>
+    <tr>
+        <td class="code" id="y0">jsqbits("|00>").Y(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="y0">1i |01></td>
+    </tr>
+    <tr>
+        <td class="code" id="y1">jsqbits("|01>").Y(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="y1">-1i |00></td>
+    </tr>
+    <tr>
+        <td class="code" id="z0">jsqbits("|00>").Z(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="z0">1 |00></td>
+    </tr>
+    <tr>
+        <td class="code" id="z1">jsqbits("|01>").Z(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="z1">-1 |01></td>
+    </tr>
+        <td class="code" id="not0">jsqbits("|00>").not(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="not0">1 |01></td>
+    </tr>
+    <tr>
+        <td class="code" id="not1">jsqbits("|01>").not(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="not1">1 |00></td>
+    </tr>
+    </tr>
+        <td class="code" id="hadamard0">jsqbits("|00>").hadamard(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="hadamard0">0.7071 |00> + 0.7071 |01></td>
+    </tr>
+    <tr>
+        <td class="code" id="hadamard1">jsqbits("|01>").hadamard(0)</td>
+        <td>gives</td>
+        <td class="code" data-sampleref="hadamard1">0.7071 |00> - 0.7071 |01></td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>jsqbits.roundToZero</h3>
+<p>
+    Note that, while the values are displayed to four decimal places, they are maintained to
+    the maximum precision provided by the JavaScript implementation of floating point numbers,
+    with the exception that numbers very close to zero are rounded off to zero.
+    The value used for determining this rounding to zero is the variable <code>jsqbits.roundToZero</code>.
+</p>
+
 </body>
 </html>

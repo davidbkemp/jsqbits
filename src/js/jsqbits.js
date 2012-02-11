@@ -115,6 +115,9 @@ new function() {
 
     jsqbits.ALL = 'ALL';
 
+    // Amplitudes with magnitudes smaller than jsqbits.roundToZero this are rounded off to zero.
+    jsqbits.roundToZero = 0.0000001;
+
     jsqbits.QState = function(numBits, amplitudes) {
         validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
         this.numBits = numBits;
@@ -372,7 +375,7 @@ new function() {
 
     var sparseAssign = function(array, index, value) {
         // Try to avoid assigning values and try to make zero exactly zero.
-        if (value.magnitude() > 0.0000001) {
+        if (value.magnitude() > jsqbits.roundToZero) {
             array[index] = value;
         }
     }

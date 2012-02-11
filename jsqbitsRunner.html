@@ -7,20 +7,23 @@
         ALL = jsqbits.ALL;
         $(function() {
             $('#run').click(function() {
-                $('#result').text('');
-                try {
-                    var result = eval($('#code').get(0).value);
-                    if ((typeof result == 'object') && result.toString) {
-                        result = result.toString();
-                    } else if (typeof result == 'number') {
-                        result = '' + result;
+                $('#result').fadeOut(function() {
+                    $('#result').text('');
+                    try {
+                        var result = eval($('#code').get(0).value);
+                        if ((typeof result == 'object') && result.toString) {
+                            result = result.toString();
+                        } else if (typeof result == 'number') {
+                            result = '' + result;
+                        }
+                    } catch (e) {
+                        var result = e.message ? e.message : e;
                     }
-                } catch (e) {
-                    var result = e.message ? e.message : e;
-                }
-                if (result) {
-                    $('#result').text(result);
-                }
+                    if (result) {
+                        $('#result').text(result);
+                    }
+                    $('#result').fadeIn();
+                });
             });
         });
     </script>
@@ -34,10 +37,10 @@
 </p>
 
 <p>Try some quantum computation operations like:
-    jsqbits('|001>').hadamard(ALL).rotateX(1, Math.PI/8).cnot(1,0)</p>
+    jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)</p>
 
 <textarea id="code" rows="20" cols="120" def>
-jsqbits('|001>').hadamard(ALL).rotateX(1, Math.PI/8).cnot(1,0)
+    jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)
 </textarea>
 <button id="run" style="display:block; margin-top:1em;">Run</button>
 <div style="margin-top:1em; min-height:2em; border-style:solid; border-width:1px;">

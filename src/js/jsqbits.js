@@ -14,6 +14,10 @@
    limitations under the License.
  */
 
+/**
+ * For documentation, and the latest version, see http://www.jsqbits.org/
+ */
+
 function jsqbits(bitString) {
     return jsqbits.QState.fromBits(bitString)
 };
@@ -60,9 +64,17 @@ new function() {
 
     jsqbits.Complex.prototype.toString = function() {
         if (this.imaginary === 0) return "" + this.real;
-        if (this.real === 0) return "" + this.imaginary + 'i';
+        var imaginaryString;
+        if (this.imaginary === 1) {
+            imaginaryString = 'i';
+        } else if (this.imaginary === -1) {
+            imaginaryString = '-i';
+        } else {
+            imaginaryString = this.imaginary + 'i';
+        }
+        if (this.real === 0) return imaginaryString;
         var sign = (this.imaginary < 0) ? "" : "+";
-        return this.real + sign + this.imaginary + "i";
+        return this.real + sign + imaginaryString;
     };
 
     jsqbits.Complex.prototype.format = function(options) {

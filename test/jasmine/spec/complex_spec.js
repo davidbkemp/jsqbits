@@ -68,7 +68,12 @@ describe('Complex', function() {
         it('should use toString when no options', function() {
             expect(complex(-1.23, 3.4).format()).toEqual('-1.23+3.4i');
         });
-
+        it('should drop the 1 if imaginary value is 1', function() {
+            expect(complex(-1.23, 1).format()).toEqual('-1.23+i');
+        });
+        it('should drop the 1 if imaginary value is -1', function() {
+            expect(complex(-1.23, -1).format()).toEqual('-1.23-i');
+        });
         it('should round off decimal places when requested', function() {
             expect(complex(-1.235959, 3.423523).format({decimalPlaces: 3})).toEqual('-1.236+3.424i');
         });

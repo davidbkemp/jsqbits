@@ -14,6 +14,10 @@
    limitations under the License.
  */
 
+/**
+ * For documentation, and the latest version, see http://www.jsqbits.org/
+ */
+
 function jsqbits(bitString) {
     return jsqbits.QState.fromBits(bitString)
 };
@@ -60,9 +64,17 @@ new function() {
 
     jsqbits.Complex.prototype.toString = function() {
         if (this.imaginary === 0) return "" + this.real;
-        if (this.real === 0) return "" + this.imaginary + 'i';
+        var imaginaryString;
+        if (this.imaginary === 1) {
+            imaginaryString = 'i';
+        } else if (this.imaginary === -1) {
+            imaginaryString = '-i';
+        } else {
+            imaginaryString = this.imaginary + 'i';
+        }
+        if (this.real === 0) return imaginaryString;
         var sign = (this.imaginary < 0) ? "" : "+";
-        return this.real + sign + this.imaginary + "i";
+        return this.real + sign + imaginaryString;
     };
 
     jsqbits.Complex.prototype.format = function(options) {
@@ -109,7 +121,14 @@ new function() {
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
 
+    jsqbits.complex = function(real, imaginary) {
+        return new Complex(real, imaginary);
+    };
+
     jsqbits.ALL = 'ALL';
+
+    // Amplitudes with magnitudes smaller than jsqbits.roundToZero this are rounded off to zero.
+    jsqbits.roundToZero = 0.0000001;
 
     jsqbits.QState = function(numBits, amplitudes) {
         validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
@@ -344,9 +363,7 @@ new function() {
 
     var Complex = jsqbits.Complex;
 
-    var complex = function(real, imaginary) {
-        return new Complex(real, imaginary);
-    };
+    var complex = jsqbits.complex;
 
     var squareRootOfOneHalf = complex(1/Math.sqrt(2),0);
 
@@ -370,7 +387,7 @@ new function() {
 
     var sparseAssign = function(array, index, value) {
         // Try to avoid assigning values and try to make zero exactly zero.
-        if (value.magnitude() > 0.0000001) {
+        if (value.magnitude() > jsqbits.roundToZero) {
             array[index] = value;
         }
     }

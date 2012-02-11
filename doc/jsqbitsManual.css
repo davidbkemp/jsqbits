@@ -1,0 +1,29 @@
+code.block {
+    display: block;
+    white-space: pre;
+}
+
+code {
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+}
+
+.code {
+    font-family: monospace;
+}
+
+table.samples td {
+    padding: 0em 1em 0em 1em;
+}
+
+.error {
+    background-color: red;
+}
+
+.warning {
+    background-color: yellow;
+}
+
+#topErrorMessage, #topWarningMessage {
+    float: right;
+}

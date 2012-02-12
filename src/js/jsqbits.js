@@ -22,6 +22,9 @@ function jsqbits(bitString) {
     return jsqbits.QState.fromBits(bitString)
 };
 
+// Make jsqubits an alias for the poorly spelt jsqits.
+jsqubits = jsqbits;
+
 new function() {
 
     var validateArgs = function(args, minimum) {
@@ -129,6 +132,15 @@ new function() {
 
     // Amplitudes with magnitudes smaller than jsqbits.roundToZero this are rounded off to zero.
     jsqbits.roundToZero = 0.0000001;
+
+    jsqbits.Measurement = function(result, newState) {
+        this.result = result;
+        this.newState = newState;
+    }
+
+    jsqbits.Measurement.prototype.toString = function() {
+        return "{result: " + this.result + ", newState: " + this.newState + "}";
+    };
 
     jsqbits.QState = function(numBits, amplitudes) {
         validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
@@ -347,7 +359,7 @@ new function() {
         }
 
         normalize(newAmplitudes);
-        return {result: measurementOutcome, newState: new jsqbits.QState(this.numBits, newAmplitudes)};
+        return new jsqbits.Measurement(measurementOutcome, new jsqbits.QState(this.numBits, newAmplitudes));
     };
 
     jsqbits.QState.prototype.toString = function() {

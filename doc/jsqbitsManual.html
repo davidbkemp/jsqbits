@@ -17,9 +17,13 @@
 </p>
 <h1>jsqbits User Manual</h1>
 <p>
-    <a href="http://jsqbits.com">jsqbits</a> is a simple JavaScript library for quantum computation simulation.
-    Using it is as simple as creating an initial state, applying various quantum gates,
-    and then performing a measurement or simply analysing the final state. eg.
+    <a href="http://jsqbits.net">jsqbits</a> is a simple JavaScript library for quantum computation simulation.
+    To use it, you can down load and use the JavaScript library from the
+    <a href="https://github.com/davidbkemp/jsqbits/downloads">jsqbits github repository</a>,
+    or you can try it out the online
+    <a href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">jsqbits runner</a>.
+    You may then create an initial state, apply various quantum gates,
+    and then perform a measurement or simply analysing the final state. eg.
 </p>
 
 <code class="block">
@@ -38,7 +42,7 @@
 </p>
 <p>
     The jsqbits function takes a string zeros and ones representing the state of its qbits.
-    The string may optionally be a "ket" in the <a href="http://en.wikipedia.org/wiki/Bra-ket_notation">bra-ket</a> notation.
+    The string may optionally be a "ket" in the "bra-ket" notation.
 </p>
 <table class="samples">
     <tbody>
@@ -121,8 +125,8 @@
 </table>
 
 <p>
-    QState objects are intended to be immutable,
-    except that currently its attributes are exposed and may be directly modified (not recommended).
+    QState objects are intended to be immutable
+    (except that currently its attributes are exposed and may be directly modified -- plan to fix this).
     All qbit manipulations return a new QState and leave the original one untouched.
     Consider the following code:
 </p>
@@ -262,42 +266,42 @@ e<sup>-i&theta;Z/2</sup>.
     <tbody>
     <tr>
         <td class="code" id="control1">jsqbits("|0000>").controlledX(2, 0)</td>
-        <td>gives</td>
+        <td>leaves the state unchanged:</td>
         <td class="code" data-sampleref="control1">1 |0000></td>
     </tr>
     <tr>
         <td class="code" id="control2">jsqbits("|0100>").controlledX(2, 0)</td>
-        <td>gives</td>
+        <td>flips bit zero to give:</td>
         <td class="code" data-sampleref="control2">1 |0101></td>
     </tr>
     <tr>
         <td class="code" id="control3">jsqbits("|0010>").controlledX([1,3], 0)</td>
-        <td>gives</td>
+        <td>leaves the state unchanged:</td>
         <td class="code" data-sampleref="control3">1 |0010></td>
     </tr>
     <tr>
         <td class="code" id="control4">jsqbits("|1010>").controlledX([1,3], 0)</td>
-        <td>gives</td>
+        <td>flips bit zero to give:</td>
         <td class="code" data-sampleref="control4">1 |1011></td>
     </tr>
     <tr>
         <td class="code" id="control5">jsqbits("|1010>").controlledX({from:1, to: 3}, 0)</td>
-        <td>gives</td>
+        <td>leaves the state unchanged:</td>
         <td class="code" data-sampleref="control5">1 |1010></td>
     </tr>
     <tr>
         <td class="code" id="control6">jsqbits("|1110>").controlledX({from:1, to: 3}, 0)</td>
-        <td>gives</td>
+        <td>flips bit zero to give:</td>
         <td class="code" data-sampleref="control6">1 |1111></td>
     </tr>
     <tr>
         <td class="code" id="control7">jsqbits("|1010>").controlledX([2,3], [0,1])</td>
-        <td>gives</td>
+        <td>leaves the state unchanged:</td>
         <td class="code" data-sampleref="control7">1 |1010></td>
     </tr>
     <tr>
         <td class="code" id="control8">jsqbits("|1110>").controlledX([2,3], [0,1])</td>
-        <td>gives</td>
+        <td>flips bit zero and one give:</td>
         <td class="code" data-sampleref="control8">1 |1101></td>
     </tr>
     </tbody>
@@ -306,7 +310,7 @@ e<sup>-i&theta;Z/2</sup>.
 <p>
     In addition to controlledX(), there are controlledY(), controlledZ(), and controlledHadamard() functions.
     cnot() is an alias for controlledX().
-    There are also controlledXRotation(), controlledYRotation(), and controlledZXRotation() functions.
+    There are also controlledXRotation(), controlledYRotation(), and controlledZRotation() functions.
 </p>
 <table class="samples">
     <tbody>
@@ -314,6 +318,78 @@ e<sup>-i&theta;Z/2</sup>.
         <td class="code" id="controlledXRotation">jsqbits("|010>").controlledXRotation(1, 0, Math.PI/2)</td>
         <td>gives</td>
         <td class="code" data-sampleref="controlledXRotation">0.7071 |010> - 0.7071i |011></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Measurement</h2>
+
+<p>
+    The measurement operator is intended to emulate the act of measuring one or more of the qbits.
+    You may specify a single bit index, a range of bits using an object with "from" and "to" attributes,
+    or the constant <code>jsqbits.ALL</code>.
+    Note that, at time of writing, you cannot supply an array of bits.
+    As with all QState functions, the meaurement() function does not actually modify the object,
+    but instead returns an object with a "result" field containing the integer value of the result,
+    and a "newState" field containing the new quantum state (an a new QState object).
+</p>
+<table class="samples">
+    <tbody>
+    <tr>
+        <td class="code" id="measurement1">jsqbits("|0110>").measure(2)</td>
+        <td>results in</td>
+        <td class="code" data-sampleref="measurement1">{result: 1, newState: 1 |0110>}</td>
+    </tr>
+    <tr>
+        <td class="code" id="measurement2">jsqbits("|0110>").measure({from:1, to: 3})</td>
+        <td>results in</td>
+        <td class="code" data-sampleref="measurement2">{result: 3, newState: 1 |0110>}</td>
+    </tr>
+    <tr>
+        <td class="code" id="measurement3">jsqbits("|0110>").measure(jsqbits.ALL)</td>
+        <td>results in</td>
+        <td class="code" data-sampleref="measurement3">{result: 6, newState: 1 |0110>}</td>
+    </tr>
+    <tr>
+        <td class="code" id="measurement4">jsqbits("|00>").hadamard(0).measure(1)</td>
+        <td>results in</td>
+        <td class="code" data-sampleref="measurement4">{result: 0, newState: 0.7071 |00> + 0.7071 |01>}</td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    The random number generator used during measurement is exposed as "random()" and hence may be over-ridden:
+</p>
+<code class="block" id="random">
+    var state = jsqbits("|00>").hadamard(jsqbits.ALL);
+    state.random = function() {return 0;};
+    state.measure(0)
+</code>
+<p>
+    always results in
+    <span class="code" data-sampleref="random">{result: 0, newState: 0.7071 |00> + 0.7071 |10>}</span>
+</p>
+
+<h2>Toffoli</h2>
+
+<p>
+    Given that the controlledX() operator can cake multiple control bits, a separate Toffoli is redundant,
+    but has been added for the sake of completeness.
+    It takes one or more control bits (traditionally 2) as separate arguments,
+    followed by a target bit (which actually can also be a bit range, array, or jsqbits.ALL).
+</p>
+<table class="samples">
+    <tbody>
+    <tr>
+        <td class="code" id="Toffoli1">jsqbits("|0001>").toffoli(0, 2, 3)</td>
+        <td>leaves the state unchanged:</td>
+        <td class="code" data-sampleref="Toffoli1">1 |0001></td>
+    </tr>
+    <tr>
+        <td class="code" id="Toffoli2">jsqbits("|0101>").toffoli(0, 2, 3)</td>
+        <td>flips bit three to give:</td>
+        <td class="code" data-sampleref="Toffoli2">1 |1101></td>
     </tr>
     </tbody>
 </table>

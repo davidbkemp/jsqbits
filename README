@@ -11,12 +11,13 @@ the jsqbits runner http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 
 TODO before first release:
 * Documentation
+* Consider jsqubits instead of jsqbits
+* Hide attributes of Complex and QState
 
 Nice to have:
 * Allow array of bits anywhere we currently allow a bit range (measure() and applyFunction())
 * Implementation of Simon's algorithm
 * Include a 'remainingQbits' field on measurement outcomes.
-* Include a 'toString' method on measurement outcomes.
 * JSLint?
 * Coverage?
 

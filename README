@@ -6,8 +6,8 @@ Some user documentation will need to be written for starters.
 The user manual is only half finished, but what there is of it can be found here:
 http://davidbkemp.github.com/jsqbits/doc/jsqbitsManual.html
 
-But you can still try it out now in your browser using
-the jsqbits runner http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
+You can try it out now in your browser using the jsqbits runner:
+http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 
 TODO before first release:
 * Documentation

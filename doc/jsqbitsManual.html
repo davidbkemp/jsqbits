@@ -359,16 +359,18 @@ e<sup>-i&theta;Z/2</sup>.
 </table>
 
 <p>
-    The random number generator used during measurement is exposed as "random()" and hence may be over-ridden:
+    The random number generator used during measurement is exposed as "random()" and hence may be over-ridden
+    by replacing the prototype function or replacing it on individual objects.
+    Here is how you can get measurements to always choose the first basis state with
+    a non-zero amplitude:
 </p>
 <code class="block" id="random">
-    var state = jsqbits("|00>").hadamard(jsqbits.ALL);
-    state.random = function() {return 0;};
-    state.measure(0)
+    jsqbits.QState.prototype.random = function() {return 0;};
+    jsqbits("|100>").hadamard([0,1]).measure(0)
 </code>
 <p>
     always results in
-    <span class="code" data-sampleref="random">{result: 0, newState: 0.7071 |00> + 0.7071 |10>}</span>
+    <span class="code" data-sampleref="random">{result: 0, newState: 0.7071 |100> + 0.7071 |110>}</span>
 </p>
 
 <h2>Toffoli</h2>
@@ -379,6 +381,7 @@ e<sup>-i&theta;Z/2</sup>.
     It takes one or more control bits (traditionally 2) as separate arguments,
     followed by a target bit (which actually can also be a bit range, array, or jsqbits.ALL).
 </p>
+
 <table class="samples">
     <tbody>
     <tr>
@@ -394,13 +397,104 @@ e<sup>-i&theta;Z/2</sup>.
     </tbody>
 </table>
 
+<h2>applyFunction</h2>
+<p>
+    The <code>applyFunction</code> method takes
+    an input bit specification,
+    an output bit specification,
+    and a function to apply.
+    The input and output bit specifications must either be single bit indexes
+    or bit ranges using "from" and "to" attributes.
+    <em>Note that currently they cannot be arrays.</em>
+    The value of the bits specified by the input bit index (range)
+    is fed to the function, and the result is
+    applied to the output bit (range).
+    For example,
+</p>
+<code class="block" id="applyFunction">
+    jsqbits("|10110>")
+        .applyFunction(
+            {from:3, to:4},
+            {from:0, to:2},
+            function(x){return x+1;})
+</code>
+<p>
+    In the example, the function is passed the top two bits (ie, the value 2) and so it returns 3.
+    This is to be applied to bits 0 to 2 and so the function's return value is
+    treated as the bit string "011" and xor'ed with the bottom three bits to give:
+    <span class="code" data-sampleref="applyFunction">1 |10101></span>
+</p>
+
+<h2>amplitude</h2>
+<p>
+    The <code>amplitude</code> method can return the value of a specific amplitude.
+</p>
+
+
 <h2 id='roundToZero'>jsqbits.roundToZero</h2>
 <p>
-    Note that, while the values are displayed to four decimal places, they are maintained to
+    Note that, while the QState values are displayed to four decimal places, they are maintained to
     the maximum precision provided by the JavaScript implementation of floating point numbers,
     with the exception that numbers very close to zero are rounded off to zero.
     The value used for determining this rounding to zero is the variable <code>jsqbits.roundToZero</code>.
 </p>
+
+<h2>jsqbits.Complex</h2>
+
+<p>
+    Given that the amplitudes of a quantum state are complex numbers,
+    jsqbits has a Complex class.  The easiest way to create a complex number is using
+    the method: <code>jsqbits.complex(real, imaginary)</code>
+</p>
+<table class="samples">
+    <tbody>
+    <tr>
+        <td class="code" id="complex">jsqbits.complex(3, 4)</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex">3+4i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-add">jsqbits.complex(3, 4).add(jsqbits.complex(10, 20))</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-add">13+24i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-addreal">jsqbits.complex(3, 4).add(7)</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-addreal">10+4i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-subtract">jsqbits.complex(3, 4).subtract(jsqbits.complex(10, 20))</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-subtract">-7-16i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-subtractreal">jsqbits.complex(3, 4).subtract(7)</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-subtractreal">-4+4i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-multiply">jsqbits.complex(3, 4).multiply(jsqbits.complex(10, 20))</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-multiply">-50+100i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-multiplyreal">jsqbits.complex(3, 4).multiply(10)</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-multiplyreal">30+40i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-negate">jsqbits.complex(3, 4).negate()</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-negate">-3-4i</td>
+    </tr>
+    <tr>
+        <td class="code" id="complex-magnitude">jsqbits.complex(3, 4).magnitude()</td>
+        <td>=</td>
+        <td class="code" data-sampleref="complex-magnitude">5</td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>

@@ -27,3 +27,7 @@ table.samples td {
 #topErrorMessage, #topWarningMessage {
     float: right;
 }
+
+#tableOfContents a {
+    padding-right: 0.5em;
+}

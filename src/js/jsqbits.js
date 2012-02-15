@@ -156,9 +156,9 @@ new function() {
         return new jsqbits.QState(parsedBitString.length, amplitudes);
     }
 
-    jsqbits.QState.prototype.amplitude = function(index) {
+    jsqbits.QState.prototype.amplitude = function(basisState) {
         validateArgs(arguments, 1, 1, 'Must supply an index to amplitude()');
-        var numericIndex = (typeof index === 'string') ? parseBitString(index).value : index;
+        var numericIndex = (typeof basisState === 'string') ? parseBitString(basisState).value : basisState;
         return this.amplitudes[numericIndex] || Complex.ZERO;
     };
 

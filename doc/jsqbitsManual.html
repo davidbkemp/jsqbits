@@ -3,6 +3,7 @@
 <head>
     <title>jsqbits User Manual</title>
     <link rel="stylesheet" type="text/css" href="jsqbitsManual.css" />
+    <script type="text/javascript" src="doc/modernizr.custom.56088.js"></script>
     <script src="jquery-1.7.1.min.js"></script>
     <script src="../src/js/jsqbits.js"></script>
     <script src="jsqbitsManual.js"></script>
@@ -31,12 +32,12 @@
 </p>
 
 <code class="block">
-    jsqbits('|01>')
-        .hadamard(jsqbits.ALL)
-        .cnot(1, 0)
-        .hadamard(jsqbits.ALL)
-        .measure(1)
-        .result
+jsqbits('|01>')
+    .hadamard(jsqbits.ALL)
+    .cnot(1, 0)
+    .hadamard(jsqbits.ALL)
+    .measure(1)
+    .result
 </code>
 
 <section>
@@ -79,12 +80,12 @@
 
 
     <code class="block" id="QState">
-        var a = []; a[0] = a[1] = a[4] = a[5] = jsqbits.complex(0.5, 0);
-        new jsqbits.QState(4, a)
+var a = []; a[0] = a[1] = a[4] = a[5] = jsqbits.complex(0.5, 0);
+new jsqbits.QState(4, a)
     </code>
     <p>creates the following 4 qbit QState:</p>
     <code class="block"  data-sampleref="QState">
-        0.5 |0000> + 0.5 |0001> + 0.5 |0100> + 0.5 |0101>
+0.5 |0000> + 0.5 |0001> + 0.5 |0100> + 0.5 |0101>
     </code>
 
     <p>
@@ -150,9 +151,9 @@
     </p>
 
     <code class="block" id='immutableExample'>
-        var state1 = jsqbits('|00>');
-        var state2 = state1.x(1);
-        "state2 is " + state2 + " but state1 is still " + state1
+var state1 = jsqbits('|00>');
+var state2 = state1.x(1);
+"state2 is " + state2 + " but state1 is still " + state1
     </code>
 
     <p>
@@ -399,8 +400,8 @@
         a non-zero amplitude:
     </p>
     <code class="block" id="random">
-        jsqbits.QState.prototype.random = function() {return 0;};
-        jsqbits("|100>").hadamard([0,1]).measure(0)
+jsqbits.QState.prototype.random = function() {return 0;};
+jsqbits("|100>").hadamard([0,1]).measure(0)
     </code>
     <p>
         always results in
@@ -456,11 +457,11 @@
         For example,
     </p>
     <code class="block" id="applyFunctionSample">
-        jsqbits("|10110>")
-            .applyFunction(
-                {from:3, to:4},
-                {from:0, to:2},
-                function(x){return x+1;})
+jsqbits("|10110>")
+    .applyFunction(
+        {from:3, to:4},
+        {from:0, to:2},
+        function(x){return x+1;})
     </code>
     <p>
         In the example, the function is passed the top two bits (ie, the value 2) and so it returns 3.

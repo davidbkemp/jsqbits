@@ -1,4 +1,4 @@
-new function($) {
+(function($) {
     var totalErrors = 0;
 
 //    Find code samples and compare the actual output with the stated output.
@@ -9,7 +9,7 @@ new function($) {
                 var jscode = $('#' + id).text();
                 var result = eval(jscode).toString();
                 var expected = $(this).text();
-                if (expected.trim() !== result.trim()) throw "no match";
+                if ($.trim(expected) !== $.trim(result)) throw "no match";
             } catch (e) {
                 $(this).addClass('error');
                 totalErrors++;
@@ -26,7 +26,7 @@ new function($) {
         $('ul.index li, h2.index').map(function() {
             var indexItem = $(this).text().split('(')[0];
             indexItems.push(indexItem);
-            indexMap[indexItem] = $(this).closest('section').find('h2').attr('id');
+            indexMap[indexItem] = $(this).closest('.section').find('h2').attr('id');
         });
         indexItems.sort();
         for (var i in indexItems) {
@@ -35,4 +35,4 @@ new function($) {
             $('#tableOfContents').append(element);
         }
     });
-}(jQuery);  
+})(jQuery);

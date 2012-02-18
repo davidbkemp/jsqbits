@@ -2,15 +2,13 @@ JavaScript library for quantum computation simulation.
 
 jsqbits is not quite ready for release.
 
-The user manual is only half finished, but what there is of it can be found here:
+The user manual:
 http://davidbkemp.github.com/jsqbits/doc/jsqbitsManual.html
 
-You can try it out in your browser using the jsqbits runner:
+Try it out online using the jsqbits runner:
 http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 
 TODO before first release:
-* Documentation
-* Consider jsqubits instead of jsqbits
 * Hide attributes of Complex and QState
 
 Nice to have:

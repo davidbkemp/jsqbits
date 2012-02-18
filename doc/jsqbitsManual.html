@@ -3,7 +3,6 @@
 <head>
     <title>jsqbits User Manual</title>
     <link rel="stylesheet" type="text/css" href="jsqbitsManual.css" />
-    <script type="text/javascript" src="doc/modernizr.custom.56088.js"></script>
     <script src="jquery-1.7.1.min.js"></script>
     <script src="../src/js/jsqbits.js"></script>
     <script src="jsqbitsManual.js"></script>
@@ -40,7 +39,7 @@ jsqbits('|01>')
     .result
 </code>
 
-<section>
+<div class='section'>
     <h2 id='jsqbits'>jsqbits.QState</h2>
     <ul class="code index">
         <li>jsqbits(bitString)</li>
@@ -92,9 +91,9 @@ new jsqbits.QState(4, a)
         WARNING: Currently, instead of copying the supplied amplitude array, a reference to it is used,
         and so any subsequent modifications will affect the QState object.
     </p>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='singleQbitOperators'>Single qbit operators</h2>
     <ul class="code index">
         <li>x(targetBits)</li>
@@ -264,9 +263,9 @@ var state2 = state1.x(1);
         </tr>
         </tbody>
     </table>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='ControlledOperations'>Controlled operations</h2>
     <ul class="code index">
         <li>controlledX(controlBits, targetBits)</li>
@@ -351,9 +350,9 @@ var state2 = state1.x(1);
         </tr>
         </tbody>
     </table>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='measurement'>Measurement</h2>
     <ul class="code index">
         <li>measure(targetBits)</li>
@@ -407,9 +406,9 @@ jsqbits("|100>").hadamard([0,1]).measure(0)
         always results in
         <span class="code" data-sampleref="random">{result: 0, newState: 0.7071 |100> + 0.7071 |110>}</span>
     </p>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='toffoli'>Toffoli</h2>
     <ul class="code index">
         <li>toffoli(controlBit, controlBit, ..., targetBit)</li>
@@ -436,9 +435,9 @@ jsqbits("|100>").hadamard([0,1]).measure(0)
         </tr>
         </tbody>
     </table>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='applyFunction'>applyFunction</h2>
     <ul class="code index">
         <li>applyFunction(inputBits, targetBits, functionToApply)</li>
@@ -469,9 +468,9 @@ jsqbits("|10110>")
         treated as the bit string "011" and xor'ed with the bottom three bits to give:
         <span class="code" data-sampleref="applyFunctionSample">1 |10101></span>
     </p>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='amplitude'>amplitude</h2>
     <ul class="code index">
         <li>amplitude(basisState)</li>
@@ -479,9 +478,9 @@ jsqbits("|10110>")
     <p>
         The <code>amplitude</code> method can return the value of a specific amplitude.
     </p>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='roundToZero' class='index'>jsqbits.roundToZero</h2>
     <p>
         Note that, while the QState values are displayed to four decimal places, they are maintained to
@@ -489,9 +488,9 @@ jsqbits("|10110>")
         with the exception that numbers very close to zero are rounded off to zero.
         The value used for determining this rounding to zero is the variable <code>jsqbits.roundToZero</code>.
     </p>
-</section>
+</div>
 
-<section>
+<div class='section'>
     <h2 id='complex' class="index">Complex</h2>
     <p>
         Given that the amplitudes of a quantum state are complex numbers,
@@ -552,7 +551,7 @@ jsqbits("|10110>")
         </tr>
         </tbody>
     </table>
-</section>
+</div>
 <p>
 <a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">jsqbits User Manual</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/davidbkemp" property="cc:attributionName" rel="cc:attributionURL">David Kemp</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.
 </p>

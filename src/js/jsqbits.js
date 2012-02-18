@@ -120,6 +120,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
+    jsqbits.ZERO = jsqbits.Complex.ZERO;
 
     jsqbits.complex = function(real, imaginary) {
         return new Complex(real, imaginary);
@@ -360,12 +361,28 @@ function jsqbits(bitString) {
         return new jsqbits.Measurement(measurementOutcome, new jsqbits.QState(this.numBits, newAmplitudes));
     };
 
+
+    jsqbits.QState.prototype.sortedNonZeroStates = function() {
+        var nonZeroStates, stateString;
+        nonZeroStates = [];
+        for (stateString in this.amplitudes) {
+            nonZeroStates.push(stateString);
+        }
+        nonZeroStates.sort();
+        return nonZeroStates;
+    }
+
     jsqbits.QState.prototype.toString = function() {
-        var result = '';
-        var formatFlags = {decimalPlaces: 4};
-        for(var stateString in this.amplitudes) {
+        var stateString, result, formatFlags, nonZeroStates, state, i;
+        result = '';
+        formatFlags = {decimalPlaces: 4};
+        // Not sure if for-in loops are supposed to iterate in order over arrays, but they don't seem to on IE7.
+        // So, we need a sorted array of indexes.
+        nonZeroStates = this.sortedNonZeroStates();
+        for (i = 0; i < nonZeroStates.length; i++) {
             if (result !== '') formatFlags.spacedSign = true;
-            var state = padState(parseInt(stateString, 10).toString(2), this.numBits);
+            stateString = nonZeroStates[i];
+            state = padState(parseInt(stateString, 10).toString(2), this.numBits);
             result = result + this.amplitudes[stateString].format(formatFlags) + " |" + state + ">";
         }
         return result;

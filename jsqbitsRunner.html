@@ -11,9 +11,9 @@
                     $('#result').text('');
                     try {
                         var result = eval($('#code').get(0).value);
-                        if ((typeof result == 'object') && result.toString) {
+                        if ((typeof result === 'object') && result.toString) {
                             result = result.toString();
-                        } else if (typeof result == 'number') {
+                        } else if (typeof result === 'number') {
                             result = '' + result;
                         }
                     } catch (e) {
@@ -34,6 +34,7 @@
 <p>
     This is a crude JavaScript runner preloaded with
     the <a href="index.html">jsqbits library</a>.
+    Entry arbitrary JavaScript in the text area blow and press the "Run" button.
 </p>
 
 <p>Try some quantum computation operations like:

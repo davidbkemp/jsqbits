@@ -19,13 +19,10 @@
  */
 
 function jsqbits(bitString) {
-    return jsqbits.QState.fromBits(bitString)
-};
+    return jsqbits.QState.fromBits(bitString);
+}
 
-// Make jsqubits an alias for the poorly spelt jsqits.
-jsqubits = jsqbits;
-
-new function() {
+(function() {
 
     var validateArgs = function(args, minimum) {
         var maximum = 10000;
@@ -40,7 +37,7 @@ new function() {
         if (args.length < minimum || args.length > maximum) {
             throw message;
         }
-    }
+    };
 
     jsqbits.Complex = function(real, imaginary) {
         validateArgs(arguments, 2, 2, 'Must supply real and imaginary parameters to Complex()');
@@ -104,15 +101,15 @@ new function() {
             }
         }
         return prefix + (objectToFormat.toString());
-    }
+    };
 
     jsqbits.Complex.prototype.negate = function() {
         return new jsqbits.Complex(-this.real, -this.imaginary);
-    }
+    };
 
     jsqbits.Complex.prototype.magnitude = function() {
         return Math.sqrt(this.real * this.real + this.imaginary * this.imaginary);
-    }
+    };
 
     jsqbits.Complex.prototype.subtract = function(other) {
         validateArgs(arguments, 1, 1, 'Must 1 parameter to subtract()');
@@ -120,7 +117,7 @@ new function() {
             return new jsqbits.Complex(this.real - other, this.imaginary);
         }
         return new jsqbits.Complex(this.real - other.real, this.imaginary - other.imaginary);
-    }
+    };
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
 
@@ -136,7 +133,7 @@ new function() {
     jsqbits.Measurement = function(result, newState) {
         this.result = result;
         this.newState = newState;
-    }
+    };
 
     jsqbits.Measurement.prototype.toString = function() {
         return "{result: " + this.result + ", newState: " + this.newState + "}";
@@ -154,7 +151,7 @@ new function() {
         var amplitudes = [];
         amplitudes[parsedBitString.value] = complex(1,0);
         return new jsqbits.QState(parsedBitString.length, amplitudes);
-    }
+    };
 
     jsqbits.QState.prototype.amplitude = function(basisState) {
         validateArgs(arguments, 1, 1, 'Must supply an index to amplitude()');
@@ -191,7 +188,7 @@ new function() {
     jsqbits.QState.prototype.rotateX = function(targetBits, angle) {
         validateArgs(arguments, 2, 2, 'Must supply target bits and angle to rotateX.');
         return this.controlledXRotation(null, targetBits, angle);
-    }
+    };
 
     jsqbits.QState.prototype.controlledYRotation = function(controlBits, targetBits, angle) {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledYRotation()');
@@ -208,7 +205,7 @@ new function() {
     jsqbits.QState.prototype.rotateY = function(targetBits, angle) {
         validateArgs(arguments, 2, 2, 'Must supply target bits and angle to rotateY.');
         return this.controlledYRotation(null, targetBits, angle);
-    }
+    };
 
     jsqbits.QState.prototype.controlledZRotation = function(controlBits, targetBits, angle) {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledZRotation()');
@@ -225,14 +222,14 @@ new function() {
     jsqbits.QState.prototype.rotateZ = function(targetBits, angle) {
         validateArgs(arguments, 2, 2, 'Must supply target bits and angle to rotateZ.');
         return this.controlledZRotation(null, targetBits, angle);
-    }
+    };
 
     jsqbits.QState.prototype.controlledX = function(controlBits, targetBits) {
         validateArgs(arguments, 2, 2, 'Must supply control and target bits to cnot() / controlledX().');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf1, amplitudeOf1: amplitudeOf0};
         });
-    }
+    };
 
     jsqbits.QState.prototype.cnot = jsqbits.QState.prototype.controlledX;
 
@@ -312,7 +309,7 @@ new function() {
         var targetBitMask = ((1 << (1 + targetBitRange.to - targetBitRange.from)) - 1) << targetBitRange.from;
 
         for(var stateString in this.amplitudes) {
-            var state = parseInt(stateString);
+            var state = parseInt(stateString, 10);
             if (statesThatCanBeSkipped[state]) continue;
             var input = (state & highBitMask) >> inputBitRange.from;
             var result = (functionToApply(input) << targetBitRange.from) & targetBitMask;
@@ -335,8 +332,9 @@ new function() {
         var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
         var randomNumber = this.random();
         var randomStateString;
+        var stateString;
         var accumulativeSquareAmplitudeMagnitude = 0;
-        for (var stateString in this.amplitudes) {
+        for (stateString in this.amplitudes) {
             var magnitude = this.amplitudes[stateString].magnitude();
             accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
             randomStateString = stateString;
@@ -344,14 +342,14 @@ new function() {
                 break;
             }
         }
-        var randomState = parseInt(randomStateString);
+        var randomState = parseInt(randomStateString, 10);
 
         var highBitMask = (1 << (bitRange.to+1)) - 1;
         var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
 
         var newAmplitudes = [];
-        for(var stateString in this.amplitudes) {
-            var state = parseInt(stateString);
+        for(stateString in this.amplitudes) {
+            var state = parseInt(stateString, 10);
             var comparisonState = (state & highBitMask) >> bitRange.from;
             if (comparisonState === measurementOutcome) {
                 newAmplitudes[state] = this.amplitudes[state];
@@ -367,11 +365,11 @@ new function() {
         var formatFlags = {decimalPlaces: 4};
         for(var stateString in this.amplitudes) {
             if (result !== '') formatFlags.spacedSign = true;
-            var state = padState(parseInt(stateString).toString(2), this.numBits);
-            result = result + this.amplitudes[stateString].format(formatFlags) + " |" + state + ">"
+            var state = padState(parseInt(stateString, 10).toString(2), this.numBits);
+            result = result + this.amplitudes[stateString].format(formatFlags) + " |" + state + ">";
         }
         return result;
-    }
+    };
 
     var Complex = jsqbits.Complex;
 
@@ -387,12 +385,13 @@ new function() {
 
     var normalize = function(amplitudes) {
         var sumOfMagnitudeSqaures = 0;
-        for(var state in amplitudes) {
+        var state;
+        for(state in amplitudes) {
             var magnitude = amplitudes[state].magnitude();
             sumOfMagnitudeSqaures += magnitude * magnitude;
         }
         var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
-        for(var state in amplitudes) {
+        for(state in amplitudes) {
             amplitudes[state] = amplitudes[state].multiply(scale);
         }
     };
@@ -402,7 +401,7 @@ new function() {
         if (value.magnitude() > jsqbits.roundToZero) {
             array[index] = value;
         }
-    }
+    };
 
     var convertBitQualifierToBitRange = function(bits, numBits) {
         if (bits == null) {
@@ -411,9 +410,9 @@ new function() {
             return {from: 0, to: numBits - 1};
         } else if (bits.from != null && bits.to != null) {
             if (bits.from > bits.to) {
-                throw "bit range must have 'from' being less than or equal to 'to'"
+                throw "bit range must have 'from' being less than or equal to 'to'";
             }
-            return bits
+            return bits;
         } else if (typeof bits === 'number') {
             return {from: bits, to: bits};
         } else {
@@ -423,7 +422,7 @@ new function() {
 
     var bitRangeAsArray = function(low, high) {
         if (low > high) {
-            throw "bit range must have 'from' being less than or equal to 'to'"
+            throw "bit range must have 'from' being less than or equal to 'to'";
         }
         var result = [];
         for (var i = low; i <= high; i++) {
@@ -453,7 +452,7 @@ new function() {
 
     var padState = function(state, numBits) {
         var paddingLength = numBits - state.length;
-        for (i = 0; i < paddingLength; i++) {
+        for (var i = 0; i < paddingLength; i++) {
             state = '0' + state;
         }
         return state;
@@ -472,7 +471,7 @@ new function() {
         }
 
         for (var stateString in qState.amplitudes) {
-            var state = parseInt(stateString);
+            var state = parseInt(stateString, 10);
             if (statesThatCanBeSkipped[state]) continue;
             statesThatCanBeSkipped[state ^ targetBitMask] = true;
             var indexOf1 = state | targetBitMask;
@@ -507,4 +506,4 @@ new function() {
             }
         }
     };
-}();
+})();

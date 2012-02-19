@@ -10,6 +10,7 @@ http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 
 TODO before first release:
 * Use hasOwnProperty where needed.
+* Use toFixed
 * Fix sorting in sortedNonZeroStates() method.
 * Consider making amplitudes an object instead of an array.
 * Hide attributes of Complex and QState

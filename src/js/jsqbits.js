@@ -370,7 +370,7 @@ function jsqbits(bitString) {
         }
         nonZeroStates.sort();
         return nonZeroStates;
-    }
+    };
 
     jsqbits.QState.prototype.toString = function() {
         var stateString, result, formatFlags, nonZeroStates, state, i;

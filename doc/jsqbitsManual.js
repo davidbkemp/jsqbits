@@ -26,7 +26,7 @@
         $('ul.index li, h2.index').map(function() {
             var indexItem = $(this).text().split('(')[0];
             indexItems.push(indexItem);
-            indexMap[indexItem] = $(this).closest('.section').find('h2').attr('id');
+            indexMap[indexItem] = $(this).closest('.section').attr('id');
         });
         indexItems.sort();
         for (var i in indexItems) {

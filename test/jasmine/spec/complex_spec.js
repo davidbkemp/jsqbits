@@ -17,35 +17,35 @@ describe('Complex', function() {
     describe('#add', function() {
         it("adds complex numbers", function() {
             var z = x.add(y);
-            expect(z.real).toEqual(11);
-            expect(z.imaginary).toEqual(33);
+            expect(z.real()).toEqual(11);
+            expect(z.imaginary()).toEqual(33);
         });
 
         it ("adds real numbers", function(){
             var z = x.add(5);
-            expect(z.real).toEqual(6);
-            expect(z.imaginary).toEqual(x.imaginary);
+            expect(z.real()).toEqual(6);
+            expect(z.imaginary()).toEqual(x.imaginary());
         });
     });
 
     describe('#multiply', function() {
         it("multiplies complex numbers", function() {
             var z = x.multiply(y);
-            expect(z.real).toEqual(10 - 90);
-            expect(z.imaginary).toEqual(60);
+            expect(z.real()).toEqual(10 - 90);
+            expect(z.imaginary()).toEqual(60);
         });
         it("multiplies real numbers", function() {
             var z = y.multiply(5);
-            expect(z.real).toEqual(50);
-            expect(z.imaginary).toEqual(150);
+            expect(z.real()).toEqual(50);
+            expect(z.imaginary()).toEqual(150);
         });
     });
 
     describe('#negate', function() {
         it("negates complex numbers", function() {
             var z = x.negate();
-            expect(z.real).toEqual(-1);
-            expect(z.imaginary).toEqual(-3);
+            expect(z.real()).toEqual(-1);
+            expect(z.imaginary()).toEqual(-3);
         });
     });
 
@@ -57,10 +57,10 @@ describe('Complex', function() {
 
     describe('#subtract', function() {
         it('subtracts real numbers', function(){
-            expect(y.subtract(2)).toEqual(complex(8, 30));
+            expect(y.subtract(2)).toEql(complex(8, 30));
         });
         it('subtracts complex numbers', function(){
-            expect(y.subtract(w)).toEqual(complex(14, 27));
+            expect(y.subtract(w)).toEql(complex(14, 27));
         });
     });
 

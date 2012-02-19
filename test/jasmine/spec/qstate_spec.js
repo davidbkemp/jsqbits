@@ -23,26 +23,26 @@ describe('QState', function() {
             var qbitFunction = jasmine.createSpy('qbitFunction');
             var x = jsqbits('|001>').controlledApplicatinOfqBitOperator(2, 0, qbitFunction);
             expect(qbitFunction).not.toHaveBeenCalled();
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("does nothing when the control bit is zero (target range)", function() {
             var qbitFunction = jasmine.createSpy('qbitFunction');
             var targetBits = {from: 0, to: 1};
             var x = jsqbits('|001>').controlledApplicatinOfqBitOperator(2, targetBits, qbitFunction);
             expect(qbitFunction).not.toHaveBeenCalled();
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("does nothing when the control bit is zero (target array)", function() {
             var qbitFunction = jasmine.createSpy('qbitFunction');
             var x = jsqbits('|0001>').controlledApplicatinOfqBitOperator(3, [0, 2], qbitFunction);
             expect(qbitFunction).not.toHaveBeenCalled();
-            expect(x).toEqual(jsqbits('|0001>'));
+            expect(x).toEql(jsqbits('|0001>'));
         });
         it("invokes the qbitFunction when the control bit is one", function() {
             var qbitFunction = jasmine.createSpy('qbitFunction')
                 .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
             var x = jsqbits('|100>').controlledApplicatinOfqBitOperator(2, 0, qbitFunction);
-            expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+            expect(qbitFunction.argsForCall[0]).toEql([complex(1,0), complex(0,0)]);
             expect(x.amplitude('|100>')).toBeApprox(complex(0.2,0));
             expect(x.amplitude('|101>')).toBeApprox(complex(0.3,0));
         });
@@ -50,7 +50,7 @@ describe('QState', function() {
             var qbitFunction = jasmine.createSpy('qbitFunction')
                 .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
             var x = jsqbits('|000>').controlledApplicatinOfqBitOperator(null, 0, qbitFunction);
-            expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+            expect(qbitFunction.argsForCall[0]).toEql([complex(1,0), complex(0,0)]);
             expect(x.amplitude('|000>')).toBeApprox(complex(0.2,0));
             expect(x.amplitude('|001>')).toBeApprox(complex(0.3,0));
         });
@@ -60,9 +60,9 @@ describe('QState', function() {
                 .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
             var x = jsqbits('|101>').controlledApplicatinOfqBitOperator(2, targetBits, qbitFunction);
             expect(qbitFunction).toHaveBeenCalled();
-            expect(qbitFunction.argsForCall[0]).toEqual([complex(0,0), complex(1,0)]);
-            expect(qbitFunction.argsForCall[1]).toEqual([complex(0.2,0), complex(0,0)]);
-            expect(qbitFunction.argsForCall[2]).toEqual([complex(0.3,0), complex(0,0)]);
+            expect(qbitFunction.argsForCall[0]).toEql([complex(0,0), complex(1,0)]);
+            expect(qbitFunction.argsForCall[1]).toEql([complex(0.2,0), complex(0,0)]);
+            expect(qbitFunction.argsForCall[2]).toEql([complex(0.3,0), complex(0,0)]);
             expect(x.amplitude('|100>')).toBeApprox(complex(0.2,0));
             expect(x.amplitude('|101>')).toBeApprox(complex(0.2,0));
             expect(x.amplitude('|110>')).toBeApprox(complex(0.3,0));
@@ -73,9 +73,9 @@ describe('QState', function() {
                 .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
             var x = jsqbits('|1001>').controlledApplicatinOfqBitOperator(3, [0, 2], qbitFunction);
             expect(qbitFunction).toHaveBeenCalled();
-            expect(qbitFunction.argsForCall[0]).toEqual([complex(0,0), complex(1,0)]);
-            expect(qbitFunction.argsForCall[1]).toEqual([complex(0.2,0), complex(0,0)]);
-            expect(qbitFunction.argsForCall[2]).toEqual([complex(0.3,0), complex(0,0)]);
+            expect(qbitFunction.argsForCall[0]).toEql([complex(0,0), complex(1,0)]);
+            expect(qbitFunction.argsForCall[1]).toEql([complex(0.2,0), complex(0,0)]);
+            expect(qbitFunction.argsForCall[2]).toEql([complex(0.3,0), complex(0,0)]);
             expect(x.amplitude('|1000>')).toBeApprox(complex(0.2,0));
             expect(x.amplitude('|1001>')).toBeApprox(complex(0.2,0));
             expect(x.amplitude('|1100>')).toBeApprox(complex(0.3,0));
@@ -86,21 +86,21 @@ describe('QState', function() {
             var controlBits = {from: 1, to: 2};
             var x = jsqbits('|101>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
             expect(qbitFunction).not.toHaveBeenCalled();
-            expect(x).toEqual(jsqbits('|101>'));
+            expect(x).toEql(jsqbits('|101>'));
         });
         it("does nothing when any of the control bits are zero (control bit array)", function() {
             var qbitFunction = jasmine.createSpy('qbitFunction');
             var controlBits = [1,2];
             var x = jsqbits('|101>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
             expect(qbitFunction).not.toHaveBeenCalled();
-            expect(x).toEqual(jsqbits('|101>'));
+            expect(x).toEql(jsqbits('|101>'));
         });
         it("invokes the qbitFunction when the control bits are all one (control bit range)", function() {
              var qbitFunction = jasmine.createSpy('qbitFunction')
                  .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
              var controlBits = {from: 1, to: 2};
              var x = jsqbits('|110>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
-             expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+             expect(qbitFunction.argsForCall[0]).toEql([complex(1,0), complex(0,0)]);
              expect(x.amplitude('|110>')).toBeApprox(complex(0.2,0));
              expect(x.amplitude('|111>')).toBeApprox(complex(0.3,0));
          });
@@ -109,7 +109,7 @@ describe('QState', function() {
                  .andReturn({amplitudeOf0: complex(0.2, 0), amplitudeOf1: complex(0.3, 0)});
              var controlBits =  [1,3];
              var x = jsqbits('|1010>').controlledApplicatinOfqBitOperator(controlBits, 0, qbitFunction);
-             expect(qbitFunction).toHaveBeenCalledWith(complex(1,0), complex(0,0));
+             expect(qbitFunction.argsForCall[0]).toEql([complex(1,0), complex(0,0)]);
              expect(x.amplitude('|1010>')).toBeApprox(complex(0.2,0));
              expect(x.amplitude('|1011>')).toBeApprox(complex(0.3,0));
          });
@@ -118,13 +118,13 @@ describe('QState', function() {
     describe('#x', function() {
         it("applies the Pauli x operator to (|0>)", function() {
             var x = jsqbits('|0>').x(0);
-            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|1>')).toEqual(complex(1, 0));
+            expect(x.amplitude('|0>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEql(complex(1, 0));
         });
         it("applies the Pauli x operator to (|1>)", function() {
             var x = jsqbits('|1>').x(0);
-            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
-            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|0>')).toEql(complex(1, 0));
+            expect(x.amplitude('|1>')).toEql(jsqbits.Complex.ZERO);
         });
     });
 
@@ -153,20 +153,20 @@ describe('QState', function() {
     describe('#z', function() {
         it("applies the Pauli z operator to (|0>)", function() {
             var x = jsqbits('|0>').z(0);
-            expect(x.amplitude('|0>')).toEqual(complex(1, 0));
-            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|0>')).toEql(complex(1, 0));
+            expect(x.amplitude('|1>')).toEql(jsqbits.Complex.ZERO);
         });
         it("applies the Pauli z operator to (|1>)", function() {
             var x = jsqbits('|1>').z(0);
-            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|1>')).toEqual(complex(-1, 0));
+            expect(x.amplitude('|0>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEql(complex(-1, 0));
         });
     });
 
     describe('#controlledZ', function(){
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|001>').controlledZ(2, 0);
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("flips the phase when both the control and target bits are one", function() {
             var x = jsqbits('|101>').controlledZ(2, 0);
@@ -182,25 +182,25 @@ describe('QState', function() {
     describe('#y', function() {
         it("applies the Pauli y operator to (|0>)", function() {
             var x = jsqbits('|0>').y(0);
-            expect(x.amplitude('|0>')).toEqual(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|1>')).toEqual(complex(0, 1));
+            expect(x.amplitude('|0>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEql(complex(0, 1));
         });
         it("applies the Pauli y operator to (|1>)", function() {
             var x = jsqbits('|1>').y(0);
-            expect(x.amplitude('|0>')).toEqual(complex(0, -1));
-            expect(x.amplitude('|1>')).toEqual(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|0>')).toEql(complex(0, -1));
+            expect(x.amplitude('|1>')).toEql(jsqbits.Complex.ZERO);
         });
     });
 
     describe('#controlledY', function(){
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|001>').controlledY(2, 0);
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("applies the Pauli y operator when the control bit is one",  function() {
             var x = jsqbits('|101>').controlledY(0, 2);
-            expect(x.amplitude('|001>')).toEqual(complex(0, -1));
-            expect(x.amplitude('|101>')).toEqual(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|001>')).toEql(complex(0, -1));
+            expect(x.amplitude('|101>')).toEql(jsqbits.Complex.ZERO);
         });
     });
 
@@ -209,13 +209,13 @@ describe('QState', function() {
         it("applies the hadamard operation", function() {
             var x = jsqbits('|000>').hadamard(2);
             expect(x.amplitude('|000>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(x.amplitude('|001>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|010>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|011>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|001>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|010>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|011>')).toEql(jsqbits.Complex.ZERO);
             expect(x.amplitude('|100>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(x.amplitude('|101>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|110>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|101>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|110>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|111>')).toEql(jsqbits.Complex.ZERO);
         });
 
         it("is it's own inverse", function() {
@@ -254,7 +254,7 @@ describe('QState', function() {
     describe('#controlledHadamard', function() {
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|001>').controlledHadamard(2, 0);
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("applies the Hadamard operator when the control bits are one", function() {
             var x = jsqbits('|111>').controlledHadamard({from: 1, to: 2}, 0);
@@ -293,7 +293,7 @@ describe('QState', function() {
     describe('#controlledXRotation', function() {
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|001>').controlledXRotation(2, 0, Math.PI/4);
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("rotates around the x axis when the control bit is one", function() {
             var x = jsqbits('|100>').controlledXRotation(2, 0, Math.PI/4);
@@ -322,7 +322,7 @@ describe('QState', function() {
     describe('#controlledYRotation', function() {
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|001>').controlledYRotation(2, 0, Math.PI/4);
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("rotates around the y axis when the control bit is one", function() {
             var x = jsqbits('|100>').controlledYRotation(2, 0, Math.PI/4);
@@ -352,7 +352,7 @@ describe('QState', function() {
     describe('#controlledZRotation', function() {
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|001>').controlledZRotation(2, 0, Math.PI/4);
-            expect(x).toEqual(jsqbits('|001>'));
+            expect(x).toEql(jsqbits('|001>'));
         });
         it("rotates around the z axis when the control bit is one", function() {
             var x = jsqbits('|100>').controlledZRotation(2, 0, Math.PI/4);
@@ -370,15 +370,15 @@ describe('QState', function() {
     describe('#cnot', function() {
         it("does nothing when the control bit is zero", function() {
             var x = jsqbits('|000>').cnot(2, 0);
-            expect(x).toEqual(jsqbits('|000>'));
+            expect(x).toEql(jsqbits('|000>'));
         });
         it("flips the target bit from zero to one when the control bit is one", function() {
             var x = jsqbits('|100>').cnot(2, 0);
-            expect(x).toEqual(jsqbits('|101>'));
+            expect(x).toEql(jsqbits('|101>'));
         });
         it("flips the target bit from one to zero when the control bit is one", function() {
             var x = jsqbits('|101>').cnot(2, 0);
-            expect(x).toEqual(jsqbits('|100>'));
+            expect(x).toEql(jsqbits('|100>'));
         });
     });
 
@@ -413,31 +413,31 @@ describe('QState', function() {
             var f = jasmine.createSpy('f').andReturn(0);
             var x = jsqbits('|00>').applyFunction(1, 0, f);
             expect(f).toHaveBeenCalled();
-            expect(x).toEqual(jsqbits('|00>'));
+            expect(x).toEql(jsqbits('|00>'));
         });
 
         it ("flips the target bit from zero to one when the function returns one", function() {
             var f = function(x) { return 1; };
             var x = jsqbits('|00>').applyFunction(1, 0, f);
-            expect(x).toEqual(jsqbits('|01>'));
+            expect(x).toEql(jsqbits('|01>'));
         });
 
         it ("flips the target bit from one to zero when the function returns one", function() {
             var f = function(x) { return 1; };
             var x = jsqbits('|01>').applyFunction(1, 0, f);
-            expect(x).toEqual(jsqbits('|00>'));
+            expect(x).toEql(jsqbits('|00>'));
         });
 
         it ("can flip multiple target bits", function() {
             var f = function(x) { return parseInt('101', 2); };
             var x = jsqbits('|1011>').applyFunction(3, {from: 0, to: 2}, f);
-            expect(x).toEqual(jsqbits('|1110>'));
+            expect(x).toEql(jsqbits('|1110>'));
         });
 
         it ("restricts flipping of target bits to those specified", function() {
             var f = function(x) { return parseInt('1101', 2); };
             var x = jsqbits('|1011>').applyFunction(3, {from: 0, to: 2}, f);
-            expect(x).toEqual(jsqbits('|1110>'));
+            expect(x).toEql(jsqbits('|1110>'));
         });
     });
 

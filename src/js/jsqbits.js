@@ -41,45 +41,45 @@ function jsqbits(bitString) {
 
     jsqbits.Complex = function(real, imaginary) {
         validateArgs(arguments, 2, 2, 'Must supply real and imaginary parameters to Complex()');
-        this.real = real;
-        this.imaginary = imaginary;
+        this.real = function() {return real;};
+        this.imaginary = function() {return imaginary;};
     };
 
     jsqbits.Complex.prototype.add = function(other) {
         validateArgs(arguments, 1, 1, 'Must 1 parameter to add()');
         if (typeof other === 'number') {
-            return new jsqbits.Complex(this.real + other, this.imaginary);
+            return new jsqbits.Complex(this.real() + other, this.imaginary());
         }
-        return new jsqbits.Complex(this.real + other.real, this.imaginary + other.imaginary);
+        return new jsqbits.Complex(this.real() + other.real(), this.imaginary() + other.imaginary());
     };
 
     jsqbits.Complex.prototype.multiply = function(other) {
         validateArgs(arguments, 1, 1, 'Must 1 parameter to multiply()');
         if (typeof other === 'number') {
-            return new jsqbits.Complex(this.real * other, this.imaginary * other);
+            return new jsqbits.Complex(this.real() * other, this.imaginary() * other);
         }
-        return new jsqbits.Complex(this.real * other.real - this.imaginary * other.imaginary,
-                    this.real * other.imaginary + this.imaginary * other.real);
+        return new jsqbits.Complex(this.real() * other.real() - this.imaginary() * other.imaginary(),
+                    this.real() * other.imaginary() + this.imaginary() * other.real());
     };
 
     jsqbits.Complex.prototype.toString = function() {
-        if (this.imaginary === 0) return "" + this.real;
+        if (this.imaginary() === 0) return "" + this.real();
         var imaginaryString;
-        if (this.imaginary === 1) {
+        if (this.imaginary() === 1) {
             imaginaryString = 'i';
-        } else if (this.imaginary === -1) {
+        } else if (this.imaginary() === -1) {
             imaginaryString = '-i';
         } else {
-            imaginaryString = this.imaginary + 'i';
+            imaginaryString = this.imaginary() + 'i';
         }
-        if (this.real === 0) return imaginaryString;
-        var sign = (this.imaginary < 0) ? "" : "+";
-        return this.real + sign + imaginaryString;
+        if (this.real() === 0) return imaginaryString;
+        var sign = (this.imaginary() < 0) ? "" : "+";
+        return this.real() + sign + imaginaryString;
     };
 
     jsqbits.Complex.prototype.format = function(options) {
-        var realValue = this.real;
-        var imaginaryValue = this.imaginary;
+        var realValue = this.real();
+        var imaginaryValue = this.imaginary();
         if (options && options.decimalPlaces != null) {
             var roundingMagnitude = Math.pow(10, options.decimalPlaces);
             realValue = Math.round(realValue * roundingMagnitude) /roundingMagnitude;
@@ -88,12 +88,12 @@ function jsqbits(bitString) {
         var objectToFormat = new jsqbits.Complex(realValue, imaginaryValue);
         var prefix = '';
         if (options && options.spacedSign) {
-            if (objectToFormat.real > 0) {
+            if (objectToFormat.real() > 0) {
                 prefix = ' + ';
-            } else if (objectToFormat.real < 0) {
+            } else if (objectToFormat.real() < 0) {
                 prefix = ' - ';
                 objectToFormat = objectToFormat.negate();
-            } else if (objectToFormat.imaginary >= 0) {
+            } else if (objectToFormat.imaginary() >= 0) {
                 prefix = ' + ';
             } else {
                 prefix = ' - ';
@@ -104,19 +104,24 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex.prototype.negate = function() {
-        return new jsqbits.Complex(-this.real, -this.imaginary);
+        return new jsqbits.Complex(-this.real(), -this.imaginary());
     };
 
     jsqbits.Complex.prototype.magnitude = function() {
-        return Math.sqrt(this.real * this.real + this.imaginary * this.imaginary);
+        return Math.sqrt(this.real() * this.real() + this.imaginary() * this.imaginary());
     };
 
     jsqbits.Complex.prototype.subtract = function(other) {
         validateArgs(arguments, 1, 1, 'Must 1 parameter to subtract()');
         if (typeof other === 'number') {
-            return new jsqbits.Complex(this.real - other, this.imaginary);
+            return new jsqbits.Complex(this.real() - other, this.imaginary());
         }
-        return new jsqbits.Complex(this.real - other.real, this.imaginary - other.imaginary);
+        return new jsqbits.Complex(this.real() - other.real(), this.imaginary() - other.imaginary());
+    };
+
+    jsqbits.Complex.prototype.eql = function(other) {
+        if (!(other instanceof jsqbits.Complex)) return false;
+        return this.real() === other.real() && this.imaginary() === other.imaginary();
     };
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
@@ -370,6 +375,20 @@ function jsqbits(bitString) {
         }
         nonZeroStates.sort();
         return nonZeroStates;
+    };
+
+    jsqbits.QState.prototype.eql = function(other) {
+        var stateString;
+        if (!other) return false;
+        if (!(other instanceof jsqbits.QState)) return false;
+        if (this.numBits !== other.numBits) return false;
+        for (stateString in this.amplitudes) {
+            if (!this.amplitudes[stateString].eql(other.amplitudes[stateString])) return false;
+        }
+        for (stateString in other.amplitudes) {
+            if (!this.amplitudes[stateString].eql(other.amplitudes[stateString])) return false;
+        }
+        return true;
     };
 
     jsqbits.QState.prototype.toString = function() {

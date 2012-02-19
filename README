@@ -12,6 +12,7 @@ TODO before first release:
 * Hide attributes of Complex and QState
 
 Nice to have:
+* Fix exceptions to follow a more standard pattern
 * Allow array of bits anywhere we currently allow a bit range (measure() and applyFunction())
 * Implementation of Simon's algorithm
 * Include a 'remainingQbits' field on measurement outcomes.

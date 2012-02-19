@@ -39,8 +39,8 @@ jsqbits('|01>')
     .result
 </code>
 
-<div class='section'>
-    <h2 id='jsqbits'>jsqbits.QState</h2>
+<div class='section'  id='jsqbits'>
+    <h2>jsqbits.QState</h2>
     <ul class="code index">
         <li>jsqbits(bitString)</li>
         <li>QState(numBits, amplitudes)</li>
@@ -93,10 +93,10 @@ new jsqbits.QState(4, a)
     </p>
 </div>
 
-<div class='section'>
-    <h2 id='singleQbitOperators'>Single qbit operators</h2>
+<div class='section' id='singleQbitOperators'>
     <ul class="code index">
         <li>x(targetBits)</li>
+        <h2>Single qbit operators</h2>
         <li>y(targetBits)</li>
         <li>z(targetBits)</li>
         <li>hadamard(targetBits)</li>
@@ -265,8 +265,8 @@ var state2 = state1.x(1);
     </table>
 </div>
 
-<div class='section'>
-    <h2 id='ControlledOperations'>Controlled operations</h2>
+<div class='section' id='ControlledOperations'>
+    <h2>Controlled operations</h2>
     <ul class="code index">
         <li>controlledX(controlBits, targetBits)</li>
         <li>controlledY(controlBits, targetBits)</li>
@@ -352,8 +352,8 @@ var state2 = state1.x(1);
     </table>
 </div>
 
-<div class='section'>
-    <h2 id='measurement'>Measurement</h2>
+<div class='section' id='measurement'>
+    <h2>Measurement</h2>
     <ul class="code index">
         <li>measure(targetBits)</li>
     </ul>
@@ -408,8 +408,8 @@ jsqbits("|100>").hadamard([0,1]).measure(0)
     </p>
 </div>
 
-<div class='section'>
-    <h2 id='toffoli'>Toffoli</h2>
+<div class='section' id='toffoli'>
+    <h2>Toffoli</h2>
     <ul class="code index">
         <li>toffoli(controlBit, controlBit, ..., targetBit)</li>
     </ul>
@@ -437,8 +437,8 @@ jsqbits("|100>").hadamard([0,1]).measure(0)
     </table>
 </div>
 
-<div class='section'>
-    <h2 id='applyFunction'>applyFunction</h2>
+<div class='section' id='applyFunction'>
+    <h2>applyFunction</h2>
     <ul class="code index">
         <li>applyFunction(inputBits, targetBits, functionToApply)</li>
     </ul>
@@ -470,8 +470,8 @@ jsqbits("|10110>")
     </p>
 </div>
 
-<div class='section'>
-    <h2 id='amplitude'>amplitude</h2>
+<div class='section' id='amplitude'>
+    <h2>amplitude</h2>
     <ul class="code index">
         <li>amplitude(basisState)</li>
     </ul>
@@ -480,8 +480,8 @@ jsqbits("|10110>")
     </p>
 </div>
 
-<div class='section'>
-    <h2 id='roundToZero' class='index'>jsqbits.roundToZero</h2>
+<div class='section' id='roundToZero'>
+    <h2 class='index'>jsqbits.roundToZero</h2>
     <p>
         Note that, while the QState values are displayed to four decimal places, they are maintained to
         the maximum precision provided by the JavaScript implementation of floating point numbers,
@@ -490,8 +490,8 @@ jsqbits("|10110>")
     </p>
 </div>
 
-<div class='section'>
-    <h2 id='complex' class="index">Complex</h2>
+<div class='section' id='complex'>
+    <h2 class="index">Complex</h2>
     <p>
         Given that the amplitudes of a quantum state are complex numbers,
         jsqbits has a Complex class.  The easiest way to create a complex number is using

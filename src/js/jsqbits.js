@@ -304,6 +304,7 @@ function jsqbits(bitString) {
         return result;
     };
 
+    // TODO: This needs some serious refactoring!!
     jsqbits.QState.prototype.applyFunction = function(inputBits, targetBits, functionToApply) {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and functionToApply to applyFunction().');
         var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
@@ -311,21 +312,23 @@ function jsqbits(bitString) {
         validateBitRangesAreDistinct(inputBitRange, targetBitRange);
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
-        var highBitMask = (1 << (inputBitRange.to+1)) - 1;
+        var highBitMask = (1 << (inputBitRange.to + 1)) - 1;
         var targetBitMask = ((1 << (1 + targetBitRange.to - targetBitRange.from)) - 1) << targetBitRange.from;
 
-        for(var stateString in this.amplitudes) {
-            var state = parseInt(stateString, 10);
-            if (statesThatCanBeSkipped[state]) continue;
-            var input = (state & highBitMask) >> inputBitRange.from;
-            var result = (functionToApply(input) << targetBitRange.from) & targetBitMask;
-            var resultingState = state^result;
-            if (resultingState === state) {
-                sparseAssign(newAmplitudes, state, this.amplitude(state));
-            } else {
-                statesThatCanBeSkipped[resultingState] = true;
-                sparseAssign(newAmplitudes, state, this.amplitude(resultingState));
-                sparseAssign(newAmplitudes, resultingState, this.amplitude(state));
+        for (var stateString in this.amplitudes) {
+            if (this.amplitudes.hasOwnProperty(stateString)) {
+                var state = parseInt(stateString, 10);
+                if (statesThatCanBeSkipped[state]) continue;
+                var input = (state & highBitMask) >> inputBitRange.from;
+                var result = (functionToApply(input) << targetBitRange.from) & targetBitMask;
+                var resultingState = state ^ result;
+                if (resultingState === state) {
+                    sparseAssign(newAmplitudes, state, this.amplitude(state));
+                } else {
+                    statesThatCanBeSkipped[resultingState] = true;
+                    sparseAssign(newAmplitudes, state, this.amplitude(resultingState));
+                    sparseAssign(newAmplitudes, resultingState, this.amplitude(state));
+                }
             }
         }
         return new jsqbits.QState(this.numBits, newAmplitudes);
@@ -333,6 +336,7 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.random = Math.random;
 
+    // TODO: Refactor this method!
     jsqbits.QState.prototype.measure = function(bits) {
         validateArgs(arguments, 1, 1, 'Must supply bits to be measured to measure().');
         var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
@@ -341,11 +345,13 @@ function jsqbits(bitString) {
         var stateString;
         var accumulativeSquareAmplitudeMagnitude = 0;
         for (stateString in this.amplitudes) {
-            var magnitude = this.amplitudes[stateString].magnitude();
-            accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
-            randomStateString = stateString;
-            if (accumulativeSquareAmplitudeMagnitude > randomNumber) {
-                break;
+            if (this.amplitudes.hasOwnProperty(stateString)) {
+                var magnitude = this.amplitudes[stateString].magnitude();
+                accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
+                randomStateString = stateString;
+                if (accumulativeSquareAmplitudeMagnitude > randomNumber) {
+                    break;
+                }
             }
         }
         var randomState = parseInt(randomStateString, 10);
@@ -354,11 +360,13 @@ function jsqbits(bitString) {
         var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
 
         var newAmplitudes = [];
-        for(stateString in this.amplitudes) {
-            var state = parseInt(stateString, 10);
-            var comparisonState = (state & highBitMask) >> bitRange.from;
-            if (comparisonState === measurementOutcome) {
-                newAmplitudes[state] = this.amplitudes[state];
+        for (stateString in this.amplitudes) {
+            if (this.amplitudes.hasOwnProperty(stateString)) {
+                var state = parseInt(stateString, 10);
+                var comparisonState = (state & highBitMask) >> bitRange.from;
+                if (comparisonState === measurementOutcome) {
+                    newAmplitudes[state] = this.amplitudes[state];
+                }
             }
         }
 
@@ -367,15 +375,24 @@ function jsqbits(bitString) {
     };
 
 
-    jsqbits.QState.prototype.sortedNonZeroStates = function() {
-        var nonZeroStates, stateString;
-        nonZeroStates = [];
-        for (stateString in this.amplitudes) {
-            nonZeroStates.push(stateString);
-        }
-        nonZeroStates.sort();
-        return nonZeroStates;
-    };
+    jsqbits.QState.prototype.sortedNonZeroStates = (function() {
+        var compareNuumbers = function(a, b)
+        {
+            return a - b;
+        };
+
+        return function() {
+            var nonZeroStates, stateString;
+            nonZeroStates = [];
+            for (stateString in this.amplitudes) {
+                if (this.amplitudes.hasOwnProperty(stateString)) {
+                    nonZeroStates.push(stateString);
+                }
+            }
+            nonZeroStates.sort(compareNuumbers);
+            return nonZeroStates;
+        };
+    })();
 
     jsqbits.QState.prototype.eql = function(other) {
         var stateString;
@@ -383,10 +400,12 @@ function jsqbits(bitString) {
         if (!(other instanceof jsqbits.QState)) return false;
         if (this.numBits !== other.numBits) return false;
         for (stateString in this.amplitudes) {
-            if (!this.amplitudes[stateString].eql(other.amplitudes[stateString])) return false;
+            if (this.amplitudes.hasOwnProperty(stateString) &&
+                !this.amplitudes[stateString].eql(other.amplitudes[stateString])) return false;
         }
         for (stateString in other.amplitudes) {
-            if (!this.amplitudes[stateString].eql(other.amplitudes[stateString])) return false;
+            if (other.amplitudes.hasOwnProperty(stateString) &&
+                !this.amplitudes[stateString].eql(other.amplitudes[stateString])) return false;
         }
         return true;
     };
@@ -395,8 +414,6 @@ function jsqbits(bitString) {
         var stateString, result, formatFlags, nonZeroStates, state, i;
         result = '';
         formatFlags = {decimalPlaces: 4};
-        // Not sure if for-in loops are supposed to iterate in order over arrays, but they don't seem to on IE7.
-        // So, we need a sorted array of indexes.
         nonZeroStates = this.sortedNonZeroStates();
         for (i = 0; i < nonZeroStates.length; i++) {
             if (result !== '') formatFlags.spacedSign = true;
@@ -422,13 +439,17 @@ function jsqbits(bitString) {
     var normalize = function(amplitudes) {
         var sumOfMagnitudeSqaures = 0;
         var state;
-        for(state in amplitudes) {
-            var magnitude = amplitudes[state].magnitude();
-            sumOfMagnitudeSqaures += magnitude * magnitude;
+        for (state in amplitudes) {
+            if (amplitudes.hasOwnProperty(state)) {
+                var magnitude = amplitudes[state].magnitude();
+                sumOfMagnitudeSqaures += magnitude * magnitude;
+            }
         }
         var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
-        for(state in amplitudes) {
-            amplitudes[state] = amplitudes[state].multiply(scale);
+        for (state in amplitudes) {
+            if (amplitudes.hasOwnProperty(state)) {
+                amplitudes[state] = amplitudes[state].multiply(scale);
+            }
         }
     };
 
@@ -494,6 +515,7 @@ function jsqbits(bitString) {
         return state;
     };
 
+    // TODO: Needs refactoring!
     var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
         var newAmplitudes = [];
         var statesThatCanBeSkipped = [];
@@ -507,18 +529,20 @@ function jsqbits(bitString) {
         }
 
         for (var stateString in qState.amplitudes) {
-            var state = parseInt(stateString, 10);
-            if (statesThatCanBeSkipped[state]) continue;
-            statesThatCanBeSkipped[state ^ targetBitMask] = true;
-            var indexOf1 = state | targetBitMask;
-            var indexOf0 = indexOf1 - targetBitMask;
-            if (controlBits == null || ((state & controlBitMask) === controlBitMask)) {
-                var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
-                sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
-                sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
-            } else {
-                sparseAssign(newAmplitudes, indexOf0, qState.amplitude(indexOf0));
-                sparseAssign(newAmplitudes, indexOf1, qState.amplitude(indexOf1));
+            if (qState.amplitudes.hasOwnProperty(stateString)) {
+                var state = parseInt(stateString, 10);
+                if (statesThatCanBeSkipped[state]) continue;
+                statesThatCanBeSkipped[state ^ targetBitMask] = true;
+                var indexOf1 = state | targetBitMask;
+                var indexOf0 = indexOf1 - targetBitMask;
+                if (controlBits == null || ((state & controlBitMask) === controlBitMask)) {
+                    var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
+                    sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
+                    sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
+                } else {
+                    sparseAssign(newAmplitudes, indexOf0, qState.amplitude(indexOf0));
+                    sparseAssign(newAmplitudes, indexOf1, qState.amplitude(indexOf1));
+                }
             }
         }
         return new jsqbits.QState(qState.numBits, newAmplitudes);

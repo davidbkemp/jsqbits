@@ -154,7 +154,7 @@ function jsqbits(bitString) {
     jsqbits.QState.fromBits = function(bitString) {
         validateArgs(arguments, 1, 1, 'Must supply a bit string');
         var parsedBitString = parseBitString(bitString);
-        var amplitudes = [];
+        var amplitudes = {};
         amplitudes[parsedBitString.value] = complex(1,0);
         return new jsqbits.QState(parsedBitString.length, amplitudes);
     };
@@ -310,8 +310,8 @@ function jsqbits(bitString) {
         var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
         var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
         validateBitRangesAreDistinct(inputBitRange, targetBitRange);
-        var newAmplitudes = [];
-        var statesThatCanBeSkipped = [];
+        var newAmplitudes = {};
+        var statesThatCanBeSkipped = {};
         var highBitMask = (1 << (inputBitRange.to + 1)) - 1;
         var targetBitMask = ((1 << (1 + targetBitRange.to - targetBitRange.from)) - 1) << targetBitRange.from;
 
@@ -359,7 +359,7 @@ function jsqbits(bitString) {
         var highBitMask = (1 << (bitRange.to+1)) - 1;
         var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
 
-        var newAmplitudes = [];
+        var newAmplitudes = {};
         for (stateString in this.amplitudes) {
             if (this.amplitudes.hasOwnProperty(stateString)) {
                 var state = parseInt(stateString, 10);
@@ -517,8 +517,8 @@ function jsqbits(bitString) {
 
     // TODO: Needs refactoring!
     var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
-        var newAmplitudes = [];
-        var statesThatCanBeSkipped = [];
+        var newAmplitudes = {};
+        var statesThatCanBeSkipped = {};
         var targetBitMask = 1 << targetBit;
         var controlBitMask = null;
         if (controlBits) {

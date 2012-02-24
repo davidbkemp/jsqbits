@@ -30,9 +30,11 @@
         });
         indexItems.sort();
         for (var i in indexItems) {
-            var indexItem = indexItems[i];
-            var element = $('<a>').attr('href', '#' + indexMap[indexItem]).text(indexItem + ' ');
-            $('#tableOfContents').append(element);
+            if (indexItems.hasOwnProperty(i)) {
+                var indexItem = indexItems[i];
+                var element = $('<a>').attr('href', '#' + indexMap[indexItem]).text(indexItem + ' ');
+                $('#tableOfContents').append(element);
+            }
         }
     });
 })(jQuery);

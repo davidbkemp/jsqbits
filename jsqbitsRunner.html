@@ -3,30 +3,7 @@
     <title>jsqbits runner</title>
     <script type="text/javascript" src="doc/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="src/js/jsqbits.js"></script>
-    <script type="text/javascript">
-        ALL = jsqbits.ALL;
-        $(function() {
-            $('#run').click(function() {
-                $('#result').fadeOut(function() {
-                    $('#result').text('');
-                    try {
-                        var result = eval($('#code').get(0).value);
-                        if ((typeof result === 'object') && result.toString) {
-                            result = result.toString();
-                        } else if (typeof result === 'number') {
-                            result = '' + result;
-                        }
-                    } catch (e) {
-                        var result = e.message ? e.message : e;
-                    }
-                    if (result) {
-                        $('#result').text(result);
-                    }
-                    $('#result').fadeIn();
-                });
-            });
-        });
-    </script>
+    <script type="text/javascript" src="doc/jsqbitsRunner.js"></script>
 </head>
 <body>
 <h1>jsqbits runner</h1>

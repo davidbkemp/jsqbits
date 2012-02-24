@@ -9,8 +9,6 @@ Try it out online using the jsqbits runner:
 http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html
 
 TODO before first release:
-* Use toFixed
-* Consider making amplitudes an object instead of an array.
 * Hide attributes of QState
 
 Nice to have:

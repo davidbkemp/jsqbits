@@ -16,6 +16,10 @@ describe('QState', function() {
            var x = jsqbits('|100>').hadamard(2);
            expect(x.toString()).toEqual('0.7071 |000> - 0.7071 |100>');
         });
+        it('will omit the amplitude when it is close to one', function() {
+            var x = jsqbits('|000>').rotateX(1, 0.1).rotateX(1, -0.1);
+            expect(x.toString()).toEqual('|000>');
+        });
     });
 
     describe('#controlledApplicatinOfqBitOperator', function(){

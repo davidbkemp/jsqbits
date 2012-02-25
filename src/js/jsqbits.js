@@ -419,7 +419,7 @@ function jsqbits(bitString) {
             if (result !== '') formatFlags.spacedSign = true;
             stateString = nonZeroStates[i];
             state = padState(parseInt(stateString, 10).toString(2), this.numBits);
-            result = result + this.amplitudes[stateString].format(formatFlags) + " |" + state + ">";
+            result = result + formatAmplitude(this, stateString, formatFlags) + "|" + state + ">";
         }
         return result;
     };
@@ -518,6 +518,10 @@ function jsqbits(bitString) {
         }
         return state;
     };
+    var formatAmplitude = function(qstate, stateString, formatFlags) {
+        var amplitude = qstate.amplitudes[stateString].format(formatFlags);
+        return amplitude === '1' ? '' : amplitude + " ";
+    }
 
     // TODO: Needs refactoring!
     var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {

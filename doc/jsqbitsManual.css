@@ -24,10 +24,14 @@ table.samples td {
     background-color: yellow;
 }
 
-#topErrorMessage, #topWarningMessage {
-    float: right;
+.success {
+    background-color: #90ee90;
 }
 
 #tableOfContents a {
     padding-right: 0.5em;
+}
+
+#validateCodeSamplesButton {
+    font-size: xx-small;
 }

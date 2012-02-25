@@ -8,13 +8,6 @@
     <script src="jsqbitsManual.js"></script>
 </head>
 <body>
-<p id="topErrorMessage" class="error" style="display: none;">
-    Automatic error checking of code samples has picked up some errors (highlighted in red).
-</p>
-<p id="topWarningMessage" class="warning">
-    Performing automatic error checking of code samples.
-    If you can still see this message, then you probably have JavaScript disabled.
-</p>
 <h1>jsqbits User Manual</h1>
 
 <p id='tableOfContents'>
@@ -552,6 +545,18 @@ jsqbits("|10110>")
         </tbody>
     </table>
 </div>
+<p>
+    <button id='validateCodeSamplesButton'>Validate code samples</button>
+    <span id="codeValidationFailure" class="error validationMessage" style="display: none;">
+        Automatic error checking of code samples has picked up some errors (highlighted in red).
+    </span>
+    <span id="codeValidationInProgress" class="warning validationMessage" style="display: none;">
+        Unexpected error occurred: Unable to validate code!
+    </span>
+    <span id="codeValidationSuccess" class="success validationMessage" style="display: none;">
+        Code samples validated and found to be OK.
+    </span>
+</p>
 <p>
 <a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">jsqbits User Manual</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/davidbkemp" property="cc:attributionName" rel="cc:attributionURL">David Kemp</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.
 </p>

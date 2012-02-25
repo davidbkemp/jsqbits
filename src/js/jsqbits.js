@@ -103,6 +103,14 @@ function jsqbits(bitString) {
         throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";
     };
 
+    var padState = function(state, numBits) {
+        var paddingLength = numBits - state.length;
+        for (var i = 0; i < paddingLength; i++) {
+            state = '0' + state;
+        }
+        return state;
+    };
+
     jsqbits.Complex = function(real, imaginary) {
         validateArgs(arguments, 2, 2, 'Must supply real and imaginary parameters to Complex()');
         this.real = function() {return real;};
@@ -212,14 +220,37 @@ function jsqbits(bitString) {
         return "{result: " + this.result + ", newState: " + this.newState + "}";
     };
 
+    jsqbits.StateWithAmplitude = function(numBits, index, amplitude) {
+        this.numBits = numBits;
+        this.index = index;
+        this.amplitude = amplitude;
+    };
+
+    jsqbits.StateWithAmplitude.prototype.asNumber = function() {
+        return parseInt(this.index, 10);
+    };
+
+    jsqbits.StateWithAmplitude.prototype.asBitString = function() {
+        return padState(parseInt(this.index, 10).toString(2), this.numBits);
+    };
+
     jsqbits.QState = function(numBits, amplitudes) {
         validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
         this.numBits = function () {
             return numBits;
         };
 
+        // TODO Hide this property.
         this.amplitudes = amplitudes;
 
+        this.each = function(callBack) {
+            validateArgs(arguments, 1, 1, "Must supply a callback function to each()");
+            for (var index in amplitudes) {
+                if (amplitudes.hasOwnProperty(index)) {
+                    callBack(new jsqbits.StateWithAmplitude(numBits, index, amplitudes[index]));
+                }
+            }
+        };
     };
 
     jsqbits.QState.fromBits = function(bitString) {
@@ -562,14 +593,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.QState.prototype.toString = (function() {
-        var padState = function(state, numBits) {
-            var paddingLength = numBits - state.length;
-            for (var i = 0; i < paddingLength; i++) {
-                state = '0' + state;
-            }
-            return state;
-        };
-        
+
         var formatAmplitude = function(qstate, stateString, formatFlags) {
             var amplitude = qstate.amplitudes[stateString].format(formatFlags);
             return amplitude === '1' ? '' : amplitude + " ";

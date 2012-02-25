@@ -445,6 +445,32 @@ describe('QState', function() {
         });
     });
 
+    describe('#each', function() {
+        it('should invoke a callback with a StateWithAmplitude', function(){
+            var callBack = jasmine.createSpy('callBack');
+            jsqbits('|10>').hadamard(1).each(callBack);
+            expect(callBack).toHaveBeenCalled();
+            expect(callBack.argsForCall.length).toEql(2);
+            var stateWithAmplitude0 = callBack.argsForCall[0][0];
+            var stateWithAmplitude2 = callBack.argsForCall[1][0];
+            var index0 = stateWithAmplitude0.index;
+            expect(index0 === '0' || index0 === '2').toBeTruthy();
+            if(index0 === '2') {
+                var tmp = stateWithAmplitude0;
+                stateWithAmplitude0 = stateWithAmplitude2;
+                stateWithAmplitude2 = tmp;
+            }
+            expect(stateWithAmplitude0.index).toBe('0');
+            expect(stateWithAmplitude2.index).toBe('2');
+            expect(stateWithAmplitude0.amplitude).toBeApprox(complex(Math.sqrt(0.5),0));
+            expect(stateWithAmplitude2.amplitude).toBeApprox(complex(-Math.sqrt(0.5),0));
+            expect(stateWithAmplitude0.asNumber()).toBe(0);
+            expect(stateWithAmplitude2.asNumber()).toBe(2);
+            expect(stateWithAmplitude0.asBitString()).toBe('00');
+            expect(stateWithAmplitude2.asBitString()).toBe('10');
+        });
+    });
+
     describe('#measure', function(){
         var bitRange = {from:1, to:2};
         var stateToMeasure;

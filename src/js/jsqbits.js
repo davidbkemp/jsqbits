@@ -24,6 +24,10 @@ function jsqbits(bitString) {
 
 (function() {
 
+    var isNull = function(x) {
+        return x === null || x === undefined;
+    };
+
     var validateArgs = function(args, minimum) {
         var maximum = 10000;
         var message = 'Must supply at least ' + minimum + ' parameters.';
@@ -37,6 +41,66 @@ function jsqbits(bitString) {
         if (args.length < minimum || args.length > maximum) {
             throw message;
         }
+    };
+
+    var parseBitString = function(bitString) {
+        // Strip optional 'ket' characters to support |0101>
+        bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
+        return {value: parseInt(bitString, 2), length: bitString.length};
+    };
+
+    var sparseAssign = function(array, index, value) {
+        // Try to avoid assigning values and try to make zero exactly zero.
+        if (value.magnitude() > jsqbits.roundToZero) {
+            array[index] = value;
+        }
+    };
+
+    var convertBitQualifierToBitRange = function(bits, numBits) {
+        if (isNull(bits)) {
+            throw "bit qualification must be supplied";
+        } else if (bits === jsqbits.ALL) {
+            return {from: 0, to: numBits - 1};
+        } else if (typeof bits === 'number') {
+            return {from: bits, to: bits};
+        } else if (!isNull(bits.from) && !isNull(bits.to)) {
+            if (bits.from > bits.to) {
+                throw "bit range must have 'from' being less than or equal to 'to'";
+            }
+            return bits;
+        } else {
+            throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
+        }
+    };
+
+    var bitRangeAsArray = function(low, high) {
+        if (low > high) {
+            throw "bit range must have 'from' being less than or equal to 'to'";
+        }
+        var result = [];
+        for (var i = low; i <= high; i++) {
+            result.push(i);
+        }
+        return result;
+    };
+
+    var convertBitQualifierToBitArray = function(bits, numBits) {
+        if (isNull(bits)) {
+            throw "bit qualification must be supplied";
+        }
+        if (bits instanceof Array) {
+            return bits;
+        }
+        if (typeof bits === 'number') {
+            return [bits];
+        }
+        if (bits === jsqbits.ALL) {
+            return bitRangeAsArray(0, numBits - 1);
+        }
+        if (!isNull(bits.from) && !isNull(bits.to)) {
+            return bitRangeAsArray(bits.from, bits.to);
+        }
+        throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";
     };
 
     jsqbits.Complex = function(real, imaginary) {
@@ -131,6 +195,9 @@ function jsqbits(bitString) {
         return new Complex(real, imaginary);
     };
 
+    var Complex = jsqbits.Complex;
+    var complex = jsqbits.complex;
+   
     jsqbits.ALL = 'ALL';
 
     // Amplitudes with magnitudes smaller than jsqbits.roundToZero this are rounded off to zero.
@@ -165,14 +232,17 @@ function jsqbits(bitString) {
         return this.amplitudes[numericIndex] || Complex.ZERO;
     };
 
-    jsqbits.QState.prototype.controlledHadamard = function(controlBits, targetBits) {
-        validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledHadamard()');
-        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
-            var newAmplitudeOf0 = amplitudeOf0.add(amplitudeOf1).multiply(squareRootOfOneHalf);
-            var newAmplitudeOf1 = amplitudeOf0.subtract(amplitudeOf1).multiply(squareRootOfOneHalf);
-            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
-        });
-    };
+    jsqbits.QState.prototype.controlledHadamard = (function() {
+        var squareRootOfOneHalf = complex(1 / Math.sqrt(2), 0);
+        return function(controlBits, targetBits) {
+            validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledHadamard()');
+            return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1) {
+                var newAmplitudeOf0 = amplitudeOf0.add(amplitudeOf1).multiply(squareRootOfOneHalf);
+                var newAmplitudeOf1 = amplitudeOf0.subtract(amplitudeOf1).multiply(squareRootOfOneHalf);
+                return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
+            });
+        };
+    })();
 
     jsqbits.QState.prototype.hadamard = function(targetBits) {
         validateArgs(arguments, 1, 1, 'Must supply target bits to hadamard() as either a single index or a range.');
@@ -288,92 +358,169 @@ function jsqbits(bitString) {
         return this.controlledX(controlBits, targetBit);
     };
 
-    jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = function(controlBits, targetBits, qbitFunction) {
-        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and qbitFunction to controlledApplicatinOfqBitOperator().');
-        var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits);
-        var controlBitArray = null;
-        if (!isNull(controlBits)) {
-            controlBitArray = convertBitQualifierToBitArray(controlBits, this.numBits);
-            validateTargetBitRangesDontOverlap(controlBitArray, targetBitArray);
-        }
-        var result = this;
-        for (var i = 0; i < targetBitArray.length; i++) {
-            var targetBit = targetBitArray[i];
-            result = applyToOneBit(controlBitArray, targetBit, qbitFunction, result);
-        }
-        return result;
-    };
+    jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = (function() {
 
-    // TODO: This needs some serious refactoring!!
-    jsqbits.QState.prototype.applyFunction = function(inputBits, targetBits, functionToApply) {
-        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and functionToApply to applyFunction().');
-        var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
-        var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
-        validateBitRangesAreDistinct(inputBitRange, targetBitRange);
-        var newAmplitudes = {};
-        var statesThatCanBeSkipped = {};
-        var highBitMask = (1 << (inputBitRange.to + 1)) - 1;
-        var targetBitMask = ((1 << (1 + targetBitRange.to - targetBitRange.from)) - 1) << targetBitRange.from;
+        var validateTargetBitRangesDontOverlap = function(controlBits, targetBits) {
+            if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
+                throw "control and target bits must not be the same nor overlap";
+            }
+        };
 
-        for (var stateString in this.amplitudes) {
-            if (this.amplitudes.hasOwnProperty(stateString)) {
-                var state = parseInt(stateString, 10);
-                if (statesThatCanBeSkipped[state]) continue;
-                var input = (state & highBitMask) >> inputBitRange.from;
-                var result = (functionToApply(input) << targetBitRange.from) & targetBitMask;
-                var resultingState = state ^ result;
-                if (resultingState === state) {
-                    sparseAssign(newAmplitudes, state, this.amplitude(state));
-                } else {
-                    statesThatCanBeSkipped[resultingState] = true;
-                    sparseAssign(newAmplitudes, state, this.amplitude(resultingState));
-                    sparseAssign(newAmplitudes, resultingState, this.amplitude(state));
+        // TODO: Needs refactoring!
+        var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
+            var newAmplitudes = {};
+            var statesThatCanBeSkipped = {};
+            var targetBitMask = 1 << targetBit;
+            var controlBitMask = null;
+            if (controlBits) {
+                controlBitMask = 0;
+                for (var i = 0; i < controlBits.length; i++) {
+                    controlBitMask += (1 << controlBits[i]);
                 }
             }
-        }
-        return new jsqbits.QState(this.numBits, newAmplitudes);
-    };
+
+            for (var stateString in qState.amplitudes) {
+                if (qState.amplitudes.hasOwnProperty(stateString)) {
+                    var state = parseInt(stateString, 10);
+                    if (statesThatCanBeSkipped[state]) continue;
+                    statesThatCanBeSkipped[state ^ targetBitMask] = true;
+                    var indexOf1 = state | targetBitMask;
+                    var indexOf0 = indexOf1 - targetBitMask;
+                    if (isNull(controlBits) || ((state & controlBitMask) === controlBitMask)) {
+                        var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
+                        sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
+                        sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
+                    } else {
+                        sparseAssign(newAmplitudes, indexOf0, qState.amplitude(indexOf0));
+                        sparseAssign(newAmplitudes, indexOf1, qState.amplitude(indexOf1));
+                    }
+                }
+            }
+            return new jsqbits.QState(qState.numBits, newAmplitudes);
+        };
+
+        return function(controlBits, targetBits, qbitFunction) {
+            validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and qbitFunction to controlledApplicatinOfqBitOperator().');
+            var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits);
+            var controlBitArray = null;
+            if (!isNull(controlBits)) {
+                controlBitArray = convertBitQualifierToBitArray(controlBits, this.numBits);
+                validateTargetBitRangesDontOverlap(controlBitArray, targetBitArray);
+            }
+            var result = this;
+            for (var i = 0; i < targetBitArray.length; i++) {
+                var targetBit = targetBitArray[i];
+                result = applyToOneBit(controlBitArray, targetBit, qbitFunction, result);
+            }
+            return result;
+        };
+    })();
+
+    // TODO: This needs some serious refactoring!!
+    jsqbits.QState.prototype.applyFunction = (function() {
+
+        var validateBitRangesAreDistinct = function(controlBits, targetBits) {
+            // TODO: Find out if it would sometimes be faster to put one of the bit collections into a hash-set first.
+            // Also consider allowing validation to be disabled.
+            for (var i = 0; i < controlBits.length; i++) {
+                var controlBit = controlBits[i];
+                for (var j = 0; j < targetBits.length; i++) {
+                    if (controlBit === targetBits[j]) {
+                        throw "control and target bits must not be the same nor overlap";
+                    }
+                }
+            }
+        };
+
+        return function(inputBits, targetBits, functionToApply) {
+            validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and functionToApply to applyFunction().');
+            var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
+            var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
+            validateBitRangesAreDistinct(inputBitRange, targetBitRange);
+            var newAmplitudes = {};
+            var statesThatCanBeSkipped = {};
+            var highBitMask = (1 << (inputBitRange.to + 1)) - 1;
+            var targetBitMask = ((1 << (1 + targetBitRange.to - targetBitRange.from)) - 1) << targetBitRange.from;
+
+            for (var stateString in this.amplitudes) {
+                if (this.amplitudes.hasOwnProperty(stateString)) {
+                    var state = parseInt(stateString, 10);
+                    if (statesThatCanBeSkipped[state]) continue;
+                    var input = (state & highBitMask) >> inputBitRange.from;
+                    var result = (functionToApply(input) << targetBitRange.from) & targetBitMask;
+                    var resultingState = state ^ result;
+                    if (resultingState === state) {
+                        sparseAssign(newAmplitudes, state, this.amplitude(state));
+                    } else {
+                        statesThatCanBeSkipped[resultingState] = true;
+                        sparseAssign(newAmplitudes, state, this.amplitude(resultingState));
+                        sparseAssign(newAmplitudes, resultingState, this.amplitude(state));
+                    }
+                }
+            }
+            return new jsqbits.QState(this.numBits, newAmplitudes);
+        };
+    })();
 
     jsqbits.QState.prototype.random = Math.random;
 
     // TODO: Refactor this method!
-    jsqbits.QState.prototype.measure = function(bits) {
-        validateArgs(arguments, 1, 1, 'Must supply bits to be measured to measure().');
-        var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
-        var randomNumber = this.random();
-        var randomStateString;
-        var stateString;
-        var accumulativeSquareAmplitudeMagnitude = 0;
-        for (stateString in this.amplitudes) {
-            if (this.amplitudes.hasOwnProperty(stateString)) {
-                var magnitude = this.amplitudes[stateString].magnitude();
-                accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
-                randomStateString = stateString;
-                if (accumulativeSquareAmplitudeMagnitude > randomNumber) {
-                    break;
+    jsqbits.QState.prototype.measure = (function(bits) {
+
+        var normalize = function(amplitudes) {
+            var sumOfMagnitudeSqaures = 0;
+            var state;
+            for (state in amplitudes) {
+                if (amplitudes.hasOwnProperty(state)) {
+                    var magnitude = amplitudes[state].magnitude();
+                    sumOfMagnitudeSqaures += magnitude * magnitude;
                 }
             }
-        }
-        var randomState = parseInt(randomStateString, 10);
-
-        var highBitMask = (1 << (bitRange.to+1)) - 1;
-        var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
-
-        var newAmplitudes = {};
-        for (stateString in this.amplitudes) {
-            if (this.amplitudes.hasOwnProperty(stateString)) {
-                var state = parseInt(stateString, 10);
-                var comparisonState = (state & highBitMask) >> bitRange.from;
-                if (comparisonState === measurementOutcome) {
-                    newAmplitudes[state] = this.amplitudes[state];
+            var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
+            for (state in amplitudes) {
+                if (amplitudes.hasOwnProperty(state)) {
+                    amplitudes[state] = amplitudes[state].multiply(scale);
                 }
             }
-        }
+        };
 
-        normalize(newAmplitudes);
-        return new jsqbits.Measurement(measurementOutcome, new jsqbits.QState(this.numBits, newAmplitudes));
-    };
+        return function(bits) {
+            validateArgs(arguments, 1, 1, 'Must supply bits to be measured to measure().');
+            var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
+            var randomNumber = this.random();
+            var randomStateString;
+            var stateString;
+            var accumulativeSquareAmplitudeMagnitude = 0;
+            for (stateString in this.amplitudes) {
+                if (this.amplitudes.hasOwnProperty(stateString)) {
+                    var magnitude = this.amplitudes[stateString].magnitude();
+                    accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
+                    randomStateString = stateString;
+                    if (accumulativeSquareAmplitudeMagnitude > randomNumber) {
+                        break;
+                    }
+                }
+            }
+            var randomState = parseInt(randomStateString, 10);
 
+            var highBitMask = (1 << (bitRange.to + 1)) - 1;
+            var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
+
+            var newAmplitudes = {};
+            for (stateString in this.amplitudes) {
+                if (this.amplitudes.hasOwnProperty(stateString)) {
+                    var state = parseInt(stateString, 10);
+                    var comparisonState = (state & highBitMask) >> bitRange.from;
+                    if (comparisonState === measurementOutcome) {
+                        newAmplitudes[state] = this.amplitudes[state];
+                    }
+                }
+            }
+
+            normalize(newAmplitudes);
+            return new jsqbits.Measurement(measurementOutcome, new jsqbits.QState(this.numBits, newAmplitudes));
+        };
+    })();
 
     jsqbits.QState.prototype.sortedNonZeroStates = (function() {
         var compareNuumbers = function(a, b)
@@ -410,168 +557,32 @@ function jsqbits(bitString) {
         return true;
     };
 
-    jsqbits.QState.prototype.toString = function() {
-        var stateString, result, formatFlags, nonZeroStates, state, i;
-        result = '';
-        formatFlags = {decimalPlaces: 4};
-        nonZeroStates = this.sortedNonZeroStates();
-        for (i = 0; i < nonZeroStates.length; i++) {
-            if (result !== '') formatFlags.spacedSign = true;
-            stateString = nonZeroStates[i];
-            state = padState(parseInt(stateString, 10).toString(2), this.numBits);
-            result = result + formatAmplitude(this, stateString, formatFlags) + "|" + state + ">";
-        }
-        return result;
-    };
-
-    var Complex = jsqbits.Complex;
-
-    var complex = jsqbits.complex;
-
-    var squareRootOfOneHalf = complex(1/Math.sqrt(2),0);
-
-    var isNull = function(x) {
-        return x === null || null === undefined;
-    };
-
-    var parseBitString = function(bitString) {
-        // Strip optional 'ket' characters to support |0101>
-        bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
-        return {value: parseInt(bitString, 2), length: bitString.length};
-    };
-
-    var normalize = function(amplitudes) {
-        var sumOfMagnitudeSqaures = 0;
-        var state;
-        for (state in amplitudes) {
-            if (amplitudes.hasOwnProperty(state)) {
-                var magnitude = amplitudes[state].magnitude();
-                sumOfMagnitudeSqaures += magnitude * magnitude;
+    jsqbits.QState.prototype.toString = (function() {
+        var padState = function(state, numBits) {
+            var paddingLength = numBits - state.length;
+            for (var i = 0; i < paddingLength; i++) {
+                state = '0' + state;
             }
-        }
-        var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
-        for (state in amplitudes) {
-            if (amplitudes.hasOwnProperty(state)) {
-                amplitudes[state] = amplitudes[state].multiply(scale);
+            return state;
+        };
+        
+        var formatAmplitude = function(qstate, stateString, formatFlags) {
+            var amplitude = qstate.amplitudes[stateString].format(formatFlags);
+            return amplitude === '1' ? '' : amplitude + " ";
+        };
+
+        return function() {
+            var stateString, result, formatFlags, nonZeroStates, state, i;
+            result = '';
+            formatFlags = {decimalPlaces: 4};
+            nonZeroStates = this.sortedNonZeroStates();
+            for (i = 0; i < nonZeroStates.length; i++) {
+                if (result !== '') formatFlags.spacedSign = true;
+                stateString = nonZeroStates[i];
+                state = padState(parseInt(stateString, 10).toString(2), this.numBits);
+                result = result + formatAmplitude(this, stateString, formatFlags) + "|" + state + ">";
             }
-        }
-    };
-
-    var sparseAssign = function(array, index, value) {
-        // Try to avoid assigning values and try to make zero exactly zero.
-        if (value.magnitude() > jsqbits.roundToZero) {
-            array[index] = value;
-        }
-    };
-
-    var convertBitQualifierToBitRange = function(bits, numBits) {
-        if (isNull(bits)) {
-            throw "bit qualification must be supplied";
-        } else if (bits === jsqbits.ALL) {
-            return {from: 0, to: numBits - 1};
-        } else if (typeof bits === 'number') {
-            return {from: bits, to: bits};
-        } else if (!isNull(bits.from) && !isNull(bits.to)) {
-            if (bits.from > bits.to) {
-                throw "bit range must have 'from' being less than or equal to 'to'";
-            }
-            return bits;
-        } else {
-            throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
-        }
-    };
-
-    var bitRangeAsArray = function(low, high) {
-        if (low > high) {
-            throw "bit range must have 'from' being less than or equal to 'to'";
-        }
-        var result = [];
-        for (var i = low; i <= high; i++) {
-            result.push(i);
-        }
-        return result;
-    };
-
-    var convertBitQualifierToBitArray = function(bits, numBits) {
-        if (isNull(bits)) {
-            throw "bit qualification must be supplied";
-        }
-        if (bits instanceof Array) {
-            return bits;
-        }
-        if (typeof bits === 'number') {
-            return [bits];
-        }
-        if (bits === jsqbits.ALL) {
-            return bitRangeAsArray(0, numBits - 1);
-        }
-        if (!isNull(bits.from) && !isNull(bits.to)) {
-            return bitRangeAsArray(bits.from, bits.to);
-        }
-        throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";
-    };
-
-    var padState = function(state, numBits) {
-        var paddingLength = numBits - state.length;
-        for (var i = 0; i < paddingLength; i++) {
-            state = '0' + state;
-        }
-        return state;
-    };
-    var formatAmplitude = function(qstate, stateString, formatFlags) {
-        var amplitude = qstate.amplitudes[stateString].format(formatFlags);
-        return amplitude === '1' ? '' : amplitude + " ";
-    }
-
-    // TODO: Needs refactoring!
-    var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
-        var newAmplitudes = {};
-        var statesThatCanBeSkipped = {};
-        var targetBitMask = 1 << targetBit;
-        var controlBitMask = null;
-        if (controlBits) {
-            controlBitMask = 0;
-            for (var i = 0; i < controlBits.length; i++) {
-                controlBitMask += (1 << controlBits[i]);
-            }
-        }
-
-        for (var stateString in qState.amplitudes) {
-            if (qState.amplitudes.hasOwnProperty(stateString)) {
-                var state = parseInt(stateString, 10);
-                if (statesThatCanBeSkipped[state]) continue;
-                statesThatCanBeSkipped[state ^ targetBitMask] = true;
-                var indexOf1 = state | targetBitMask;
-                var indexOf0 = indexOf1 - targetBitMask;
-                if (isNull(controlBits) || ((state & controlBitMask) === controlBitMask)) {
-                    var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
-                    sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
-                    sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
-                } else {
-                    sparseAssign(newAmplitudes, indexOf0, qState.amplitude(indexOf0));
-                    sparseAssign(newAmplitudes, indexOf1, qState.amplitude(indexOf1));
-                }
-            }
-        }
-        return new jsqbits.QState(qState.numBits, newAmplitudes);
-    };
-
-    var validateTargetBitRangesDontOverlap = function(controlBits, targetBits) {
-        if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
-            throw "control and target bits must not be the same nor overlap";
-        }
-    };
-
-    var validateBitRangesAreDistinct = function(controlBits, targetBits) {
-        // TODO: Find out if it would sometimes be faster to put one of the bit collections into a hash-set first.
-        // Also consider allowing validation to be disabled.
-        for (var i = 0; i < controlBits.length; i++) {
-            var controlBit = controlBits[i];
-            for (var j = 0; j < targetBits.length; i++) {
-                if (controlBit === targetBits[j]) {
-                    throw "control and target bits must not be the same nor overlap";
-                }
-            }
-        }
-    };
+            return result;
+        };
+    })();
 })();

@@ -1,25 +1,36 @@
 (function($) {
-    var totalErrors = 0;
+
 
 //    Find code samples and compare the actual output with the stated output.
     $(function() {
-        $('*[data-sampleref]').each(function() {
-            try {
-                var id = $(this).attr('data-sampleref');
-                var jscode = $('#' + id).text();
-                var result = eval(jscode).toString();
-                var expected = $(this).text();
-                if ($.trim(expected) !== $.trim(result)) throw "no match";
-            } catch (e) {
-                $(this).addClass('error');
-                totalErrors++;
-            }
-        });
 
-        $('#topWarningMessage').hide();
-        if (totalErrors > 0) {
-            $('#topErrorMessage').show();
-        }
+        var validateCodeSamples = function() {
+            var totalErrors = 0;
+
+            $('.validationMessage').hide();
+            $('#codeValidationInProgress').show();
+            $('*[data-sampleref]').each(function() {
+                try {
+                    var id = $(this).attr('data-sampleref');
+                    var jscode = $('#' + id).text();
+                    var result = eval(jscode).toString();
+                    var expected = $(this).text();
+                    if ($.trim(expected) !== $.trim(result)) throw "no match";
+                } catch (e) {
+                    $(this).addClass('error');
+                    totalErrors++;
+                }
+            });
+
+            $('#codeValidationInProgress').hide();
+            if (totalErrors > 0) {
+                $('#codeValidationFailure').show();
+            } else {
+                $('#codeValidationSuccess').show();
+            }
+        };
+
+        $('#validateCodeSamplesButton').on('click', validateCodeSamples);
 
         var indexItems = [];
         var indexMap = [];
@@ -36,5 +47,7 @@
                 $('#tableOfContents').append(element);
             }
         }
+
+
     });
 })(jQuery);

@@ -16,7 +16,7 @@
 
 <p>
     <a href="http://jsqbits.org">jsqbits</a> is a simple JavaScript library for quantum computation simulation.
-    To use it, you can down load and use the JavaScript library from the
+    To use it, you can download and use the JavaScript library from the
     <a href="https://github.com/davidbkemp/jsqbits/downloads">jsqbits github repository</a>,
     or you can try the online
     <a href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">jsqbits runner</a>.
@@ -44,7 +44,7 @@ jsqbits('|01>')
     </p>
     <p>
         The jsqbits function takes a string zeros and ones representing the state of its qbits.
-        The string may optionally be a "ket" in the "bra-ket" notation.
+        The string may optionally be a "ket" in the Dirac or "bra-ket" notation.
     </p>
     <table class="samples">
         <tbody>
@@ -98,7 +98,7 @@ new jsqbits.QState(4, a)
         A number of operators operate on a single qbit (the Pauli operators and the Hadamard gate).
         For these, you must specify the index bit to be operated on, with the right most bit being bit 0,
         and the left most bit being bit n-1 for an n bit state.
-        As a convenience, you can also specify a range of bits using an object with "from" and "to" attributes,
+        As a convenience, you can also specify a range of bits using an object with "from" and "to" properties,
         and the operator will be applied to each of the bits in that range (inclusive).
         The constant <code>jsqbits.ALL</code> can be used to apply the operator to all the bits.
         For most operators (except where indicated), you may also use an array of bit indexes.
@@ -270,7 +270,7 @@ var state2 = state1.x(1);
         There are controlled versions of all the single qbit operators.
         For these you must specify control bits as well as target bits.
         As with the target bits, the control bits may be a single bit index,
-        a range of bits using an object with "from" and "to" attributes,
+        a range of bits using an object with "from" and "to" properties,
         or an array of bit indexes.
         The operation is only performed when all of the control bits are ones.
         Note that the control and target bits must not have any bits in common.
@@ -348,7 +348,7 @@ var state2 = state1.x(1);
     </ul>
     <p>
         The measurement operator is intended to simulate the act of measuring one or more of the qbits.
-        You may specify a single bit index, a range of bits using an object with "from" and "to" attributes,
+        You may specify a single bit index, a range of bits using an object with "from" and "to" properties,
         or the constant <code>jsqbits.ALL</code>.
         Note that currently you cannot supply an array of bit indexes.
         As with all QState functions, the meaurement() function does not actually modify the object,
@@ -403,7 +403,7 @@ jsqbits("|100>").hadamard([0,1]).measure(0)
         <li>toffoli(controlBit, controlBit, ..., targetBit)</li>
     </ul>
     <p>
-        Given that the controlledX() operator can cake multiple control bits,
+        Given that the controlledX() operator can take multiple control bits,
         a separate Toffoli operator is redundant,
         but has been added for the sake of convenience.
         It takes one or more control bit indexes as separate arguments,
@@ -437,7 +437,7 @@ jsqbits("|100>").hadamard([0,1]).measure(0)
         an output bit specification,
         and a function to apply.
         The input and output bit specifications must either be single bit indexes
-        or bit ranges using "from" and "to" attributes.
+        or bit ranges using "from" and "to" properties.
         <em>Note that currently they cannot be arrays.</em>
         The value of the bits specified by the input bit index (or range)
         is fed to the function, and the result is

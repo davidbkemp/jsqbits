@@ -214,8 +214,12 @@ function jsqbits(bitString) {
 
     jsqbits.QState = function(numBits, amplitudes) {
         validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
-        this.numBits = numBits;
+        this.numBits = function () {
+            return numBits;
+        };
+
         this.amplitudes = amplitudes;
+
     };
 
     jsqbits.QState.fromBits = function(bitString) {
@@ -396,15 +400,15 @@ function jsqbits(bitString) {
                     }
                 }
             }
-            return new jsqbits.QState(qState.numBits, newAmplitudes);
+            return new jsqbits.QState(qState.numBits(), newAmplitudes);
         };
 
         return function(controlBits, targetBits, qbitFunction) {
             validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and qbitFunction to controlledApplicatinOfqBitOperator().');
-            var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits);
+            var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits());
             var controlBitArray = null;
             if (!isNull(controlBits)) {
-                controlBitArray = convertBitQualifierToBitArray(controlBits, this.numBits);
+                controlBitArray = convertBitQualifierToBitArray(controlBits, this.numBits());
                 validateTargetBitRangesDontOverlap(controlBitArray, targetBitArray);
             }
             var result = this;
@@ -434,8 +438,8 @@ function jsqbits(bitString) {
 
         return function(inputBits, targetBits, functionToApply) {
             validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and functionToApply to applyFunction().');
-            var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits);
-            var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits);
+            var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits());
+            var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits());
             validateBitRangesAreDistinct(inputBitRange, targetBitRange);
             var newAmplitudes = {};
             var statesThatCanBeSkipped = {};
@@ -458,7 +462,7 @@ function jsqbits(bitString) {
                     }
                 }
             }
-            return new jsqbits.QState(this.numBits, newAmplitudes);
+            return new jsqbits.QState(this.numBits(), newAmplitudes);
         };
     })();
 
@@ -486,7 +490,7 @@ function jsqbits(bitString) {
 
         return function(bits) {
             validateArgs(arguments, 1, 1, 'Must supply bits to be measured to measure().');
-            var bitRange = convertBitQualifierToBitRange(bits, this.numBits);
+            var bitRange = convertBitQualifierToBitRange(bits, this.numBits());
             var randomNumber = this.random();
             var randomStateString;
             var stateString;
@@ -518,7 +522,7 @@ function jsqbits(bitString) {
             }
 
             normalize(newAmplitudes);
-            return new jsqbits.Measurement(measurementOutcome, new jsqbits.QState(this.numBits, newAmplitudes));
+            return new jsqbits.Measurement(measurementOutcome, new jsqbits.QState(this.numBits(), newAmplitudes));
         };
     })();
 
@@ -545,7 +549,7 @@ function jsqbits(bitString) {
         var stateString;
         if (!other) return false;
         if (!(other instanceof jsqbits.QState)) return false;
-        if (this.numBits !== other.numBits) return false;
+        if (this.numBits() !== other.numBits()) return false;
         for (stateString in this.amplitudes) {
             if (this.amplitudes.hasOwnProperty(stateString) &&
                 !this.amplitudes[stateString].eql(other.amplitudes[stateString])) return false;
@@ -579,7 +583,7 @@ function jsqbits(bitString) {
             for (i = 0; i < nonZeroStates.length; i++) {
                 if (result !== '') formatFlags.spacedSign = true;
                 stateString = nonZeroStates[i];
-                state = padState(parseInt(stateString, 10).toString(2), this.numBits);
+                state = padState(parseInt(stateString, 10).toString(2), this.numBits());
                 result = result + formatAmplitude(this, stateString, formatFlags) + "|" + state + ">";
             }
             return result;

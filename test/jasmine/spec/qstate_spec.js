@@ -457,7 +457,7 @@ describe('QState', function() {
             stateToMeasure.random = function() {return 0};
             var measurement = stateToMeasure.measure(bitRange);
             var newState = measurement.newState;
-            expect(newState.numBits).toBe(4);
+            expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(0);
             expect(newState.amplitude('|1000>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
@@ -469,7 +469,7 @@ describe('QState', function() {
             stateToMeasure.random = function() {return 0.49};
             var measurement = stateToMeasure.measure(bitRange);
             var newState = measurement.newState;
-            expect(newState.numBits).toBe(4);
+            expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(0);
             expect(newState.amplitude('|1000>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
@@ -481,7 +481,7 @@ describe('QState', function() {
             stateToMeasure.random = function() {return 0.51};
             var measurement = stateToMeasure.measure(bitRange);
             var newState = measurement.newState;
-            expect(newState.numBits).toBe(4);
+            expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(2);
             expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
             expect(newState.amplitude('|1001>')).toBe(jsqbits.Complex.ZERO);
@@ -493,7 +493,7 @@ describe('QState', function() {
             stateToMeasure.random = function() {return 1.0};
             var measurement = stateToMeasure.measure(bitRange);
             var newState = measurement.newState;
-            expect(newState.numBits).toBe(4);
+            expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(2);
             expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
             expect(newState.amplitude('|1001>')).toBe(jsqbits.Complex.ZERO);
@@ -505,7 +505,7 @@ describe('QState', function() {
             stateToMeasure.random = function() {return 1.0};
             var measurement = stateToMeasure.measure(0);
             var newState = measurement.newState;
-            expect(newState.numBits).toBe(4);
+            expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(1);
             expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
@@ -517,7 +517,7 @@ describe('QState', function() {
             stateToMeasure.random = function() {return 0.49};
             var measurement = stateToMeasure.measure(jsqbits.ALL);
             var newState = measurement.newState;
-            expect(newState.numBits).toBe(4);
+            expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(parseInt('1001', 2));
             expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1, 0));
@@ -528,7 +528,7 @@ describe('QState', function() {
         it ("actually calls Math.random", function() {
             var measurement = stateToMeasure.measure(3);
             var newState = measurement.newState;
-            expect(newState.numBits).toBe(4);
+            expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(1);
             expect(newState.amplitude('|1000>')).toBeApprox(complex(0.5, 0));
             expect(newState.amplitude('|1001>')).toBeApprox(complex(0.5, 0));

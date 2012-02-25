@@ -469,6 +469,15 @@ describe('QState', function() {
             expect(stateWithAmplitude0.asBitString()).toBe('00');
             expect(stateWithAmplitude2.asBitString()).toBe('10');
         });
+
+        it('should break early when returned false', function(){
+            var callCount = 0;
+            jsqbits('|10>').hadamard(jsqbits.ALL).each(function(stateWithAmplitude){
+                callCount++;
+                if (callCount === 1) return false;
+            });
+            expect(callCount).toBe(1);
+        });
     });
 
     describe('#measure', function(){

@@ -98,16 +98,15 @@ describe('Simple Quantum Algorithms', function() {
             // By this stage, only bit zero has not been measured and it should have the same state the original state to be transmitted.
             var receivedAmplitudeFor0 = null;
             var receivedAmplitudeFor1 = null;
-            for (var stateString in finalState.amplitudes) {
-                var state = parseInt(stateString);
-                if (state % 2 == 0) {
+            finalState.each(function(stateWithAmplitude) {
+                if (stateWithAmplitude.asNumber() % 2 == 0) {
                     if (receivedAmplitudeFor0 != null) throw "Should only have one state with bit 0 being 0";
-                    receivedAmplitudeFor0 = finalState.amplitude(state);
+                    receivedAmplitudeFor0 = stateWithAmplitude.amplitude;
                 } else {
                     if (receivedAmplitudeFor1 != null) throw "Should only have one state with bit 0 being 1";
-                    receivedAmplitudeFor1 = finalState.amplitude(state);
+                    receivedAmplitudeFor1 = stateWithAmplitude.amplitude;
                 }
-            }
+            });
             expect(receivedAmplitudeFor0).toBeApprox(stateToBeTransmitted0);
             expect(receivedAmplitudeFor1).toBeApprox(stateToBeTransmitted1);
         });

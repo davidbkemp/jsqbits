@@ -1,23 +1,23 @@
 <html>
 <head>
     <title>jsqbits runner</title>
-    <script type="text/javascript" src="doc/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="src/js/jsqbits.js"></script>
-    <script type="text/javascript" src="doc/jsqbitsRunner.js"></script>
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="jsqbits-1.0.js"></script>
+    <script type="text/javascript" src="js/jsqbitsRunner.js"></script>
 </head>
 <body>
 <h1>jsqbits runner</h1>
 
 <p>
-    This is a crude JavaScript runner preloaded with
+    This is a JavaScript runner preloaded with
     the <a href="index.html">jsqbits library</a>.
-    Enter arbitrary JavaScript in the text area blow and press the "Run" button.
+    Enter arbitrary JavaScript in the text area below and press the "Run" button.
 </p>
 
 <p>Try some quantum computation operations like:
     jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)</p>
 
-<textarea id="code" rows="15" cols="120" def>
+<textarea id="code" rows="15" cols="120">
 jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)
 </textarea>
 <button id="run" style="display:block; margin-top:1em;">Run</button>

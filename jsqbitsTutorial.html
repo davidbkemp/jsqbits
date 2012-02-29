@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>An Introduction to Quantum Programming using jsqbits</title>
+    <link rel="stylesheet" type="text/css" href="css/jsqbits.css" />
+</head>
+<body>
+<h1>An Introduction to Quantum Programming using jsqbits</h1>
+<p>
+    Quantum computers make use of quantum interference and superposition for some of their computation
+    (at least the quantum computers with which we are concerned do).
+    The purpose of this tutorial is to introduce you to the basic concepts of quantum programming
+    using examples that you can try out on
+    the online <a href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">jsqbits runner</a>.
+</p>
+
+<h2>Qubits</h2>
+<!-- Dirac notation, Hadamard, Not, and cnot. -->
+<p>
+    Like conventional computers, quantum computers typically use a binary encoding of information.
+    However, instead of "bits", quantum computers use "quantum bits" (abbreviated to "qubits" or "qbits").
+    These are like bits in that they have two states (typically represented as "0" or "1"),
+    but they have the extra properties of being capable of being
+    in a "superposition" of states and being "entangled" with each other
+    (terms that will be explained later).
+    Note real implementations of qubits do exist using, for example, nuclear spin.
+</p>
+
+<h3>Dirac Notation</h3>
+<p>
+    We use the "Dirac" or "bra-ket" notation commonly used in quantum mechanics.
+    The advantages of this notation will not be immediately apparent,
+    but it helps if we use the notation used in most of the quantum programming literature.
+    Under the Dirac notation, the state of a quantum computer is prefixed by a vertical bar "|"
+    and ends with a greater-than symbol ">".
+    For example, a four qubit quantum computer with all its qubits are in a zero state
+    is represented as <code>|0000></code>.
+</p>
+
+<h3>Superposition and Measurement</h3>
+<p>
+    There are several special quantum operators. One of these is called the Hadamard operator.
+    At first glance, the Hadamard operator seems to put a qubit into a random state.
+    For instance, if we were to apply the Hadamard operator to the right most bit (bit 0) of <code>|0000></code>
+    and then print out the state of the qubits,
+    then half the time it would be <code>|0000></code>
+    and the other half it would be <code>|0001></code>.
+    But there is much much more to it than that.
+</p>
+
+<p>
+    If you apply the Hadamard operator twice to a qubit (without doing anything in between),
+    then the qubit will return to its original state.
+    Other operators are so bizarre
+    that they are best modelled as rotations of a sphere (more on that later).
+</p>
+
+<p>
+    When we said that printing out the state of a computer's qubits
+    randomly lead to one of two possible outcomes,
+    it turns out that it is best to think of the system being in <em>both states at once</em>.
+    This is more formally called a <em>superposition</em> of the two states.
+    Each of the different possible outcomes will have a different associated probability.
+    This is modelled by associating an "amplitude" with each possibility,
+    where the amplitude is a number whose magnitude needs to be squared to
+    get the actual probability.
+</p>
+
+<p>
+    After applying the Hadamard operator to a qubit that is originally in a zero state (<code>|0></code>),
+    it ends up in a super position of <code>|0></code> and <code>|1></code>,
+    each with an associated amplitude of the square root of one half
+    (remember, you need to square the amplitude to get the probability).
+    The Dirac notation for the resulting state is:
+</p>
+<code>&#x221a;(1/2)|0> + &#x221a;(1/2)|1></code>
+<p>
+    Note that the '+' symbol here does not really mean that we are adding the two states together.
+    Adding <code>|0></code> to <code>|1></code> does not give you anything besides
+    <code>|0></code> and <code>|1></code>.
+    It is just a convenient notation for representing superpositions
+    whose benefits will become apparent in a moment.
+</p>
+
+<p>
+    After applying the Hadamard operator to a qubit that is originally is <code>|1></code>,
+    the resulting state is:
+</p>
+<code>&#x221a;(1/2)|0> - &#x221a;(1/2)|1></code>
+<p><em>Notice the minus sign</em>.</p>
+<p>
+    The significance of the minus sign becomes apparent when you apply the Hadamard operation twice.
+    Suppose we start with <code>|0></code>.
+    As described above, one application of the Hadamard results in
+    <code>&#x221a;(1/2)|0> + &#x221a;(1/2)|1></code>.
+    To understand what happens when you apply the Hadamard a second time,
+    you need to realize that applying an operator to
+    a superposition of states is the combination of applying that operator
+    to each of the individual states that make up that superposition.
+    So, in this case, you are applying the Hadamard separately to both
+    <code>&#x221a;(1/2)|0></code> and <code>&#x221a;(1/2)|1></code>.
+</p>
+<p>
+    Applying the Hadamard to <code>&#x221a;(1/2)|0></code> gives:
+</p>
+<code>&#x221a;(1/2)&#x221a;(1/2)|0> + &#x221a;(1/2)&#x221a;(1/2)|1></code>
+<p>
+    which gives you
+</p>
+<code>0.5 |0> + 0.5 |1></code>
+<p>
+    Applying the Hadamard to <code>&#x221a;(1/2)|1></code> gives:
+</p>
+<code>&#x221a;(1/2)&#x221a;(1/2)|0> - &#x221a;(1/2)&#x221a;(1/2)|1>)</code>
+<p>
+    which of course is
+</p>
+<code>0.5 |0> - 0.5 |1></code>
+<p>
+    Combining these gives:
+</p>
+<code>0.5 |0> + 0.5 |1> + 0.5 |0> - 0.5 |1></code>
+<p>
+    The two instances of <code>|0></code> combine,
+    and the two instances of <code>|1></code> cancel each other out,
+    to give a final state of <code>|0></code>.
+    This process of states re-enforcing and cancelling each other out is
+    known as <em>interference</em>.
+    It is the same quantum principle behind the interference pattern
+    that results from the famous two-slit experiment with light.
+</p>
+<p>
+    Similarly, applying the Hadamard twice to <code>|1></code> brings the
+    state of the system back to <code>|1></code>.
+</p>
+<h2>The Pauli Operators</h2>
+
+<h2>Partial Measurements</h2>
+
+<h2>Superdense coding</h2>
+
+<h2>Controlled operations</h2>
+
+<h2>Deutche's Algorithm</h2>
+
+<h2>Concluding Remarks &amp; Further Reading</h2>
+I highly recommend reading
+<a href="http://www.cs.uwaterloo.ca/~watrous/lecture-notes.html">John Watrous' lecture notes</a>
+</body>
+</html>

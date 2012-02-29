@@ -198,6 +198,7 @@ function jsqbits(bitString) {
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
     jsqbits.ZERO = jsqbits.Complex.ZERO;
+    jsqbits.ONE = new jsqbits.Complex(1, 0);
 
     jsqbits.complex = function(real, imaginary) {
         return new Complex(real, imaginary);

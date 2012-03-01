@@ -572,4 +572,10 @@ describe('QState', function() {
         });
 
     });
+
+    describe('Measurement', function(){
+        it('should have a asBitString() function', function(){
+            expect(jsqbits('|0101>').measure({from:1, to:3}).asBitString()).toBe("010");
+        });
+    });
 });

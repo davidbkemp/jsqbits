@@ -198,6 +198,7 @@ function jsqbits(bitString) {
 
     jsqbits.Complex.ZERO = new jsqbits.Complex(0,0);
     jsqbits.ZERO = jsqbits.Complex.ZERO;
+    jsqbits.ONE = new jsqbits.Complex(1, 0);
 
     jsqbits.complex = function(real, imaginary) {
         return new Complex(real, imaginary);
@@ -211,13 +212,18 @@ function jsqbits(bitString) {
     // Amplitudes with magnitudes smaller than jsqbits.roundToZero this are rounded off to zero.
     jsqbits.roundToZero = 0.0000001;
 
-    jsqbits.Measurement = function(result, newState) {
+    jsqbits.Measurement = function(numBits, result, newState) {
+        this.numBits = numBits;
         this.result = result;
         this.newState = newState;
     };
 
     jsqbits.Measurement.prototype.toString = function() {
         return "{result: " + this.result + ", newState: " + this.newState + "}";
+    };
+
+    jsqbits.Measurement.prototype.asBitString = function() {
+        return padState(this.result.toString(2), this.numBits);
     };
 
     jsqbits.StateWithAmplitude = function(numBits, index, amplitude) {
@@ -548,7 +554,8 @@ function jsqbits(bitString) {
             });
 
             normalize(newAmplitudes);
-            return new jsqbits.Measurement(measurementOutcome, new jsqbits.QState(this.numBits(), newAmplitudes));
+            var numBitsMeasured = bitRange.to - bitRange.from + 1;
+            return new jsqbits.Measurement(numBitsMeasured, measurementOutcome, new jsqbits.QState(this.numBits(), newAmplitudes));
         };
     })();
 

@@ -3,14 +3,32 @@
 <head>
     <title>An Introduction to Quantum Programming using jsqbits</title>
     <link rel="stylesheet" type="text/css" href="css/jsqbits.css" />
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-29684858-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
 </head>
 <body>
-<h1>An Introduction to Quantum Programming using jsqbits</h1>
+<h1 class='withAuthor'>An Introduction to Quantum Programming using jsqbits</h1>
+<div class="author">
+    by David Kemp (kemp@jsqbits.org)
+</div>
 <p>
-    Quantum computers make use of quantum phenomenon for some of their computation.
+    A quantum program makes use of quantum phenomenon for some of its instructions.
     The purpose of this tutorial is to introduce you to the basic concepts of quantum programming
     using examples that you can try out on
     the online <a href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">jsqbits runner</a>.
+    I try to assume as little knowledge of quantum physics as possible
+    and minimize the amount mathematics required.
 </p>
 
 <h2>Qubits</h2>
@@ -28,15 +46,14 @@
 <p>
     There are several special quantum operators. One of these is called the Hadamard operator.
     At first glance, the Hadamard operator seems to put a qubit into a random state.
-    For instance, if we were to apply the Hadamard operator to a single qubit that is initially in state "0"
-    and then print out the state of the qubit,
+    If we were to print the state of a qubit after applying the Hadamard operator to it,
     then half the time it would be 0
     and the other half it would be 1.
     But there is much much more to it than that.
 </p>
 
 <p>
-    If you apply the Hadamard operator twice to a qubit (without doing anything in between),
+    For instance, if you apply the Hadamard operator twice to a qubit (without doing anything in between),
     then the qubit will return to its original state.
     Other operators are so bizarre
     that they are best modelled as rotations of a sphere (more on that later).
@@ -45,31 +62,37 @@
 
 <h2>Dirac Notation</h2>
 <p>
-    We use the "Dirac" (or "bra-ket") notation commonly used in quantum mechanics.
+    This tutorial uses the "Dirac" (or "bra-ket") notation commonly used in quantum mechanics.
     The advantages of this notation will not be immediately apparent,
-    but it helps if we use the notation used in most of the quantum programming literature.
+    but it helps to use the notation used in most of the quantum programming literature.
     Under the Dirac notation, the state of a quantum computer is prefixed by a vertical bar "|"
     and ends with a greater-than symbol ">".
-    For example, a four qubit quantum computer with all its qubits are in a zero state
+    For example, a four qubit quantum computer with all its qubits in a zero state
     is represented as <code>|0000></code>.
 </p>
 
-<h2>Superposition</h2>
+<h2>Superposition and Measurement</h2>
 <p>
-    When we said that applying the Hadamard operation to a qubit
-    leads to one of two possible randomly chosen outcomes,
+    Although the Hadamard operation seems to result in one of two randomly chosen possible outcomes,
     it turns out that it is best to think of the system as being in <em>both states at once</em>.
     This is more formally called a <em>superposition</em> of the two states.
     Each of the different possible outcomes will have a different associated probability.
-    It turns out that this is best modelled by associating an "amplitude" with each state,
-    where the amplitude is a number whose magnitude needs to be squared to
-    get the actual probability of that state being observed when the qubit
-    is "measured" (more will be said about measurement later).
+    It turns out that this is best modelled by associating an "amplitude" with each state.
+    Amplitudes can be negative.
+    They can even be complex numbers (i.e. involving the square root of negative one),
+    but fortunately we can avoid complex numbers for most of this tutorial!
+    The only constraint is that they each must have a magnitude less than one,
+    and the sum of the squares of their magnitudes must equal one.
+</p>
+<p>
+    To compute the probability of the system being in a particular state,
+    you need to square the magnitude of its associated amplitude.
+    Hopefully the meaning of this will be more clear with some examples.
 </p>
 
 <p>
     After applying the Hadamard operator to a qubit that is originally in a zero state (<code>|0></code> in the Dirac notation),
-    it ends up in a super position of <code>|0></code> and <code>|1></code>,
+    it ends up in a superposition of <code>|0></code> and <code>|1></code>,
     each with an associated amplitude of the square root of one half
     (remember, you need to square the amplitude to get the probability).
     The Dirac notation for the resulting state is:
@@ -79,14 +102,20 @@
     Note that the '+' symbol here does not really mean that we are adding the two states together.
     Adding <code>|0></code> to <code>|1></code> does not give you anything besides
     <code>|0></code> and <code>|1></code>.
-    It is better to think of  <code>|0></code> and <code>|1></code> at being like the x and y axis of a plane
-    and so <code>&#x221a;(1/2)|0> + &#x221a;(1/2)|1></code> is like a vector
-    of magnitude one pointing out from the origin at 45 degrees.
+</p>
+<p>
+    But also note that you cannot directly determine the values of the different amplitudes.
+    To extract any information out of a quantum computer,
+    it is necessary to have one or more "measurement" steps where qubits are
+    determined to be either "0" or "1" with the likelihood of either one
+    being dependent on the amplitudes of the quantum states.
 </p>
 
 <p>
-    After applying the Hadamard operator to a qubit that is originally is <code>|1></code>,
-    the resulting state is:
+    Before jumping to the conclusion that dealing with amplitudes seems all a bit pointless,
+    look at what happens when you
+    apply the Hadamard operator to a qubit that originally is <code>|1></code>.
+    The resulting state is:
 </p>
 <code>&#x221a;(1/2)|0> - &#x221a;(1/2)|1></code>
 <p><em>Notice the minus sign</em>.</p>
@@ -99,7 +128,7 @@
     The result of applying an operator to
     a superposition of states is the combination of applying that operator
     to each of the individual states that make up that superposition.
-    So, in this case, you are applying the second Hadamard operator is being applied to both
+    So, in this case, you are applying the second Hadamard operator to both
     <code>&#x221a;(1/2)|0></code> and <code>&#x221a;(1/2)|1></code>.
 </p>
 <p>
@@ -136,9 +165,56 @@
     Similarly, applying the Hadamard twice to <code>|1></code> brings the
     state of the system back to <code>|1></code>.
 </p>
+
+<h2>jsqbits</h2>
 <p>
-    You can try this out
+    <a href="http://jsqbits.org">jsqbits</a> is a JavaScript library for quantum computation simulation.
+    For this tutorial, I will use examples that you can try out
+    using the online
+    <a href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">jsqbits runner</a>.
 </p>
+
+<p>
+    Using jsqbits, the easiest way to create an initial state is using the <code>jsqbits</code> function.
+    It takes a binary string and returns a <code>QState</code> object representing the state of your quantum computer.
+    For example,
+    <code>jsqbits("|0101>")</code> creates a 4 qbit quantum state of <code>|0101></code>.
+</p>
+<p>
+    QState objects have a number of methods including the <code>hadamard()</code> method.
+    You must specify the index of the bit to be operated on, with the right most bit being bit 0,
+    and the left most bit being bit n-1 for an n bit state.
+    Try entering the following text into the text field of the
+    <a href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">jsqbits runner</a>
+    and pressing the "run" button.
+</p>
+
+<code class="block">
+jsqbits('|001>').hadamard(0)
+</code>
+
+<p>
+    You should find you get <code>0.7071 |000> - 0.7071 |001></code>
+</p>
+<p>
+    And if you try <code>jsqbits("|001>").hadamard(0).hadamard(0)</code>,
+    you should find you get back your original state of <code>|001></code>
+</p>
+
+<p>
+    As a convenience, you can also specify a range of bits using an object with "from" and "to" properties,
+    and the operator will be applied to each of the bits in that range (inclusive).
+    The constant <code>jsqbits.ALL</code> can be used to apply the operator to all the bits.
+    For most operators (except where indicated), you may also use an array of bit indexes.
+    Try the following:
+</p>
+<code class="block">
+jsqbits("|00>").hadamard(jsqbits.ALL)
+</code>
+<p>
+    You will get <code>0.5 |00> + 0.5 |01> + 0.5 |10> + 0.5 |11></code>
+</p>
+
 <h2>The Pauli Operators</h2>
 
 <h2>Partial Measurements</h2>

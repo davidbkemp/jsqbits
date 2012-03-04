@@ -6,6 +6,19 @@
     <script src="js/jquery-1.7.1.min.js"></script>
     <script src="jsqbits.js"></script>
     <script src="js/jsqbitsManual.js"></script>
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-29684858-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
 </head>
 <body>
 <h1>jsqbits User Manual</h1>
@@ -97,7 +110,7 @@ new jsqbits.QState(4, a)
     </ul>
     <p>
         A number of operators operate on a single qbit (the Pauli operators and the Hadamard gate).
-        For these, you must specify the index bit to be operated on, with the right most bit being bit 0,
+        For these, you must specify the index of the bit to be operated on, with the right most bit being bit 0,
         and the left most bit being bit n-1 for an n bit state.
         As a convenience, you can also specify a range of bits using an object with "from" and "to" properties,
         and the operator will be applied to each of the bits in that range (inclusive).

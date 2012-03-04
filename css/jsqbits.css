@@ -35,3 +35,11 @@ table.samples td {
 #validateCodeSamplesButton {
     font-size: xx-small;
 }
+
+div.author {
+    font-size: small;
+}
+
+.withAuthor {
+    margin-bottom: 0;
+}

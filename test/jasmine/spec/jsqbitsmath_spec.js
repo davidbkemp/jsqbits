@@ -1,4 +1,7 @@
 describe("jsqbitsmath", function() {
+    beforeEach(function() {
+        this.addMatchers(jsqbits.JasmineMatchers);
+    });
 
     describe("#nullSpace", function() {
         it("should solve Ax=0", function() {
@@ -9,7 +12,7 @@ describe("jsqbitsmath", function() {
                 parseInt('000', 2)
             ];
             var results = jsqbitsmath.findNullSpaceMod2(a, 3);
-            expect(results).toBe([parseInt('110', 2)]);
+            expect(results).toEqual([parseInt('110', 2)]);
         });
     });
 

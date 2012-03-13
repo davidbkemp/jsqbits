@@ -38,27 +38,30 @@ var jsqbitsmath = jsqbitsmath || {};
                     var tmp = a[pivotRowIndex];
                     a[pivotRowIndex] = a[rowIndex];
                     a[rowIndex] = tmp;
+                    return;
                 }
             }
         };
 
-        var makeTriangularFormMod2 = function(a, width) {
+        var makeReducedRowEchelonForm = function(a, width) {
             var pivotRowIndex = 0;
             for (var pivotColIndex = width - 1; pivotColIndex >= 0; pivotColIndex--) {
                 attemptToMakePivot(a, pivotColIndex, pivotRowIndex);
                 var colBitMask = 1 << pivotColIndex;
                 if (colBitMask & a[pivotRowIndex]) {
-                    zeroOutBelow(a, pivotColIndex, pivotRowIndex);
+                    a.pivotCols[pivotColIndex] = true;
+                    a.pivotRows[pivotRowIndex] = pivotColIndex;
+                    zeroOutAboveAndBelow(a, pivotColIndex, pivotRowIndex);
                     pivotRowIndex++;
                 }
             }
         };
 
-        var zeroOutBelow = function(a, pivotColIndex, pivotRowIndex) {
+        var zeroOutAboveAndBelow = function(a, pivotColIndex, pivotRowIndex) {
             var pivotRow = a[pivotRowIndex];
             var colBitMask = 1 << pivotColIndex;
-            for (var rowIndex = pivotRowIndex + 1; rowIndex < a.length; rowIndex++) {
-                if (colBitMask & a[rowIndex]) {
+            for (var rowIndex = 0; rowIndex < a.length; rowIndex++) {
+                if (rowIndex != pivotRowIndex && (colBitMask & a[rowIndex])) {
                     a[rowIndex] = a[rowIndex] ^ pivotRow;
                 }
             }
@@ -68,15 +71,21 @@ var jsqbitsmath = jsqbitsmath || {};
             specialSolutions = [];
             var rowIndex = 0;
             for (var colIndex  = width - 1; colIndex >= 0; colIndex--) {
-                var colBitMask = 1 << colIndex;
-                if ()
+                if (!a.pivotCols.hasOwnProperty(colIndex)) {
+                    // TODO: There are more solutions than this!!!!
+                    var specialSolution = (1 << colIndex) + (1 << a.pivotRows[rowIndex]);
+                    specialSolutions.push(specialSolution);
+                    rowIndex++;
+                }
             }
             return specialSolutions;
         };
 
         return function(a, width) {
             a = cloneArray(a);
-            makeTriangularFormMod2(a, width);
+            a.pivotCols = {};
+            a.pivotRows = {};
+            makeReducedRowEchelonForm(a, width);
             return specialSolutions(a, width);
         };
     })();

@@ -21,8 +21,7 @@ describe('Simple Quantum Algorithms', function() {
 //            Alice sends her qbit to Bob
             var bob = 0;
             state = state.cnot(alice, bob).hadamard(alice);
-            var result = state.measure(ALL).result.toString(2);
-            return result.length == 1 ? '0' + result : result;
+            return state.measure(ALL).asBitString();
         };
 
         it ("should transmit 00", function() {

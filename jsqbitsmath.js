@@ -30,6 +30,10 @@ var jsqbitsmath = jsqbitsmath || {};
      */
     jsqbitsmath.findNullSpaceMod2 = (function() {
 
+        /**
+         * Try to make row pivotRowIndex / column colIndex a pivot
+         * swapping rows if necessary.
+         */
         var attemptToMakePivot = function(a, colIndex, pivotRowIndex) {
             var colBitMask = 1 << colIndex;
             if (colBitMask & a[pivotRowIndex]) return;
@@ -43,20 +47,26 @@ var jsqbitsmath = jsqbitsmath || {};
             }
         };
 
-        var makeReducedRowEchelonForm = function(a, width) {
+        /**
+         * Reduce 'a' to reduced row echelon form,
+         * and keep track of which columns are pivot columns in pivotColumnIndexes.
+         */
+        var makeReducedRowEchelonForm = function(a, width, pivotColumnIndexes) {
             var pivotRowIndex = 0;
             for (var pivotColIndex = width - 1; pivotColIndex >= 0; pivotColIndex--) {
                 attemptToMakePivot(a, pivotColIndex, pivotRowIndex);
                 var colBitMask = 1 << pivotColIndex;
                 if (colBitMask & a[pivotRowIndex]) {
-                    a.pivotCols[pivotColIndex] = true;
-                    a.pivotRows[pivotRowIndex] = pivotColIndex;
+                    pivotColumnIndexes[pivotRowIndex] = pivotColIndex;
                     zeroOutAboveAndBelow(a, pivotColIndex, pivotRowIndex);
                     pivotRowIndex++;
                 }
             }
         };
 
+        /**
+         * Zero out the values above and below the pivot (using mod 2 arithmetic).
+         */
         var zeroOutAboveAndBelow = function(a, pivotColIndex, pivotRowIndex) {
             var pivotRow = a[pivotRowIndex];
             var colBitMask = 1 << pivotColIndex;
@@ -67,26 +77,41 @@ var jsqbitsmath = jsqbitsmath || {};
             }
         };
 
-        var specialSolutions = function(a, width) {
-            specialSolutions = [];
-            var rowIndex = 0;
-            for (var colIndex  = width - 1; colIndex >= 0; colIndex--) {
-                if (!a.pivotCols.hasOwnProperty(colIndex)) {
-                    // TODO: There are more solutions than this!!!!
-                    var specialSolution = (1 << colIndex) + (1 << a.pivotRows[rowIndex]);
-                    specialSolutions.push(specialSolution);
-                    rowIndex++;
+        /**
+         * Add to results, special solutions corresponding to the specified non-pivot column colIndex.
+         */
+        var addSpecialSolutionsForColumn = function(a, pivotColumnIndexes, colIndex, pivotNumber, results) {
+            for (var rowIndex = 0; rowIndex < pivotNumber; rowIndex++) {
+                if (a[rowIndex] & (1 << colIndex)) {
+                    var specialSolution = (1 << colIndex) + (1 << pivotColumnIndexes[rowIndex]);
+                    results.push(specialSolution);
                 }
             }
-            return specialSolutions;
+        }
+
+        /**
+         * Find the special solutions to the mod-2 equation Ax=0 for matrix a.
+         */
+        var specialSolutions = function(a, width, pivotColumnIndexes) {
+            var results = [];
+            var pivotNumber = 0;
+            var nextPivotColumnIndex = pivotColumnIndexes[pivotNumber];
+            for (var colIndex = width - 1; colIndex >= 0; colIndex--) {
+                if (colIndex == nextPivotColumnIndex) {
+                    pivotNumber++;
+                    nextPivotColumnIndex = pivotColumnIndexes[pivotNumber];
+                } else {
+                    addSpecialSolutionsForColumn(a, pivotColumnIndexes, colIndex, pivotNumber, results);
+                }
+            }
+            return results;
         };
 
         return function(a, width) {
             a = cloneArray(a);
-            a.pivotCols = {};
-            a.pivotRows = {};
-            makeReducedRowEchelonForm(a, width);
-            return specialSolutions(a, width);
+            var pivotColumnIndexes = [];
+            makeReducedRowEchelonForm(a, width, pivotColumnIndexes);
+            return specialSolutions(a, width, pivotColumnIndexes);
         };
     })();
 

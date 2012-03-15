@@ -80,13 +80,15 @@ var jsqbitsmath = jsqbitsmath || {};
         /**
          * Add to results, special solutions corresponding to the specified non-pivot column colIndex.
          */
-        var addSpecialSolutionsForColumn = function(a, pivotColumnIndexes, colIndex, pivotNumber, results) {
+        var specialSolutionForColumn = function(a, pivotColumnIndexes, colIndex, pivotNumber) {
+            var columnMask = 1 << colIndex;
+            var specialSolution = columnMask;
             for (var rowIndex = 0; rowIndex < pivotNumber; rowIndex++) {
-                if (a[rowIndex] & (1 << colIndex)) {
-                    var specialSolution = (1 << colIndex) + (1 << pivotColumnIndexes[rowIndex]);
-                    results.push(specialSolution);
+                if (a[rowIndex] & columnMask) {
+                    specialSolution += 1 << pivotColumnIndexes[rowIndex];
                 }
             }
+            return specialSolution;
         }
 
         /**
@@ -101,7 +103,7 @@ var jsqbitsmath = jsqbitsmath || {};
                     pivotNumber++;
                     nextPivotColumnIndex = pivotColumnIndexes[pivotNumber];
                 } else {
-                    addSpecialSolutionsForColumn(a, pivotColumnIndexes, colIndex, pivotNumber, results);
+                    results.push(specialSolutionForColumn(a, pivotColumnIndexes, colIndex, pivotNumber));
                 }
             }
             return results;

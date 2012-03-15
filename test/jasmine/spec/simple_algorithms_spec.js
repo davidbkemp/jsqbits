@@ -166,48 +166,62 @@ describe('Simple Quantum Algorithms', function() {
             expect(deutschJozsa(createBalancedFunction())).toBe(false);
         });
     });
-//
-//    describe("Simon's algorithm", function() {
-//
-//        var simonsAlgorithm = function(f) {
-//            var inputBits = {from: 3, to: 5};
-//            var targetBits = {from: 0, to: 2};
-//            var qbits = jsqbits('|000000>')
-//                    .hadamard(inputBits)
-//                    .applyFunction(inputBits, targetBits, f)
-//                    .hadamard(inputBits);
-//            // Take advantage of the fact that QState objects are actually not modified by measurement.
-//            var y1 = qbits.measure(inputBits).result;
-//            var y2 = null;
-//            for (var i = 0; i < 100; i++) {
-//                var nextY = qbits.measure(inputBits).result;
-//                if (y1 !== nextY) {
-//                    y2 = nextY;
-//                    break;
-//                }
-//            }
-//            if (y2 == null) throw "Could not find more than one value for y after 100 tries"
-//
-//        };
-//
-//
-//
-//        it("should find the right key (not identity)", function() {
-//            var testFunction = function(x) {
-//                var mapping = ['101', '010', '000', '110', '000', '110', '101', '010'];
-//                return parseInt(mapping[x], 2);
-//            };
-//            expect(simonsAlgorithm(testFunction)).toEqual('110');
-//        });
-//        it("should find the right key (identity)", function() {
-//            var mapping = [0, 1, 2, 3, 4, 5, 6, 7];
-//            shuffle(mapping);
-//            var permutation = function(x) {
-//                 return mapping[x];
-//             };
-//            expect(simonsAlgorithm(permutation)).toEqual('000');
-//        });
-//    });
+
+    describe("Simon's algorithm", function() {
+
+        var singleRunOfSimonsCircuit = function(f, numbits) {
+            var inputBits = {from: numbits, to: 2 * numbits - 1};
+            var targetBits = {from: 0, to: numbits - 1};
+            var qbits = new jsqbits.QState(2 * numbits, [jsqbits.ONE])
+                    .hadamard(inputBits)
+                    .applyFunction(inputBits, targetBits, f)
+                    .hadamard(inputBits);
+            return qbits.measure(inputBits).result;
+        }
+
+//      TODO: Must refactor this!
+        var findPotentialSolution = function(f, numBits) {
+            var nullSpace = null;
+            var results = [];
+            var estimatedNumberOfIndependentSolutions = 0;
+            for(var count = 0; count < 10 * numBits; count++) {
+                var result = singleRunOfSimonsCircuit(f, numBits);
+                if (results.indexOf(result) < 0) {
+                    results.push(result);
+                    estimatedNumberOfIndependentSolutions++;
+                    if (estimatedNumberOfIndependentSolutions == numBits - 1) {
+                        nullSpace = jsqbitsmath.findNullSpaceMod2(results, numBits);
+                        if (nullSpace.length == 1) break;
+                        estimatedNumberOfIndependentSolutions = numBits - nullSpace.length;
+                    }
+                }
+            }
+            if (nullSpace === null) throw "Could not find a solution";
+            return nullSpace[0];
+        }
+
+        var simonsAlgorithm = function(f, numBits) {
+            var solution = findPotentialSolution(f, numBits);
+            return (f(0) === f(solution)) ? solution : 0;
+         };
+
+        it("should find the right key (not identity)", function() {
+            var testFunction = function(x) {
+                var mapping = ['101', '010', '000', '110', '000', '110', '101', '010'];
+                return parseInt(mapping[x], 2);
+            };
+            expect(simonsAlgorithm(testFunction, 3).toString(2)).toEqual('110');
+        });
+
+        it("should find the right key (identity)", function() {
+            var mapping = [0, 1, 2, 3, 4, 5, 6, 7];
+            shuffle(mapping);
+            var permutation = function(x) {
+                 return mapping[x];
+             };
+            expect(simonsAlgorithm(permutation, 3)).toEqual(0);
+        });
+    });
 
 
     var shuffle = function(a) {

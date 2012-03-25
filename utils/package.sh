@@ -15,6 +15,6 @@ git checkout $1
 mkdir -p jsqbits-doc-$1
 rm -r jsqbits-doc-$1/*
 
-cp -r jsqbits-$1.js jsqbitsManual.html jsqbitsRunner.html LICENSE README css js jsqbits-doc-$1
+cp -r jsqbits-$1.js jsqbitsManual.html jsqbitsTutorial.html jsqbitsRunner.html LICENSE README css js jsqbits-doc-$1
 
 git checkout master

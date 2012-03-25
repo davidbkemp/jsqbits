@@ -237,17 +237,17 @@ jsqbits("|00>").hadamard(jsqbits.ALL)
 <p>
     Say Alice wishes to transmit two classical bits to Bob.
     The outline of the process is as follows:
-    a) A pair of qubits are entangled, and one given to Alice and one to Bob.
+    a) A pair of qubits are entangled, one given to Alice and one to Bob.
     b) Alice encodes the two bits of information into her single qubit an sends it to Bob.
     c) Bob manipulates both his own qubit and the qubit sent by Alice to extract the two bits.
 </p>
 <h3>Entangling the qubits</h3>
 <p>
-    As explained,
+    As mentioned,
     superdense coding requires two qubits to be prepared in an entangled state.
     This means that the two qubits are in a superposition of states
     and that their states are correlated in some way.
-    For this example, we require that the qubits are in the state:
+    For this example we require that the qubits are in the state:
 </p>
 <code>&#x221a;(1/2)|00> + &#x221a;(1/2)|11></code>
 <p>
@@ -267,7 +267,7 @@ jsqbits("|00>").hadamard(jsqbits.ALL)
     For, example, <code>jsqbits('|00>').not(1)</code> results in <code>|10></code>.
 </p>
 <p>
-    The "cnot" operator requires both a target bit and a control bit.
+    The controlled-not or "cnot" operator requires both a target bit and a control bit.
     It will flip the target bit if, and only if, the control bit has a value of 1.
     In jsqbits, the cnot operator takes the control bit as its first argument
     and the targit bit as its second.
@@ -281,7 +281,7 @@ jsqbits("|00>").hadamard(jsqbits.ALL)
 </p>
 <code>jsqbits('|00>').hadamard(1).cnot(1,0)</code>
 
-<h3>Encoding two bits into one qubit</h3>
+<h3>Encoding two classical bits into one qubit</h3>
 <p>
     To encode two bits into one qubit,
     we need to introduce the Pauli operators (named after the physicist Wolfgang Pauli).
@@ -292,28 +292,122 @@ jsqbits("|00>").hadamard(jsqbits.ALL)
     are aliases for <code>not()</code> and <code>cnot()</code> respectively.
 </p>
 <p>
-    Instead of flipping the qubit to which is is applied,
-    the Z operator flips the sign of the qubits amplitude,
-    and it only does so if the qubit has a value of 1.
+    Instead of flipping the qubit to which it is applied,
+    the Z operator flips the sign of the amplitude of the <code>|1></code> component of the qubit,
+    and leaves the amplitude of the <code>|0></code> component untouched.
     So, in jsqbits, <code>jsqbits('|0>').z(0)</code>
     leaves the state as <code>|0></code>,
     and <code>jsqbits('|1>').z(0)</code>
     results in the state <code>-1 |1></code>
-    (i.e. it is still in a 1 state, but its amplitude is -1).
+    (i.e. it is still in a <code>|1></code> state, but its amplitude is -1).
 </p>
 <p>
     As an illustrative example,
     consider the effect of combining the Hadamard and Z operators.
-    If a qubit is initially in a state of <code>|0></code>
+    If a qubit is initially in a state of <code>|0></code>,
+    then applying a Hadamard will result in
+    <code>&#x221a;(1/2)|0> + &#x221a;(1/2)|1></code>.
+    If you apply the Z operator this this you get
+    <code>&#x221a;(1/2)|0> - &#x221a;(1/2)|1></code> and,
+    finally, after applying a Hadamard again, you will get:
+    <code>|1></code>.
+    i.e. <code>jsqbits('|0>').hadamard(0).z(0).hadamard(0)</code> gives <code>|1></code>.
 </p>
 <p>
-    The <code>controlledZ()</code> method requires
-    both a target bit and a control bit and
-    only applies the Z operator if the control bit is 1.
+    The <code>controlledZ()</code> method, like the <code>cnot</code> method, requires
+    both a target bit and a control bit.
+    It only applies the Z operator if the control bit is 1.
 </p>
+<p>
+    The only remaining Pauli operator is the Y operator.
+    We do not actually require this operator for the algorithms covered in this tutorial,
+    but it is mentioned here for completeness.
+    The Y operator is quite tricky to describe.
+    It is equivalent to applying the Z operator, then the X operator, and then multiplying the amplitudes
+    by the imaginary number i.
+    So, in jsqbits, <code>jsqbits('|0>').y(0)</code>
+    leaves the state as <code>i |1></code>,
+    and <code>jsqbits('|1>').y(0)</code>
+    results in the state <code>-i |0></code>.
+</p>
+<p>
+    We can now describe how to encode two classical bits into one qubit.
+    Recall that Alice has two classical bits, a and b, and has one of a pair of entangled qubits,
+    and Bob has the other member of the pair.
+</p>
+<ol>
+    <li>If a = 1, then Alice applies the Z operator to her qubit.</li>
+    <li>If b = 1, then Alice applies the X operator to her qubit.</li>
+</ol>
+<p>If both a and b are 1's, then Alice applies both the Z and the X operator to her qubit.</p>
+<p>
+    This can be simulated in jsqbits with the following code:
+</p>
+<code class="block">
+// The bits to be sent to Alice are set in the string called input:
+var input = "10";
+
+// First, create a pair of entangled qubits
+var state = jsqbits('|00>').hadamard(0).cnot(0,1);
+
+// Assume that qubit 0 is sent to Bob, and that qubit 1 is sent to Alice.
+
+//            Alice prepares her qubit (qubit 1)
+var alice = 1;
+if (input.charAt(0) === '1') {
+    state = state.z(alice);
+}
+if (input.charAt(1) === '1') {
+    state = state.x(alice);
+}
+
+// Alice sends her qubit to Bob.
+</code>
+
+<h3>Decoding the qubit into the original classical bits</h3>
+<p>
+    Once Alice has encoded her two classical bits into her one qubit,
+    she can send that qubit to Bob,
+    and Bob can proceed to decode the qubit as follows.
+</p>
+<ol>
+    <li>Apply a controlled-not operation, using Alice's qubit as the control, and Bob's qubit as the target.</li>
+    <li>Apply a Hadamard operation to Alice's qubit.</li>
+    <li>Measure both qubits.</li>
+</ol>
+<p>
+    At the end of these steps, the value measured for Alice's qubit will be the original value of "a",
+    and the value measured for Bob's qubit will be the original value of "b".
+</p>
+<p>Here is the full algorithm in jsqbits (try it out in the jsqbits runner):</p>
+<code class="block">
+// The bits to be sent to Alice are set in the string called input:
+var input = "10";
+
+// First, create a pair of entangled qubits
+var state = jsqbits('|00>').hadamard(0).cnot(0,1);
+
+// Assume that qubit 0 is sent to Bob, and that qubit 1 is sent to Alice.
+
+//            Alice prepares her qubit (qubit 1)
+var alice = 1;
+if (input.charAt(0) === '1') {
+    state = state.z(alice);
+}
+if (input.charAt(1) === '1') {
+    state = state.x(alice);
+}
+
+// Alice sends her qubit to Bob.
+
+// Bob recovers the input bit values.
+var bob = 0; // Bob's qubit
+state = state.cnot(alice, bob).hadamard(alice);
+state.measure(ALL).asBitString();
+</code>
 
 <h2>Deutche's Algorithm</h2>
-
+To be completed....
 <h2>Concluding Remarks &amp; Further Reading</h2>
 <p>
     I highly recommend reading

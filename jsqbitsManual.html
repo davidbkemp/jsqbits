@@ -367,7 +367,7 @@ var state2 = state1.x(1);
         or the constant <code>jsqbits.ALL</code>.
         Note that currently you cannot supply an array of bit indexes.
         As with all QState functions, the meaurement() function does not actually modify the object,
-        but instead returns an object with a "result" field containing the integer value of the result,
+        but instead returns a Measurement object with a "result" field containing the integer value of the result,
         and a "newState" field containing the new quantum state (as a new QState object).
     </p>
     <table class="samples">
@@ -394,6 +394,12 @@ var state2 = state1.x(1);
         </tr>
         </tbody>
     </table>
+
+    <p>
+        Measurement objects have a convenient <code>asBitString()</code> method that returns the state of the measured qbits as a string of 0's and 1's.
+        So, for example, <span class="code" id="MeasurementAsBitString">jsqbits("|0110>").measure({from:1, to: 3}).asBitString()</span> will result in
+        the string <span class="code" data-sampleref="MeasurementAsBitString">011</span>.
+    </p>
 
     <p>
         The random number generator used during measurement is exposed as

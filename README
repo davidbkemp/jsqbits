@@ -13,7 +13,6 @@ TODO:
 * Document QState.each()
 * Fix exceptions to follow a more standard pattern
 * Allow array of bits anywhere we currently allow a bit range (measure() and applyFunction())
-* Implementation of Simon's algorithm
 * Include a 'remainingQbits' field on measurement outcomes.
 * JSLint?
 * Coverage?

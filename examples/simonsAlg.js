@@ -9,7 +9,7 @@ var singleRunOfSimonsCircuit = function(f, numbits) {
     return qbits.measure(inputBits).result;
 }
 
-//      TODO: Must refactor this!
+//      TODO: Make this a litte easier to read!
 var findPotentialSolution = function(f, numBits) {
     var nullSpace = null;
     var results = [];

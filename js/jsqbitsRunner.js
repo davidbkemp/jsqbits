@@ -1,5 +1,6 @@
 var ALL = jsqbits.ALL;
 $(function() {
+
     $('#run').click(function() {
         $('#result').fadeOut(function() {
             $('#result').text('');
@@ -22,5 +23,10 @@ $(function() {
             $('#result').text(result);
             $('#result').fadeIn();
         });
+    });
+
+    $('#clear').click(function() {
+        $('#code').val('');
+        $('#result').text('');
     });
 });

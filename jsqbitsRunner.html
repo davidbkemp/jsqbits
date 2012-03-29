@@ -1,6 +1,8 @@
 <html>
 <head>
     <title>jsqbits runner</title>
+    <meta name="keywords" content="quantum, quantum programming, quantum computer, simulator">
+    <link rel="stylesheet" type="text/css" href="css/runner.css" />
     <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="jsqbits-1.1.js"></script>
     <script type="text/javascript" src="jsqbitsmath-1.1.js"></script>
@@ -21,7 +23,7 @@
 </head>
 <body>
 <h1>jsqbits runner</h1>
-
+<h2>An online quantum computer simulator</h2>
 <p>
     This is a JavaScript runner preloaded with
     the <a href="index.html">jsqbits library</a>.
@@ -36,10 +38,44 @@
 <textarea id="code" rows="15" cols="120">
 jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)
 </textarea>
-<button id="run" style="display:block; margin-top:1em;">Run</button>
-<div style="margin-top:1em; min-height:2em; border-style:solid; border-width:1px;">
+<div class="buttons">
+    <button id="run">Run</button>
+    <button id="clear">Clear</button>
+</div>
+<div class="result">
     <div id="result"></div>
 </div>
 
+<h3>jsqbits methods</h3>
+<div class="commandlistblock">
+    <table class="commandlist">
+        <tbody>
+            <tr><td class="method">jsqbits(bitstring)</td><td class="desc">Create a new QState object</td></tr>
+            <tr><td class="method">new QState(numbits, amplitudes)</td><td class="desc">Create a new QState object</td></tr>
+            <tr><td class="method">x(targetBits)</td><td class="desc">Pauli X</td></tr>
+            <tr><td class="method">y(targetBits)</td><td class="desc">Pauli Y</td></tr>
+            <tr><td class="method">z(targetBits)</td><td class="desc">Pauli Z</td></tr>
+            <tr><td class="method">hadamard(targetBits)</td><td class="desc">Hadamard</td></tr>
+            <tr><td class="method">not(targetBits)</td><td class="desc">Not</td></tr>
+            <tr><td class="method">rotateX(targetBits, angle)</td><td class="desc">Rotate about X</td></tr>
+            <tr><td class="method">rotateY(targetBits, angle)</td><td class="desc">Rotate about Y</td></tr>
+            <tr><td class="method">rotateZ(targetBits, angle)</td><td class="desc">Rotate about Z</td></tr>
+        </tbody>
+    </table>
+    <table class="commandlist">
+        <tbody>
+            <tr><td class="method">controlledHadamard(controlBits, targetBits))</td><td class="desc">Controlled Hadamard</td></tr>
+            <tr><td class="method">cnot(controlBits, targetBits)</td><td class="desc">Controlled Not</td></tr>
+            <tr><td class="method">controlledX(controlBits, targetBits)</td><td class="desc">Controlled Pauli X</td></tr>
+            <tr><td class="method">controlledXRotation(controlBits, targetBits, angle)</td><td class="desc">Controlled rotation about X</td></tr>
+            <tr><td class="method">toffoli(controlBit, controlBit, ..., targetBit)</td><td class="desc">Toffoli</td></tr>
+            <tr><td class="method">applyFunction(inputBits, targetBits, functionToApply)</td><td class="desc">Apply a function</td></tr>
+            <tr><td class="method">amplitude(basisState)</td><td class="desc">Get an amplitude</td></tr>
+            <tr><td class="method">measure(targetBits)</td><td class="desc">Make a measurement</td></tr>
+            <tr><td class="method">jsqbits.complex(real, imaginary)</td><td class="desc">Create a complex number</td></tr>
+            <tr><td class="method">jsqbits.Complex.add,subtract,multiply,negate</td><td class="desc">Some Complex methods</td></tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

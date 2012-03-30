@@ -16,7 +16,7 @@ git checkout $1
 
 [ $? -eq 0 ] || die "Could not checkout the git tag"
 
-cp -r jsqbits-$1.js jsqbitsManual.html jsqbitsTutorial.html jsqbitsRunner.html LICENSE README css js jsqbits-doc-$1
+cp -r jsqbits-$1.js jsqbitsmath-$1.js jsqbitsManual.html jsqbitsTutorial.html jsqbitsRunner.html LICENSE README css js jsqbits-doc-$1
 
 tar -czf jsqbits-doc-$1.tar.gz jsqbits-doc-$1
 

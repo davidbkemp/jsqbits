@@ -1,3 +1,7 @@
+/*
+ * jqc1 is able to take a unitary function f and determine its trace in an efficient manner.
+ */
+
 function dqc1(f, n) {
     var real = traceReal(f, n);
     var imaginary = traceImaginary(f, n);

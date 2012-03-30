@@ -1,3 +1,8 @@
+/**
+ * Simon's algorithm.
+ * See http://en.wikipedia.org/wiki/Simon's_algorithm
+ */
+
 
 var singleRunOfSimonsCircuit = function(f, numbits) {
     var inputBits = {from: numbits, to: 2 * numbits - 1};
@@ -9,7 +14,6 @@ var singleRunOfSimonsCircuit = function(f, numbits) {
     return qbits.measure(inputBits).result;
 }
 
-//      TODO: Make this a litte easier to read!
 var findPotentialSolution = function(f, numBits) {
     var nullSpace = null;
     var results = [];

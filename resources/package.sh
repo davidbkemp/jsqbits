@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: This needs to be reworked now that things have been completely re-organized
+
 die () {
     echo >&2 "$@"
     exit 1

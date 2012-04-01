@@ -16,7 +16,9 @@ var applyTeleportation = function(state) {
     return resultingState;
 };
 
-// The state of the qubit to be transmitted consists of the amplitude of |0> and the amplitude of |1> as follows:
+// The state of the qubit to be transmitted consists of the amplitude of |0> and the amplitude of |1>
+// Any two complex values can be chosen here so long as the sum of their magnitudes adds up to 1.
+// For this example, we choose to transmit the state: 0.5+0.5i |0> + 0.7071i |1>
 var stateToBeTransmitted0 = jsqbits.complex(0.5, 0.5);
 var stateToBeTransmitted1 = jsqbits.complex(0, Math.sqrt(0.5));
 
@@ -26,23 +28,18 @@ var initialAmplitudes = [];
 initialAmplitudes[0] = stateToBeTransmitted0;
 initialAmplitudes[4] = stateToBeTransmitted1;
 var initialState = new jsqbits.QState(3, initialAmplitudes);
-// Need to put bits 0 and 1 into an Bell State:
+// Need to put bits 0 and 1 into a Bell State:
 initialState = initialState.hadamard(1).cnot(1,0);
 
 // Now apply the Teleportation algorithm
 var finalState = applyTeleportation(initialState);
 
 // By this stage, only bit zero has not been measured and it should have the same state the original state to be transmitted.
-var receivedAmplitudeFor0 = null;
-var receivedAmplitudeFor1 = null;
-finalState.each(function(stateWithAmplitude) {
-    if (stateWithAmplitude.asNumber() % 2 == 0) {
-        if (receivedAmplitudeFor0 != null) throw "Should only have one state with bit 0 being 0";
-        receivedAmplitudeFor0 = stateWithAmplitude.amplitude;
-    } else {
-        if (receivedAmplitudeFor1 != null) throw "Should only have one state with bit 0 being 1";
-        receivedAmplitudeFor1 = stateWithAmplitude.amplitude;
-    }
-});
+// The other two bits will have random values but will be in definite states.
+// ie. finalState should be
+// stateToBeTransmitted0 |xx0> + stateToBeTransmitted1 |xx1>
+// where the bit values of bits 1 and 2 (xx) are identical in the two states.
+// If we had some way of projecting onto bit 0, we would have
+// stateToBeTransmitted0 |0> + stateToBeTransmitted1 |1>
 
-receivedAmplitudeFor0.format({decimalPlaces: 4}) + ' |0> + ' + receivedAmplitudeFor1.format({decimalPlaces: 4}) + ' |1> '
+finalState

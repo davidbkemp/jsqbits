@@ -1,7 +1,7 @@
 /*
  * Super Dense Coding.
  * If Alice and Bob share a pair of entangled qubits, then Alice can encode two classical bits into her one entangled qubit,
- * send it to Bob, and Bob can decode it with the help of his entangled qubit
+ * send it to Bob, and Bob can decode it with the help of his entangled qubit.
  */
 
 var superDense = function(input) {

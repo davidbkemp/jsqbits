@@ -69,8 +69,8 @@ var testFunction1010 = (function() {
             }
             mapping[i] = value;
             mapping[i ^ key] = value;
+            valuesUsed.push(value);
         }
-        valuesUsed.push(value);
     }
     return function(x) {
         return mapping[x];

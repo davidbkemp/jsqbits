@@ -26,7 +26,7 @@
 <h2>An online quantum computer simulator</h2>
 <p>
     This is a JavaScript runner preloaded with
-    the <a href="http://davidbkemp.github.com/jsqbits/index.html">jsqbits library</a>.
+    the <a href="http://davidbkemp.github.com/jsqbits/">jsqbits library</a>.
     Enter arbitrary JavaScript in the text area below and press the "Run" button.
     For more information, see the
     <a href="http://davidbkemp.github.com/jsqbits/jsqbitsManual.html">jsqbits user manual</a>.
@@ -55,6 +55,8 @@ jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)
             <tr><td class="method">x(targetBits)</td><td class="desc">Pauli X</td></tr>
             <tr><td class="method">y(targetBits)</td><td class="desc">Pauli Y</td></tr>
             <tr><td class="method">z(targetBits)</td><td class="desc">Pauli Z</td></tr>
+            <tr><td class="method">s(targetBits)</td><td class="desc">Phase gate</td></tr>
+            <tr><td class="method">t(targetBits)</td><td class="desc">T gate</td></tr>
             <tr><td class="method">hadamard(targetBits)</td><td class="desc">Hadamard</td></tr>
             <tr><td class="method">not(targetBits)</td><td class="desc">Not</td></tr>
             <tr><td class="method">rotateX(targetBits, angle)</td><td class="desc">Rotate about X</td></tr>

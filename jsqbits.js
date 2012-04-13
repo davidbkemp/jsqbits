@@ -390,6 +390,37 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.Z = jsqbits.QState.prototype.z;
 
+    jsqbits.QState.prototype.controlledS = function(controlBits, targetBits) {
+        validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledS().');
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
+            return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.multiply(complex(0, 1))};
+        });
+    };
+
+    jsqbits.QState.prototype.s = function(targetBits) {
+        validateArgs(arguments, 1, 1, 'Must supply target bits to s().');
+        return this.controlledS(null, targetBits);
+    };
+
+    jsqbits.QState.prototype.S = jsqbits.QState.prototype.s;
+
+    jsqbits.QState.prototype.controlledT =  (function() {
+        var expPiOn4 = complex(1 / Math.sqrt(2), 1 / Math.sqrt(2));
+        return function(controlBits, targetBits) {
+            validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledT().');
+            return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
+                return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.multiply(expPiOn4)};
+            });
+        };
+    })();
+
+    jsqbits.QState.prototype.t = function(targetBits) {
+        validateArgs(arguments, 1, 1, 'Must supply target bits to t().');
+        return this.controlledT(null, targetBits);
+    };
+
+    jsqbits.QState.prototype.T = jsqbits.QState.prototype.t;
+
     /**
      * Toffoli takes one or more control bits (conventionally two) and one target bit.
      */
@@ -411,7 +442,6 @@ function jsqbits(bitString) {
             }
         };
 
-        // TODO: Needs refactoring!
         var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
             var newAmplitudes = {};
             var statesThatCanBeSkipped = {};
@@ -460,7 +490,6 @@ function jsqbits(bitString) {
         };
     })();
 
-    // TODO: This needs some serious refactoring!!
     jsqbits.QState.prototype.applyFunction = (function() {
 
         var validateBitRangesAreDistinct = function(controlBits, targetBits) {
@@ -508,7 +537,6 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.random = Math.random;
 
-    // TODO: Refactor this method!
     jsqbits.QState.prototype.measure = (function(bits) {
 
         var normalize = function(amplitudes) {

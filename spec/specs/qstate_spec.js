@@ -122,13 +122,13 @@ describe('QState', function() {
     describe('#x', function() {
         it("applies the Pauli x operator to (|0>)", function() {
             var x = jsqbits('|0>').x(0);
-            expect(x.amplitude('|0>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|0>')).toEql(jsqbits.ZERO);
             expect(x.amplitude('|1>')).toEql(complex(1, 0));
         });
         it("applies the Pauli x operator to (|1>)", function() {
             var x = jsqbits('|1>').x(0);
             expect(x.amplitude('|0>')).toEql(complex(1, 0));
-            expect(x.amplitude('|1>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEql(jsqbits.ZERO);
         });
     });
 
@@ -158,11 +158,11 @@ describe('QState', function() {
         it("applies the Pauli z operator to (|0>)", function() {
             var x = jsqbits('|0>').z(0);
             expect(x.amplitude('|0>')).toEql(complex(1, 0));
-            expect(x.amplitude('|1>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEql(jsqbits.ZERO);
         });
         it("applies the Pauli z operator to (|1>)", function() {
             var x = jsqbits('|1>').z(0);
-            expect(x.amplitude('|0>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|0>')).toEql(jsqbits.ZERO);
             expect(x.amplitude('|1>')).toEql(complex(-1, 0));
         });
     });
@@ -186,13 +186,13 @@ describe('QState', function() {
     describe('#y', function() {
         it("applies the Pauli y operator to (|0>)", function() {
             var x = jsqbits('|0>').y(0);
-            expect(x.amplitude('|0>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|0>')).toEql(jsqbits.ZERO);
             expect(x.amplitude('|1>')).toEql(complex(0, 1));
         });
         it("applies the Pauli y operator to (|1>)", function() {
             var x = jsqbits('|1>').y(0);
             expect(x.amplitude('|0>')).toEql(complex(0, -1));
-            expect(x.amplitude('|1>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toEql(jsqbits.ZERO);
         });
     });
 
@@ -204,34 +204,89 @@ describe('QState', function() {
         it("applies the Pauli y operator when the control bit is one",  function() {
             var x = jsqbits('|101>').controlledY(0, 2);
             expect(x.amplitude('|001>')).toEql(complex(0, -1));
-            expect(x.amplitude('|101>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|101>')).toEql(jsqbits.ZERO);
         });
     });
 
+    describe('#s', function() {
+        it("leaves |0> untouched", function() {
+             var x = jsqbits('|0>').s(0);
+             expect(x).toEql(jsqbits('|0>'));
+         });
+         it("multiplies the amplitude of |1> by i", function() {
+             var x = jsqbits('|1>').s(0);
+             expect(x.amplitude('|0>')).toEql(jsqbits.ZERO);
+             expect(x.amplitude('|1>')).toEql(complex(0, 1));
+        });
+    });
+
+    describe('#controlledS', function() {
+        it("does nothing when the control bit is zero", function() {
+            var x = jsqbits('|100>').controlledS(0, 2);
+            expect(x).toEql(jsqbits('|100>'));
+        });
+        it("applies the S operator when the control bit is one (target is 1)",  function() {
+            var x = jsqbits('|101>').controlledS(0, 2);
+            expect(x.amplitude('|101>')).toEql(complex(0, 1));
+        });
+        it("applies the S operator when the control bit is one (target is 0)",  function() {
+            var x = jsqbits('|001>').controlledS(0, 2);
+            expect(x).toEql(jsqbits('|001>'));
+        });
+    });
+
+    describe('#t', function() {
+        it("leaves |0> untouched", function() {
+             var x = jsqbits('|0>').t(0);
+             expect(x).toEql(jsqbits('|0>'));
+         });
+         it("multiplies the amplitude of |1> by e^(i pi/4)", function() {
+             var x = jsqbits('|1>').t(0);
+             expect(x.amplitude('|0>')).toEql(jsqbits.ZERO);
+             expect(x.amplitude('|1>')).toBeApprox(complex(Math.cos(Math.PI/4), Math.sin(Math.PI/4)));
+        });
+
+    });
+
+    describe('#controlledT', function(){
+        it("does nothing when the control bit is zero", function() {
+            var x = jsqbits('|100>').controlledT(0, 2);
+            expect(x).toEql(jsqbits('|100>'));
+        });
+        it("applies the T operator when the control bit is one (target is 1)",  function() {
+            var x = jsqbits('|101>').controlledT(0, 2);
+            expect(x.amplitude('|101>')).toBeApprox(complex(Math.cos(Math.PI/4), Math.sin(Math.PI/4)));
+        });
+        it("applies the T operator when the control bit is one (target is 0)",  function() {
+            var x = jsqbits('|001>').controlledT(0, 2);
+            expect(x).toEql(jsqbits('|001>'));
+        });
+        
+    });
 
     describe('#hadamard', function() {
         it("applies the hadamard operation", function() {
             var x = jsqbits('|000>').hadamard(2);
             expect(x.amplitude('|000>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(x.amplitude('|001>')).toEql(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|010>')).toEql(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|011>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|001>')).toEql(jsqbits.ZERO);
+            expect(x.amplitude('|010>')).toEql(jsqbits.ZERO);
+            expect(x.amplitude('|011>')).toEql(jsqbits.ZERO);
             expect(x.amplitude('|100>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(x.amplitude('|101>')).toEql(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|110>')).toEql(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|111>')).toEql(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|101>')).toEql(jsqbits.ZERO);
+            expect(x.amplitude('|110>')).toEql(jsqbits.ZERO);
+            expect(x.amplitude('|111>')).toEql(jsqbits.ZERO);
         });
 
         it("is it's own inverse", function() {
             var x = jsqbits('|000>').hadamard(2).hadamard(2);
             expect(x.amplitude('|000>')).toBeApprox(complex(1, 0));
-            expect(x.amplitude('|001>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|010>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|011>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|100>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|101>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|110>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|001>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|010>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|011>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|100>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|101>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|110>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|111>')).toBe(jsqbits.ZERO);
         });
 
         it("accepts an ALL parameter", function() {
@@ -245,13 +300,13 @@ describe('QState', function() {
         it("accepts a bit range", function() {
             var x = jsqbits('|000>').hadamard({from:1, to:2});
             expect(x.amplitude('|000>')).toBeApprox(complex(0.5, 0));
-            expect(x.amplitude('|001>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|001>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|010>')).toBeApprox(complex(0.5, 0));
-            expect(x.amplitude('|011>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|011>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|100>')).toBeApprox(complex(0.5, 0));
-            expect(x.amplitude('|101>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|101>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|110>')).toBeApprox(complex(0.5, 0));
-            expect(x.amplitude('|111>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|111>')).toBe(jsqbits.ZERO);
         });
     });
 
@@ -272,17 +327,17 @@ describe('QState', function() {
             var x = jsqbits('|00>').rotateX(1, Math.PI/4);
 
             expect(x.amplitude('|00>')).toBeApprox(complex(Math.cos(Math.PI/8), 0));
-            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|01>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|10>')).toBeApprox(complex(0, -Math.sin(Math.PI/8)));
-            expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|11>')).toBe(jsqbits.ZERO);
         });
         it("can be applied multiple times", function() {
             var x = jsqbits('|00>').rotateX(1, Math.PI/4).rotateX(1, Math.PI/4).rotateX(1, Math.PI/4);
 
             expect(x.amplitude('|00>')).toBeApprox(complex(Math.cos(3*Math.PI/8), 0));
-            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|01>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|10>')).toBeApprox(complex(0, -Math.sin(3*Math.PI/8)));
-            expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|11>')).toBe(jsqbits.ZERO);
         });
         it("is accepts an ALL parameter", function() {
             var x = jsqbits('|00>').rotateX(jsqbits.ALL, Math.PI/4);
@@ -310,16 +365,16 @@ describe('QState', function() {
         it("rotates about the Y axis", function() {
             var x = jsqbits('|00>').rotateY(1, Math.PI/4);
             expect(x.amplitude('|00>')).toBeApprox(complex(Math.cos(Math.PI/8), 0));
-            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|01>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|10>')).toBeApprox(complex(Math.sin(Math.PI/8), 0));
-            expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|11>')).toBe(jsqbits.ZERO);
         });
         it("can be applied multiple times", function() {
             var x = jsqbits('|00>').rotateY(1, Math.PI/4).rotateY(1, Math.PI/4).rotateY(1, Math.PI/4);
             expect(x.amplitude('|00>')).toBeApprox(complex(Math.cos(3*Math.PI/8), 0));
-            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|01>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|10>')).toBeApprox(complex(Math.sin(3*Math.PI/8), 0));
-            expect(x.amplitude('|11>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|11>')).toBe(jsqbits.ZERO);
         });
     });
 
@@ -339,17 +394,17 @@ describe('QState', function() {
         it("rotates about the Z axis (|0>)", function() {
             var x = jsqbits('|0>').rotateZ(0, Math.PI/4);
             expect(x.amplitude('|0>')).toBeApprox(complex(Math.cos(Math.PI/8), -Math.sin(Math.PI/8)));
-            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toBe(jsqbits.ZERO);
         });
         it("rotates about the Z axis (|1>)", function() {
             var x = jsqbits('|1>').rotateZ(0, Math.PI/4);
-            expect(x.amplitude('|0>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|0>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|1>')).toBeApprox(complex(Math.cos(Math.PI/8), Math.sin(Math.PI/8)));
         });
         it("can be applied multiple times", function() {
             var x = jsqbits('|0>').rotateZ(0, Math.PI/4).rotateZ(0, Math.PI/4).rotateZ(0, Math.PI/4);
             expect(x.amplitude('|0>')).toBeApprox(complex(Math.cos(3*Math.PI/8), -Math.sin(3*Math.PI/8)));
-            expect(x.amplitude('|1>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|1>')).toBe(jsqbits.ZERO);
         });
     });
 
@@ -361,7 +416,7 @@ describe('QState', function() {
         it("rotates around the z axis when the control bit is one", function() {
             var x = jsqbits('|100>').controlledZRotation(2, 0, Math.PI/4);
             expect(x.amplitude('|100>')).toBeApprox(complex(Math.cos(Math.PI/8), -Math.sin(Math.PI/8)));
-            expect(x.amplitude('|101>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|101>')).toBe(jsqbits.ZERO);
         });
     });
 
@@ -389,9 +444,9 @@ describe('QState', function() {
     describe('Simple combination of hadamard and cnot', function() {
         it("results in a phase kick back", function() {
             var x = jsqbits('|01>').hadamard(0).hadamard(1).cnot(1, 0).hadamard(0).hadamard(1);
-            expect(x.amplitude('|00>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|01>')).toBe(jsqbits.Complex.ZERO);
-            expect(x.amplitude('|10>')).toBe(jsqbits.Complex.ZERO);
+            expect(x.amplitude('|00>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|01>')).toBe(jsqbits.ZERO);
+            expect(x.amplitude('|10>')).toBe(jsqbits.ZERO);
             expect(x.amplitude('|11>')).toBeApprox(complex(1,0));
         });
     });
@@ -496,8 +551,8 @@ describe('QState', function() {
             expect(measurement.result).toBe(0);
             expect(newState.amplitude('|1000>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(newState.amplitude('|1100>')).toBe(jsqbits.Complex.ZERO);
-            expect(newState.amplitude('|1101>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1100>')).toBe(jsqbits.ZERO);
+            expect(newState.amplitude('|1101>')).toBe(jsqbits.ZERO);
         });
 
         it ("should return the new states for outcome of 00 (random returns 0.49)", function() {
@@ -508,8 +563,8 @@ describe('QState', function() {
             expect(measurement.result).toBe(0);
             expect(newState.amplitude('|1000>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(newState.amplitude('|1100>')).toBe(jsqbits.Complex.ZERO);
-            expect(newState.amplitude('|1101>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1100>')).toBe(jsqbits.ZERO);
+            expect(newState.amplitude('|1101>')).toBe(jsqbits.ZERO);
         });
 
         it ("should return the new states for outcome of 10 (random returns 0.51)", function() {
@@ -518,8 +573,8 @@ describe('QState', function() {
             var newState = measurement.newState;
             expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(2);
-            expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
-            expect(newState.amplitude('|1001>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1000>')).toBe(jsqbits.ZERO);
+            expect(newState.amplitude('|1001>')).toBe(jsqbits.ZERO);
             expect(newState.amplitude('|1100>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
             expect(newState.amplitude('|1101>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
         });
@@ -530,8 +585,8 @@ describe('QState', function() {
             var newState = measurement.newState;
             expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(2);
-            expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
-            expect(newState.amplitude('|1001>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1000>')).toBe(jsqbits.ZERO);
+            expect(newState.amplitude('|1001>')).toBe(jsqbits.ZERO);
             expect(newState.amplitude('|1100>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
             expect(newState.amplitude('|1101>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
         });
@@ -542,9 +597,9 @@ describe('QState', function() {
             var newState = measurement.newState;
             expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(1);
-            expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1000>')).toBe(jsqbits.ZERO);
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
-            expect(newState.amplitude('|1100>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1100>')).toBe(jsqbits.ZERO);
             expect(newState.amplitude('|1101>')).toBeApprox(complex(1 / Math.sqrt(2), 0));
         });
 
@@ -554,10 +609,10 @@ describe('QState', function() {
             var newState = measurement.newState;
             expect(newState.numBits()).toBe(4);
             expect(measurement.result).toBe(parseInt('1001', 2));
-            expect(newState.amplitude('|1000>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1000>')).toBe(jsqbits.ZERO);
             expect(newState.amplitude('|1001>')).toBeApprox(complex(1, 0));
-            expect(newState.amplitude('|1100>')).toBe(jsqbits.Complex.ZERO);
-            expect(newState.amplitude('|1101>')).toBe(jsqbits.Complex.ZERO);
+            expect(newState.amplitude('|1100>')).toBe(jsqbits.ZERO);
+            expect(newState.amplitude('|1101>')).toBe(jsqbits.ZERO);
         });
 
         it ("actually calls Math.random", function() {

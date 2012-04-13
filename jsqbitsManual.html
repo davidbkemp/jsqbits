@@ -109,6 +109,8 @@ new jsqbits.QState(4, a)
         <li>x(targetBits)</li>
         <li>y(targetBits)</li>
         <li>z(targetBits)</li>
+        <li>s(targetBits)</li>
+        <li>t(targetBits)</li>
         <li>hadamard(targetBits)</li>
         <li>not(targetBits)</li>
         <li>rotateX(targetBits, angle)</li>
@@ -233,6 +235,35 @@ var state2 = state1.x(1);
     </table>
 
     <p>
+        There are also the S and T operators (phase gate and &pi;/8 gate respectively):
+    </p>
+
+    <table class="samples">
+        <tbody>
+        <tr>
+            <td class="code" id="s0">jsqbits("|00>").s(0)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="s0">|00></td>
+        </tr>
+        <tr>
+            <td class="code" id="s1">jsqbits("|01>").s(0)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="s1">i |01></td>
+        </tr>
+        <tr>
+            <td class="code" id="t0">jsqbits("|00>").t(0)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="t0">|00></td>
+        </tr>
+        <tr>
+            <td class="code" id="t1">jsqbits("|01>").t(0)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="t1">0.7071+0.7071i |01></td>
+        </tr>
+        </tbody>
+    </table>
+        
+    <p>
     Other single qbit operators are those that rotate around the X, Y, and Z axis of the Bloch sphere.
     These take an angle and apply the operation
     e<sup>-i&theta;X/2</sup>,
@@ -282,6 +313,8 @@ var state2 = state1.x(1);
         <li>controlledX(controlBits, targetBits)</li>
         <li>controlledY(controlBits, targetBits)</li>
         <li>controlledZ(controlBits, targetBits)</li>
+        <li>controlledS(controlBits, targetBits)</li>
+        <li>controlledT(controlBits, targetBits)</li>
         <li>controlledHadamard(controlBits, targetBits)</li>
         <li>cnot(controlBits, targetBits)</li>
         <li>controlledXRotation(controlBits, targetBits, angle)</li>
@@ -348,7 +381,8 @@ var state2 = state1.x(1);
     </table>
 
     <p>
-        In addition to controlledX(), there are controlledY(), controlledZ(), and controlledHadamard() functions.
+        In addition to controlledX(), there are controlledY(), controlledZ(), controlledS(), controlledT(),
+        and controlledHadamard() functions.
         The function cnot() is an alias for controlledX().
         There are also controlledXRotation(), controlledYRotation(), and controlledZRotation() functions.
     </p>

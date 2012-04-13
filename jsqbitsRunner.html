@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/runner.css" />
     <script type="text/javascript" src="resources/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="jsqbits.js"></script>
-    <script type="text/javascript" src="jsqbitsmath-1.1.js"></script>
+    <script type="text/javascript" src="jsqbitsmath.js"></script>
     <script type="text/javascript" src="resources/js/jsqbitsRunner.js"></script>
     <script type="text/javascript">
 
@@ -55,6 +55,8 @@ jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)
             <tr><td class="method">x(targetBits)</td><td class="desc">Pauli X</td></tr>
             <tr><td class="method">y(targetBits)</td><td class="desc">Pauli Y</td></tr>
             <tr><td class="method">z(targetBits)</td><td class="desc">Pauli Z</td></tr>
+            <tr><td class="method">s(targetBits)</td><td class="desc">Phase gate</td></tr>
+            <tr><td class="method">t(targetBits)</td><td class="desc">T gate</td></tr>
             <tr><td class="method">hadamard(targetBits)</td><td class="desc">Hadamard</td></tr>
             <tr><td class="method">not(targetBits)</td><td class="desc">Not</td></tr>
             <tr><td class="method">rotateX(targetBits, angle)</td><td class="desc">Rotate about X</td></tr>

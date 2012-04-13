@@ -64,6 +64,12 @@ describe('Complex', function() {
         });
     });
 
+    describe("#conjugate", function() {
+       it('returns the complex conjugate', function() {
+           expect(x.conjugate()).toEql(complex(1, -3));
+       });
+    });
+
     describe('#format', function() {
         it('should use toString when no options', function() {
             expect(complex(-1.23, 3.4).format()).toEqual('-1.23+3.4i');

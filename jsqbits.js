@@ -24,10 +24,6 @@ function jsqbits(bitString) {
 
 (function() {
 
-    var isNull = function(x) {
-        return x === null || x === undefined;
-    };
-
     var validateArgs = function(args, minimum) {
         var maximum = 10000;
         var message = 'Must supply at least ' + minimum + ' parameters.';
@@ -54,6 +50,10 @@ function jsqbits(bitString) {
         if (value.magnitude() > jsqbits.roundToZero) {
             array[index] = value;
         }
+    };
+
+    var isNull = function(x) {
+        return x === null || x === undefined;
     };
 
     var convertBitQualifierToBitRange = function(bits, numBits) {
@@ -132,6 +132,10 @@ function jsqbits(bitString) {
         }
         return new jsqbits.Complex(this.real() * other.real() - this.imaginary() * other.imaginary(),
                     this.real() * other.imaginary() + this.imaginary() * other.real());
+    };
+
+    jsqbits.Complex.prototype.conjugate = function() {
+        return new jsqbits.Complex(this.real(), -this.imaginary());
     };
 
     jsqbits.Complex.prototype.toString = function() {

@@ -5,7 +5,7 @@
     <meta name="keywords" content="quantum, quantum programming, quantum computer, simulator">
     <link rel="stylesheet" type="text/css" href="resources/css/jsqbits.css" />
     <script src="resources/js/jquery-1.7.1.min.js"></script>
-    <script src="jsqbits-1.1.js"></script>
+    <script src="jsqbits.js"></script>
     <script src="resources/js/jsqbitsManual.js"></script>
     <script type="text/javascript">
 
@@ -560,6 +560,11 @@ jsqbits("|10110>")
             <td class="code" id="complex-magnitude">jsqbits.complex(3, 4).magnitude()</td>
             <td>=</td>
             <td class="code" data-sampleref="complex-magnitude">5</td>
+        </tr>
+        <tr>
+            <td class="code" id="complex-conjugate">jsqbits.complex(3, 4).conjugate()</td>
+            <td>=</td>
+            <td class="code" data-sampleref="complex-conjugate">3-4i</td>
         </tr>
         <tr>
             <td class="code" id="complex-format">jsqbits.complex(-1.235959, 3.423523).format({decimalPlaces: 3})</td>

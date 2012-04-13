@@ -71,7 +71,7 @@ var jsqbitsmath = jsqbitsmath || {};
             var pivotRow = a[pivotRowIndex];
             var colBitMask = 1 << pivotColIndex;
             for (var rowIndex = 0; rowIndex < a.length; rowIndex++) {
-                if (rowIndex != pivotRowIndex && (colBitMask & a[rowIndex])) {
+                if (rowIndex !== pivotRowIndex && (colBitMask & a[rowIndex])) {
                     a[rowIndex] = a[rowIndex] ^ pivotRow;
                 }
             }
@@ -89,7 +89,7 @@ var jsqbitsmath = jsqbitsmath || {};
                 }
             }
             return specialSolution;
-        }
+        };
 
         /**
          * Find the special solutions to the mod-2 equation Ax=0 for matrix a.
@@ -99,7 +99,7 @@ var jsqbitsmath = jsqbitsmath || {};
             var pivotNumber = 0;
             var nextPivotColumnIndex = pivotColumnIndexes[pivotNumber];
             for (var colIndex = width - 1; colIndex >= 0; colIndex--) {
-                if (colIndex == nextPivotColumnIndex) {
+                if (colIndex === nextPivotColumnIndex) {
                     pivotNumber++;
                     nextPivotColumnIndex = pivotColumnIndexes[pivotNumber];
                 } else {

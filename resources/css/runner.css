@@ -1,16 +1,47 @@
+
 body {
-    margin-left: 2em;
-    margin-right: 2em;
+    font-size: 100%;
+    font-family: sans-serif;
+    margin: 1em 8.4375%;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    font-family: serif;
+    padding: 0.2em 0 0.4em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    font-style: italic;
+    font-family: serif;
+    padding: 0.1em 0 0.4em 0;
+}
+
+h3 {
+    font-size: 1.25em;
+    font-weight: bold;
+    padding: 0.1em 0 0.4em 0;
+}
+
+p {
+    padding: 0.4em 0;
+}
+
+#code {
+    width: 100%;
+    font-size: 1em;
 }
 
 .buttons {
     margin-top: 1em;
 }
 
-.buttons button {
-    font-size: 90%;
-    margin-left: 1em;
-    margin-right: 1em;
+#run {
+    font-size: 1.125em;
+    margin-right: 1.15%;
 }
 
 .result {
@@ -19,16 +50,29 @@ body {
     border-style:solid;
     border-width:1px;
     text-align: left;
+    font-size: 1em;
+    margin-bottom: 1em;
 }
 
 .commandlist {
-    font-size: smaller;
-    float: left;
-    margin: 0 2em 1em 0;
-    padding: 0.5em;
     border-style: solid;
-    border-width:1px;
+    border-width: 1px;
     white-space: nowrap;
+    font-size: 0.75em
+}
+
+.commandlist.first {
+    border-bottom: none;
+}
+
+.commandlist.second {
+    border-top: none;
+}
+
+.row:nth-child(odd)    { background-color:#ddd; }
+
+.row {
+    padding: 0.5em 0.5em;
 }
 
 .method {
@@ -37,4 +81,39 @@ body {
 
 .desc {
     padding-left: 1em;
+}
+
+@media screen and (min-width: 600px) {
+    .method {
+        width: 25em;
+        float: left;
+    }
+
+}
+
+
+@media screen and (min-width: 1200px) {
+
+    .commandlist {
+        width: 49.2481203%;
+    }
+
+    .commandlist.first {
+        float: left;
+        border-bottom-style: solid;
+        border-width: 1px;
+    }
+
+    .commandlist.second {
+        float: right;
+        border-top-style: solid;
+        border-width: 1px;
+    }
+}
+
+
+@media screen and (min-width: 1500px) {
+    .commandlist {
+        font-size: 1em
+    }
 }

@@ -277,6 +277,18 @@ function jsqbits(bitString) {
         return new jsqbits.QState(parsedBitString.length, amplitudes);
     };
 
+    jsqbits.QState.prototype.kron = function(otherState) {
+        var amplitudes = {};
+        this.each(function(basisWithAmplitudeA) {
+            otherState.each(function(otherBasisWithAmplitude) {
+                var newBasisState = (basisWithAmplitudeA.asNumber() << otherState.numBits()) + otherBasisWithAmplitude.asNumber();
+                var newAmplitude = basisWithAmplitudeA.amplitude.multiply(otherBasisWithAmplitude.amplitude);
+                amplitudes[newBasisState] = newAmplitude;
+            });
+        });
+        return new jsqbits.QState(this.numBits() + otherState.numBits(), amplitudes);
+    };
+
     jsqbits.QState.prototype.controlledHadamard = (function() {
         var squareRootOfOneHalf = complex(1 / Math.sqrt(2), 0);
         return function(controlBits, targetBits) {

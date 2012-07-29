@@ -633,4 +633,16 @@ describe('QState', function() {
             expect(jsqbits('|0101>').measure({from:1, to:3}).asBitString()).toBe("010");
         });
     });
+
+    describe('#kron', function(){
+        it('should return the tensor product of two states', function() {
+            var q1 = jsqbits('|01>').hadamard(0); /* sqrt(1/2)(|00> - |01> */
+            var q2 = jsqbits('|100>').hadamard(2); /* sqrt(1/2) |000> - |100> */
+            var newState = q1.kron(q2); /* Should be 0.5 (|00000> - |00100> - |01000> + |01100> */
+            expect(newState.amplitude('|00000>')).toBeApprox(complex(0.5, 0));
+            expect(newState.amplitude('|00100>')).toBeApprox(complex(-0.5, 0));
+            expect(newState.amplitude('|01000>')).toBeApprox(complex(-0.5, 0));
+            expect(newState.amplitude('|01100>')).toBeApprox(complex(0.5, 0));
+        })
+    });
 });

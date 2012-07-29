@@ -521,6 +521,20 @@ jsqbits("|10110>")
     </p>
 </div>
 
+<div class="section" id="kron">
+    <h2>kron</h2>
+    <ul class="code index">
+        <li>kron(otherState)</li>
+    </ul>
+    <p>
+        The <code>kron</code> method of QState returns the Kronecker (or tensor) product.
+    </p>
+    <p>
+        For example, <span class="code" id="kronSample">jsqbits("|0110>").kron(jsqbits("|01>"))</span>
+        will result in <span class="code" data-sampleref="kronSample">|011001></span>.
+    </p>
+</div>
+
 <div class='section' id='amplitude'>
     <h2>amplitude</h2>
     <ul class="code index">

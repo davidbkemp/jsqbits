@@ -51,8 +51,8 @@ jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)
 <h3>jsqbits methods</h3>
 <div class="commandlistblock">
     <div class="commandlist first">
-            <div class='row'><div class="method">jsqbits(bitstring)</div><div class="desc">Create a new QState object</div></div>
-            <div class='row'><div class="method">new QState(numbits, amplitudes)</div><div class="desc">Create a new QState object</div></div>
+            <div class='row'><div class="method">jsqbits(bitstring)</div><div class="desc">Create a QState object</div></div>
+            <div class='row'><div class="method">new QState(numbits, amplitudes)</div><div class="desc">Create a QState object</div></div>
             <div class='row'><div class="method">x(targetBits)</div><div class="desc">Pauli X</div></div>
             <div class='row'><div class="method">y(targetBits)</div><div class="desc">Pauli Y</div></div>
             <div class='row'><div class="method">z(targetBits)</div><div class="desc">Pauli Z</div></div>
@@ -68,7 +68,7 @@ jsqbits('|001>').hadamard(jsqbits.ALL).rotateX(1, Math.PI/8).cnot(1,0)
             <div class='row'><div class="method">controlledHadamard(controlBits, targetBits))</div><div class="desc">Controlled Hadamard</div></div>
             <div class='row'><div class="method">cnot(controlBits, targetBits)</div><div class="desc">Controlled Not</div></div>
             <div class='row'><div class="method">controlledX(controlBits, targetBits)</div><div class="desc">Controlled Pauli X</div></div>
-            <div class='row'><div class="method">controlledXRotation(controlBits, targetBits, angle)</div><div class="desc">Controlled rotation about X</div></div>
+            <div class='row'><div class="method">controlledXRotation(ctrlBits, trgtBits, angle)</div><div class="desc">Controlled rotation about X</div></div>
             <div class='row'><div class="method">toffoli(controlBit, controlBit, ..., targetBit)</div><div class="desc">Toffoli</div></div>
             <div class='row'><div class="method">applyFunction(inputBits, targetBits, function)</div><div class="desc">Apply a function</div></div>
             <div class='row'><div class="method">amplitude(basisState)</div><div class="desc">Get an amplitude</div></div>

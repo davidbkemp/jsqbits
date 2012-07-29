@@ -2,10 +2,12 @@
 body {
     font-size: 100%;
     font-family: sans-serif;
-    margin: 1em 8.4375%;
+    margin: 1em 5%;
+    line-height: 1.2;
 }
 
 h1 {
+    line-height: 1;
     font-size: 2em;
     font-weight: bold;
     font-family: serif;
@@ -13,6 +15,7 @@ h1 {
 }
 
 h2 {
+    line-height: 1;
     font-size: 1.5em;
     font-weight: bold;
     font-style: italic;
@@ -84,8 +87,12 @@ p {
 }
 
 @media screen and (min-width: 600px) {
+    body {
+        margin: 1em 8.4375%;
+    }
+
     .method {
-        width: 25em;
+        width: 26em;
         float: left;
     }
 

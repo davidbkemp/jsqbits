@@ -1,6 +1,6 @@
 /*
  * Deutsch's Algorithm.
- * Determine the value of f(0) + f(1) mod 2 with a single invocation of f (where f maps {0,1} to {0,1}
+ * Determine the value of f(0) + f(1) mod 2 with a single invocation of f (where f is a single bit function)
  */
 
 var deutsch = function(f) {

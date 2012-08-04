@@ -38,13 +38,19 @@ p {
     font-size: 1em;
 }
 
-.buttons {
+button {
     margin-top: 1em;
+    font-size: 80%;
+    margin-right: 1.15%;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
 }
 
 #run {
-    font-size: 1.125em;
-    margin-right: 1.15%;
+    background-color: #50A0f0;
+    padding-left: 2em;
+    padding-right: 2em;
 }
 
 .result {

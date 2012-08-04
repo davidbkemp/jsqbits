@@ -48,9 +48,18 @@ button {
 }
 
 #run {
-    background-color: #50A0f0;
+    color: rgb(7, 26, 145);
+    font-weight: bold;
     padding-left: 2em;
     padding-right: 2em;
+}
+
+#run:active {
+    color: rgba(7, 26, 145, 0.7);
+}
+
+#clear {
+    color: #444;
 }
 
 .result {
@@ -92,18 +101,18 @@ button {
     padding-left: 1em;
 }
 
-@media screen and (min-width: 600px) {
-    body {
-        margin: 1em 8.4375%;
-    }
+@media screen and (min-width: 480px) {
+    .commandlist {
+        font-size: 0.875em
+    }    
+}
 
+@media screen and (min-width: 768px) {
     .method {
         width: 26em;
         float: left;
     }
-
 }
-
 
 @media screen and (min-width: 1200px) {
 
@@ -127,6 +136,6 @@ button {
 
 @media screen and (min-width: 1500px) {
     .commandlist {
-        font-size: 1em
+        font-size: 1em;
     }
 }

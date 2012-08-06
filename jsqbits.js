@@ -112,13 +112,14 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex = function(real, imaginary) {
-        validateArgs(arguments, 2, 2, 'Must supply real and imaginary parameters to Complex()');
+        validateArgs(arguments, 1, 2, 'Must supply a real, and optionally an imaginary, argument to Complex()');
+        imaginary = imaginary || 0;
         this.real = function() {return real;};
         this.imaginary = function() {return imaginary;};
     };
 
     jsqbits.Complex.prototype.add = function(other) {
-        validateArgs(arguments, 1, 1, 'Must 1 parameter to add()');
+        validateArgs(arguments, 1, 1, 'Must supply 1 parameter to add()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real() + other, this.imaginary());
         }
@@ -126,7 +127,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex.prototype.multiply = function(other) {
-        validateArgs(arguments, 1, 1, 'Must 1 parameter to multiply()');
+        validateArgs(arguments, 1, 1, 'Must supply 1 parameter to multiply()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real() * other, this.imaginary() * other);
         }
@@ -188,7 +189,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex.prototype.subtract = function(other) {
-        validateArgs(arguments, 1, 1, 'Must 1 parameter to subtract()');
+        validateArgs(arguments, 1, 1, 'Must supply 1 parameter to subtract()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real() - other, this.imaginary());
         }
@@ -245,7 +246,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.QState = function(numBits, amplitudes) {
-        validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
+        validateArgs(arguments, 2, 2, 'Must supply 2 parameters to QState()');
 
         this.numBits = function () {
             return numBits;
@@ -277,7 +278,28 @@ function jsqbits(bitString) {
         return new jsqbits.QState(parsedBitString.length, amplitudes);
     };
 
-    jsqbits.QState.prototype.kron = function(otherState) {
+    jsqbits.QState.prototype.multiply = function(amount) {
+        var amplitudes = {};
+        this.each(function(oldAmplitude) {
+            amplitudes[oldAmplitude.index] = oldAmplitude.amplitude.multiply(amount);
+        });
+        return new jsqbits.QState(this.numBits(), amplitudes);
+    };
+
+    jsqbits.QState.prototype.add = function(otherState) {
+        var amplitudes = {};
+        this.each(function(stateWithAmplitude) {
+            amplitudes[stateWithAmplitude.index] = stateWithAmplitude.amplitude;
+        });
+        otherState.each(function(stateWithAmplitude) {
+            var existingValue = amplitudes[stateWithAmplitude.index] || Complex.ZERO;
+            amplitudes[stateWithAmplitude.index] = stateWithAmplitude.amplitude.add(existingValue);
+        });
+        return new jsqbits.QState(this.numBits(), amplitudes);
+    };
+
+
+    jsqbits.QState.prototype.tensorProduct = function(otherState) {
         var amplitudes = {};
         this.each(function(basisWithAmplitudeA) {
             otherState.each(function(otherBasisWithAmplitude) {
@@ -288,6 +310,8 @@ function jsqbits(bitString) {
         });
         return new jsqbits.QState(this.numBits() + otherState.numBits(), amplitudes);
     };
+
+    jsqbits.QState.prototype.kron  = jsqbits.QState.prototype.tensorProduct;
 
     jsqbits.QState.prototype.controlledHadamard = (function() {
         var squareRootOfOneHalf = complex(1 / Math.sqrt(2), 0);

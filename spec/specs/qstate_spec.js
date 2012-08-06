@@ -643,6 +643,35 @@ describe('QState', function() {
             expect(newState.amplitude('|00100>')).toBeApprox(complex(-0.5, 0));
             expect(newState.amplitude('|01000>')).toBeApprox(complex(-0.5, 0));
             expect(newState.amplitude('|01100>')).toBeApprox(complex(0.5, 0));
-        })
+        });
+    });
+
+    describe("#tensorProduct", function(){
+        it("should be an alias for #kron", function() {
+            var q1 = jsqbits('|01>').hadamard(0); /* sqrt(1/2)(|00> - |01> */
+            var q2 = jsqbits('|100>').hadamard(2); /* sqrt(1/2) |000> - |100> */
+            var newState = q1.tensorProduct(q2); /* Should be 0.5 (|00000> - |00100> - |01000> + |01100> */
+            expect(newState.amplitude('|00000>')).toBeApprox(complex(0.5, 0));
+            expect(newState.amplitude('|00100>')).toBeApprox(complex(-0.5, 0));
+            expect(newState.amplitude('|01000>')).toBeApprox(complex(-0.5, 0));
+            expect(newState.amplitude('|01100>')).toBeApprox(complex(0.5, 0));
+        });
+    });
+
+    describe("#multiply", function(){
+        it("should modify the global phase", function(){
+            var q = jsqbits('|1>').hadamard(0).multiply(complex(3, -4));
+            expect(q.amplitude("|0>")).toBeApprox(complex(Math.sqrt(0.5), 0).multiply(complex(3, -4)));
+            expect(q.amplitude("|1>")).toBeApprox(complex(-Math.sqrt(0.5), 0).multiply(complex(3, -4)));
+        });
+    });
+
+    describe("#add", function() {
+        it("should add two quantum states together", function(){
+            var q = jsqbits('|01>').hadamard(0).add(jsqbits('|00>')).add(jsqbits('|11>'));
+            expect(q.amplitude("|00>")).toBeApprox(complex(1 + Math.sqrt(0.5)));
+            expect(q.amplitude("|01>")).toBeApprox(complex(-Math.sqrt(0.5)));
+            expect(q.amplitude("|11>")).toBeApprox(complex(1));
+        });
     });
 });

@@ -14,6 +14,14 @@ describe('Complex', function() {
         this.addMatchers(jsqbits.JasmineMatchers);
     });
 
+    describe("construction", function() {
+        it("should use a default imaginary value of zero", function() {
+            var z = complex(3);
+            expect(z.real()).toEqual(3);
+            expect(z.imaginary()).toEqual(0);
+        });
+    });
+
     describe('#add', function() {
         it("adds complex numbers", function() {
             var z = x.add(y);
@@ -68,6 +76,12 @@ describe('Complex', function() {
        it('returns the complex conjugate', function() {
            expect(x.conjugate()).toEql(complex(1, -3));
        });
+    });
+
+    describe("#toString", function(){
+        it("should format the complex number", function(){
+            expect(complex(-1.23, 3.4).toString()).toEqual('-1.23+3.4i');
+        });
     });
 
     describe('#format', function() {

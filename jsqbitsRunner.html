@@ -48,7 +48,7 @@ var deutsch = function(f) {
 //var f = function(x) {return x;};
 var f = function(x) {return (x + 1) % 2;};
 
-deutsch(f)
+"f(0) % f(1) = " + deutsch(f)
 </textarea>
 <div class="buttons">
     <button id="run">Run</button>
@@ -63,6 +63,9 @@ deutsch(f)
     <div class="commandlist first">
             <div class='row'><div class="method">jsqbits(bitstring)</div><div class="desc">Create a QState object</div></div>
             <div class='row'><div class="method">new QState(numbits, amplitudes)</div><div class="desc">Create a QState object</div></div>
+            <div class='row'><div class="method">add(otherState)</div><div class="desc">Add another state</div></div>
+            <div class='row'><div class="method">multiply(value)</div><div class="desc">Multiply by a global phase</div></div>
+            <div class='row'><div class="method">normalize()</div><div class="desc">Normalize the amplitudes</div></div>
             <div class='row'><div class="method">x(targetBits)</div><div class="desc">Pauli X</div></div>
             <div class='row'><div class="method">y(targetBits)</div><div class="desc">Pauli Y</div></div>
             <div class='row'><div class="method">z(targetBits)</div><div class="desc">Pauli Z</div></div>

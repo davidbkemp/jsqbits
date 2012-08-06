@@ -30,7 +30,7 @@ You may also wish to try reading the (work in progress) [Introduction to Quantum
 
 TODO
 -----
-* Document QState.each(), jsqbits.ZERO, and jsqbits.ONE
+* Document QState.each()
 * Fix exceptions to follow a more standard pattern
 * Allow array of bits anywhere we currently allow a bit range (measure() and applyFunction())
 * Include a 'remainingQbits' field on measurement outcomes.

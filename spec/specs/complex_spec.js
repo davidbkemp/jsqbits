@@ -78,6 +78,12 @@ describe('Complex', function() {
        });
     });
 
+    describe("#real", function(){
+        it("should create a complex number", function(){
+            expect(jsqbits.real(3)).toBeApprox(complex(3, 0));
+        });
+    });
+
     describe("#toString", function(){
         it("should format the complex number", function(){
             expect(complex(-1.23, 3.4).toString()).toEqual('-1.23+3.4i');

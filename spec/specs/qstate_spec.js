@@ -674,4 +674,16 @@ describe('QState', function() {
             expect(q.amplitude("|11>")).toBeApprox(complex(1));
         });
     });
+
+    describe("#normalize", function(){
+        it("should normalize the amplitudes", function() {
+            var q = jsqbits('|0>')
+                .multiply(complex(3,4))
+                .add(jsqbits('|1>').multiply(complex(0,1)));
+            q = q.normalize();
+            var factor = 1/Math.sqrt(25 + 1);
+            expect(q.amplitude('|1>')).toBeApprox(complex(0, factor));
+            expect(q.amplitude('|0>')).toBeApprox(complex(3,4).multiply(complex(factor)));
+        });
+    });
 });

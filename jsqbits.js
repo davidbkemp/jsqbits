@@ -112,13 +112,14 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex = function(real, imaginary) {
-        validateArgs(arguments, 2, 2, 'Must supply real and imaginary parameters to Complex()');
+        validateArgs(arguments, 1, 2, 'Must supply a real, and optionally an imaginary, argument to Complex()');
+        imaginary = imaginary || 0;
         this.real = function() {return real;};
         this.imaginary = function() {return imaginary;};
     };
 
     jsqbits.Complex.prototype.add = function(other) {
-        validateArgs(arguments, 1, 1, 'Must 1 parameter to add()');
+        validateArgs(arguments, 1, 1, 'Must supply 1 parameter to add()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real() + other, this.imaginary());
         }
@@ -126,7 +127,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex.prototype.multiply = function(other) {
-        validateArgs(arguments, 1, 1, 'Must 1 parameter to multiply()');
+        validateArgs(arguments, 1, 1, 'Must supply 1 parameter to multiply()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real() * other, this.imaginary() * other);
         }
@@ -188,7 +189,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.Complex.prototype.subtract = function(other) {
-        validateArgs(arguments, 1, 1, 'Must 1 parameter to subtract()');
+        validateArgs(arguments, 1, 1, 'Must supply 1 parameter to subtract()');
         if (typeof other === 'number') {
             return new jsqbits.Complex(this.real() - other, this.imaginary());
         }
@@ -208,9 +209,14 @@ function jsqbits(bitString) {
         return new Complex(real, imaginary);
     };
 
+    jsqbits.real = function(real) {
+        return new Complex(real, 0);
+    };
+
     var Complex = jsqbits.Complex;
     var complex = jsqbits.complex;
-   
+    var real = jsqbits.real;
+
     jsqbits.ALL = 'ALL';
 
     // Amplitudes with magnitudes smaller than jsqbits.roundToZero this are rounded off to zero.
@@ -245,7 +251,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.QState = function(numBits, amplitudes) {
-        validateArgs(arguments, 2, 2, 'Must 2 parameters to QState()');
+        validateArgs(arguments, 2, 2, 'Must supply 2 parameters to QState()');
 
         this.numBits = function () {
             return numBits;
@@ -273,11 +279,32 @@ function jsqbits(bitString) {
         validateArgs(arguments, 1, 1, 'Must supply a bit string');
         var parsedBitString = parseBitString(bitString);
         var amplitudes = {};
-        amplitudes[parsedBitString.value] = complex(1,0);
+        amplitudes[parsedBitString.value] = jsqbits.ONE;
         return new jsqbits.QState(parsedBitString.length, amplitudes);
     };
 
-    jsqbits.QState.prototype.kron = function(otherState) {
+    jsqbits.QState.prototype.multiply = function(amount) {
+        var amplitudes = {};
+        this.each(function(oldAmplitude) {
+            amplitudes[oldAmplitude.index] = oldAmplitude.amplitude.multiply(amount);
+        });
+        return new jsqbits.QState(this.numBits(), amplitudes);
+    };
+
+    jsqbits.QState.prototype.add = function(otherState) {
+        var amplitudes = {};
+        this.each(function(stateWithAmplitude) {
+            amplitudes[stateWithAmplitude.index] = stateWithAmplitude.amplitude;
+        });
+        otherState.each(function(stateWithAmplitude) {
+            var existingValue = amplitudes[stateWithAmplitude.index] || Complex.ZERO;
+            amplitudes[stateWithAmplitude.index] = stateWithAmplitude.amplitude.add(existingValue);
+        });
+        return new jsqbits.QState(this.numBits(), amplitudes);
+    };
+
+
+    jsqbits.QState.prototype.tensorProduct = function(otherState) {
         var amplitudes = {};
         this.each(function(basisWithAmplitudeA) {
             otherState.each(function(otherBasisWithAmplitude) {
@@ -289,8 +316,10 @@ function jsqbits(bitString) {
         return new jsqbits.QState(this.numBits() + otherState.numBits(), amplitudes);
     };
 
+    jsqbits.QState.prototype.kron  = jsqbits.QState.prototype.tensorProduct;
+
     jsqbits.QState.prototype.controlledHadamard = (function() {
-        var squareRootOfOneHalf = complex(1 / Math.sqrt(2), 0);
+        var squareRootOfOneHalf = real(1 / Math.sqrt(2));
         return function(controlBits, targetBits) {
             validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledHadamard()');
             return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1) {
@@ -310,7 +339,7 @@ function jsqbits(bitString) {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledXRotation()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
-            var cos = complex(Math.cos(halfAngle), 0);
+            var cos = real(Math.cos(halfAngle));
             var negative_i_sin = complex(0, -Math.sin(halfAngle));
             var newAmplitudeOf0 = amplitudeOf0.multiply(cos).add(amplitudeOf1.multiply(negative_i_sin));
             var newAmplitudeOf1 = amplitudeOf0.multiply(negative_i_sin).add(amplitudeOf1.multiply(cos));
@@ -327,8 +356,8 @@ function jsqbits(bitString) {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledYRotation()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
-            var cos = complex(Math.cos(halfAngle), 0);
-            var sin = complex(Math.sin(halfAngle), 0);
+            var cos = real(Math.cos(halfAngle));
+            var sin = real(Math.sin(halfAngle));
             var newAmplitudeOf0 = amplitudeOf0.multiply(cos).add(amplitudeOf1.multiply(sin.negate()));
             var newAmplitudeOf1 = amplitudeOf0.multiply(sin).add(amplitudeOf1.multiply(cos));
             return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
@@ -344,7 +373,7 @@ function jsqbits(bitString) {
         validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledZRotation()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
-            var cos = complex(Math.cos(halfAngle), 0);
+            var cos = real(Math.cos(halfAngle));
             var i_sin = complex(0, Math.sin(halfAngle));
             var newAmplitudeOf0 = amplitudeOf0.multiply(cos.subtract(i_sin));
             var newAmplitudeOf1 = amplitudeOf1.multiply(cos.add(i_sin));
@@ -549,59 +578,54 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.random = Math.random;
 
-    jsqbits.QState.prototype.measure = (function(bits) {
+    jsqbits.QState.prototype.normalize = function() {
+        var amplitudes = {};
+        var sumOfMagnitudeSqaures = 0;
+        this.each(function (stateWithAmplitude) {
+            var magnitude = stateWithAmplitude.amplitude.magnitude();
+            sumOfMagnitudeSqaures += magnitude * magnitude;
+        });
+        var scale = real(1 / Math.sqrt(sumOfMagnitudeSqaures));
+        this.each(function (stateWithAmplitude) {
+            amplitudes[stateWithAmplitude.index] = stateWithAmplitude.amplitude.multiply(scale);
+        });
+        return new jsqbits.QState(this.numBits(), amplitudes);
 
-        var normalize = function(amplitudes) {
-            var sumOfMagnitudeSqaures = 0;
-            var state;
-            for (state in amplitudes) {
-                if (amplitudes.hasOwnProperty(state)) {
-                    var magnitude = amplitudes[state].magnitude();
-                    sumOfMagnitudeSqaures += magnitude * magnitude;
-                }
+    };
+
+    jsqbits.QState.prototype.measure = function(bits) {
+        validateArgs(arguments, 1, 1, 'Must supply bits to be measured to measure().');
+        var bitRange = convertBitQualifierToBitRange(bits, this.numBits());
+        var randomNumber = this.random();
+        var randomStateString;
+        var accumulativeSquareAmplitudeMagnitude = 0;
+        this.each(function(stateWithAmplitude) {
+            var magnitude = stateWithAmplitude.amplitude.magnitude();
+            accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
+            randomStateString = stateWithAmplitude.index;
+            if (accumulativeSquareAmplitudeMagnitude > randomNumber) {
+                return false;
             }
-            var scale = 1 / Math.sqrt(sumOfMagnitudeSqaures);
-            for (state in amplitudes) {
-                if (amplitudes.hasOwnProperty(state)) {
-                    amplitudes[state] = amplitudes[state].multiply(scale);
-                }
+        });
+
+        var randomState = parseInt(randomStateString, 10);
+
+        var highBitMask = (1 << (bitRange.to + 1)) - 1;
+        var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
+
+        var newAmplitudes = {};
+        this.each(function(stateWithAmplitude) {
+            var state = stateWithAmplitude.asNumber();
+            var comparisonState = (state & highBitMask) >> bitRange.from;
+            if (comparisonState === measurementOutcome) {
+                newAmplitudes[state] = stateWithAmplitude.amplitude;
             }
-        };
+        });
 
-        return function(bits) {
-            validateArgs(arguments, 1, 1, 'Must supply bits to be measured to measure().');
-            var bitRange = convertBitQualifierToBitRange(bits, this.numBits());
-            var randomNumber = this.random();
-            var randomStateString;
-            var accumulativeSquareAmplitudeMagnitude = 0;
-            this.each(function(stateWithAmplitude){
-                var magnitude = stateWithAmplitude.amplitude.magnitude();
-                accumulativeSquareAmplitudeMagnitude += magnitude * magnitude;
-                randomStateString = stateWithAmplitude.index;
-                if (accumulativeSquareAmplitudeMagnitude > randomNumber) {
-                    return false;
-                }
-            });
-
-            var randomState = parseInt(randomStateString, 10);
-
-            var highBitMask = (1 << (bitRange.to + 1)) - 1;
-            var measurementOutcome = (randomState & highBitMask) >> bitRange.from;
-
-            var newAmplitudes = {};
-            this.each(function(stateWithAmplitude){
-                var state = stateWithAmplitude.asNumber();
-                var comparisonState = (state & highBitMask) >> bitRange.from;
-                if (comparisonState === measurementOutcome) {
-                    newAmplitudes[state] = stateWithAmplitude.amplitude;
-                }
-            });
-
-            normalize(newAmplitudes);
-            var numBitsMeasured = bitRange.to - bitRange.from + 1;
-            return new jsqbits.Measurement(numBitsMeasured, measurementOutcome, new jsqbits.QState(this.numBits(), newAmplitudes));
-        };
-    })();
+        var numBitsMeasured = bitRange.to - bitRange.from + 1;
+        var newState = new jsqbits.QState(this.numBits(), newAmplitudes).normalize();
+        return new jsqbits.Measurement(numBitsMeasured, measurementOutcome, newState);
+    };
 
     jsqbits.QState.prototype.eql = function(other) {
         var stateString;

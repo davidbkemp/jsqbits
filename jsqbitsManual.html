@@ -58,6 +58,9 @@ jsqbits('|01>')
     <ul class="code index">
         <li>jsqbits(bitString)</li>
         <li>QState(numBits, amplitudes)</li>
+        <li>add(otherState)</li>
+        <li>multiply(globalPhase)</li>
+        <li>normalize()</li>
     </ul>
     <p>
         QState is used to encapsulate the state of a quantum computer.
@@ -83,10 +86,32 @@ jsqbits('|01>')
     </table>
 
     <p>
-        If you want your initial state to be in a super-position of states, then you can use the QState constructor directly,
-        passing it the number of qbits, and a (sparse) array of complex number amplitudes.  For example
+        If you want your initial state to be in a super-position of states,
+        then you can use use a number of convenience methods.
+        <code>QState.add()</code>
+        can be used to add one quantum state to another in a super-position,
+        <code>QState.normalize()</code>
+        can be used to normalize the amplitudes to ensure that the square of their magnitudes sums to 1,
+        and <code>QState.multiply()</code>
+        can be used to multiply all a state's amplitudes by any complex number.
+        For example,
+    </p>
+    <code class="block" id="multiplyAddAndNormalize">
+jsqbits('|00>')
+        .multiply(jsqbits.complex(1,1))
+        .add(jsqbits('|01>'))
+        .add(jsqbits('|10>'))
+        .normalize()
+    </code>
+
+    <p>
+        creates the QState <code data-sampleref="multiplyAddAndNormalize">0.5+0.5i |00> + 0.5 |01> + 0.5 |10></code>
     </p>
 
+    <p>
+        Another way to create an initial super-position of states is to use the QState constructor directly,
+        passing it the number of qbits, and a (sparse) array of complex number amplitudes.  For example
+    </p>
 
     <code class="block" id="QState">
 var a = []; a[0] = a[1] = a[4] = a[5] = jsqbits.complex(0.5, 0);
@@ -101,6 +126,7 @@ new jsqbits.QState(4, a)
         WARNING: Currently, instead of copying the supplied amplitude array, a reference to it is used,
         and so any subsequent modifications will affect the QState object.
     </p>
+
 </div>
 
 <div class='section' id='singleQbitOperators'>
@@ -522,15 +548,17 @@ jsqbits("|10110>")
 </div>
 
 <div class="section" id="kron">
-    <h2>kron</h2>
+    <h2>Tensor Product</h2>
     <ul class="code index">
+        <li>tensorProduct(otherState)</li>
         <li>kron(otherState)</li>
     </ul>
     <p>
-        The <code>kron</code> method of QState returns the Kronecker (or tensor) product.
+        The <code>tensorProduct</code> method of QState returns the Kronecker (or tensor) product.
+        The <code>kron</code> method is an alias of <code>tensorProduct</code>.
     </p>
     <p>
-        For example, <span class="code" id="kronSample">jsqbits("|0110>").kron(jsqbits("|01>"))</span>
+        For example, <span class="code" id="kronSample">jsqbits("|0110>").tensorProduct(jsqbits("|01>"))</span>
         will result in <span class="code" data-sampleref="kronSample">|011001></span>.
     </p>
 </div>
@@ -560,7 +588,9 @@ jsqbits("|10110>")
     <p>
         Given that the amplitudes of a quantum state are complex numbers,
         jsqbits has a Complex class.  The easiest way to create a complex number is using
-        the method: <code>jsqbits.complex(real, imaginary)</code>
+        the method: <code>jsqbits.complex(real, imaginary)</code>.
+        If the number has no imaginary component, then the <code>jsqbits.real(value)</code>
+        method is a convenient abbreviation of <code>jsqbits.complex(value, 0)</code>.
     </p>
     <table class="samples">
         <tbody>
@@ -568,6 +598,11 @@ jsqbits("|10110>")
             <td class="code" id="complexSample">jsqbits.complex(3, 4)</td>
             <td>=</td>
             <td class="code" data-sampleref="complexSample">3+4i</td>
+        </tr>
+        <tr>
+            <td class="code" id="realSample">jsqbits.real(3)</td>
+            <td>=</td>
+            <td class="code" data-sampleref="realSample">3</td>
         </tr>
         <tr>
             <td class="code" id="complex-add">jsqbits.complex(3, 4).add(jsqbits.complex(10, 20))</td>
@@ -618,6 +653,16 @@ jsqbits("|10110>")
             <td class="code" id="complex-format">jsqbits.complex(-1.235959, 3.423523).format({decimalPlaces: 3})</td>
             <td>=</td>
             <td class="code" data-sampleref="complex-format">-1.236+3.424i</td>
+        </tr>
+        <tr>
+            <td class="code" id="complex-zero">jsqbits.ZERO</td>
+            <td>=</td>
+            <td class="code" data-sampleref="complex-zero">0</td>
+        </tr>
+        <tr>
+            <td class="code" id="complex-one">jsqbits.ONE</td>
+            <td>=</td>
+            <td class="code" data-sampleref="complex-one">1</td>
         </tr>
         </tbody>
     </table>

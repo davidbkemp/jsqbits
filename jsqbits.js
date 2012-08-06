@@ -284,6 +284,9 @@ function jsqbits(bitString) {
     };
 
     jsqbits.QState.prototype.multiply = function(amount) {
+        if (typeof amount === 'number') {
+            amount = real(amount);
+        }
         var amplitudes = {};
         this.each(function(oldAmplitude) {
             amplitudes[oldAmplitude.index] = oldAmplitude.amplitude.multiply(amount);

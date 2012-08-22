@@ -306,6 +306,9 @@ function jsqbits(bitString) {
         return new jsqbits.QState(this.numBits(), amplitudes);
     };
 
+    jsqbits.QState.prototype.subtract = function(otherState) {
+        return this.add(otherState.multiply(-1));
+    };
 
     jsqbits.QState.prototype.tensorProduct = function(otherState) {
         var amplitudes = {};

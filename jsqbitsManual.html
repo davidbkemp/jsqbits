@@ -59,6 +59,7 @@ jsqbits('|01>')
         <li>jsqbits(bitString)</li>
         <li>QState(numBits, amplitudes)</li>
         <li>add(otherState)</li>
+        <li>subtract(otherState)</li>
         <li>multiply(globalPhase)</li>
         <li>normalize()</li>
     </ul>
@@ -100,12 +101,12 @@ jsqbits('|01>')
 jsqbits('|00>')
         .multiply(jsqbits.complex(1,1))
         .add(jsqbits('|01>'))
-        .add(jsqbits('|10>'))
+        .subtract(jsqbits('|10>'))
         .normalize()
     </code>
 
     <p>
-        creates the QState <code data-sampleref="multiplyAddAndNormalize">0.5+0.5i |00> + 0.5 |01> + 0.5 |10></code>
+        creates the QState <code data-sampleref="multiplyAddAndNormalize">0.5+0.5i |00> + 0.5 |01> - 0.5 |10></code>
     </p>
 
     <p>

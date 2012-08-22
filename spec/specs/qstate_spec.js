@@ -673,10 +673,19 @@ describe('QState', function() {
 
     describe("#add", function() {
         it("should add two quantum states together", function(){
+//            NOTE: You will need to normalize afterwards to get a sensible answer!
             var q = jsqbits('|01>').hadamard(0).add(jsqbits('|00>')).add(jsqbits('|11>'));
             expect(q.amplitude("|00>")).toBeApprox(complex(1 + Math.sqrt(0.5)));
             expect(q.amplitude("|01>")).toBeApprox(complex(-Math.sqrt(0.5)));
             expect(q.amplitude("|11>")).toBeApprox(complex(1));
+        });
+    });
+
+    describe("#subtract", function() {
+        it("should subtract two quantum states together", function(){
+//            NOTE: You will need to normalize afterwards to get a sensible answer!
+            var q = jsqbits('|01>').hadamard(0).add(jsqbits('|00>')).subtract(jsqbits('|01>'));
+            expect(q.toString()).toBe("1.7071 |00> - 1.7071 |01>");
         });
     });
 

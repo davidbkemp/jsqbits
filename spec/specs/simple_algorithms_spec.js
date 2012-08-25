@@ -172,7 +172,7 @@ describe('Simple Quantum Algorithms', function() {
         var singleRunOfSimonsCircuit = function(f, numbits) {
             var inputBits = {from: numbits, to: 2 * numbits - 1};
             var targetBits = {from: 0, to: numbits - 1};
-            var qbits = new jsqbits.QState(2 * numbits, [jsqbits.ONE])
+            var qbits = new jsqbits.QState(2 * numbits)
                     .hadamard(inputBits)
                     .applyFunction(inputBits, targetBits, f)
                     .hadamard(inputBits);

@@ -6,6 +6,13 @@ describe('QState', function() {
         this.addMatchers(jsqbits.JasmineMatchers);
     });
 
+    describe('new', function(){
+        it("will default amplitudes to the zero state |00...0>", function() {
+            var x = new jsqbits.QState(3);
+            expect(x.toString()).toEqual("|000>");
+        });
+    });
+
     describe('#toString', function() {
        it('will round off long decimals', function() {
            var x = jsqbits('|000>').hadamard(2);

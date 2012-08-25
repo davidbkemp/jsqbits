@@ -5,7 +5,7 @@
  */
 
 var superDense = function(input) {
-    var state = jsqbits('|00>').hadamard(0).cnot(0, 1);
+    var state = jsqbits('|00>').add(jsqbits('|11>')).normalize();
 
 //            Alice prepares her qbit
     var alice = 1;

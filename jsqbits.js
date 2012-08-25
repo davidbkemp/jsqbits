@@ -251,7 +251,8 @@ function jsqbits(bitString) {
     };
 
     jsqbits.QState = function(numBits, amplitudes) {
-        validateArgs(arguments, 2, 2, 'Must supply 2 parameters to QState()');
+        validateArgs(arguments, 1, 'new QState() must be supplied with number of bits (optionally with amplitudes as well)');
+        amplitudes = amplitudes || [jsqbits.ONE];
 
         this.numBits = function () {
             return numBits;

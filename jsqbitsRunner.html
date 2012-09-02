@@ -4,12 +4,12 @@
     <meta name="keywords" content="quantum, quantum programming, quantum computer, simulator">
     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     <link rel="canonical" href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">
-    <link rel="stylesheet" type="text/css" href="resources-1.3/css/reset.css" />
-    <link rel="stylesheet" type="text/css" href="resources-1.3/css/runner.css" />
-    <script type="text/javascript" src="resources-1.3/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="resources-1.3/js/jsqbits.js"></script>
-    <script type="text/javascript" src="resources-1.3/js/jsqbitsmath.js"></script>
-    <script type="text/javascript" src="resources-1.3/js/jsqbitsRunner.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources-1.3.1/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="resources-1.3.1/css/runner.css" />
+    <script type="text/javascript" src="resources-1.3.1/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="resources-1.3.1/js/jsqbits.js"></script>
+    <script type="text/javascript" src="resources-1.3.1/js/jsqbitsmath.js"></script>
+    <script type="text/javascript" src="resources-1.3.1/js/jsqbitsRunner.js"></script>
     <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
     <script type="text/javascript">
 
@@ -36,25 +36,26 @@
     <a href="http://davidbkemp.github.com/jsqbits/jsqbitsManual.html">jsqbits user manual</a>.
 </p>
 
-<textarea id="code" rows="15">
-/*
- * Deutsch's Algorithm: Determine the value of (f(0) + f(1) % 2) with a single invocation of f (where f is a single bit function)
- */
+<textarea id="code" rows="15"></textarea>
 
-var deutsch = function(f) {
-   return jsqbits('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL).measure(1).result;
-};
-
-//var f = function(x) {return 1;};
-//var f = function(x) {return 0;};
-//var f = function(x) {return x;};
-var f = function(x) {return (x + 1) % 2;};
-
-"(f(0) + f(1)) % 2 = " + deutsch(f)
-</textarea>
-<div class="buttons">
-    <button id="run">Run</button>
-    <button id="clear">Clear</button>
+<div>
+    <div class="buttons">
+        <button id="run">Run</button>
+        <button id="clear">Clear</button>
+    </div>
+    <div class="examples">
+        <span>Load example: </span>
+        <select id="example">
+            <option value="none">Please Select...</option>
+            <option value="bernsteinVazirani">Bernstein Vazirani Algorithm</option>
+            <option value="deutsch">Deutsch's Algorithm</option>
+            <option value="deutschJozsa">Deutsch-Jozsa Algorithm</option>
+            <option value="quantumTeleportation">Quantum Teleportation</option>
+            <option value="simonsAlg">Simon's Algorithm</option>
+            <option value="simpleSearch">Simple search algorithm</option>
+            <option value="superDenseCoding">Super Dense Coding</option>
+        </select>
+    </div>
 </div>
 <div class="result">
     <div id="result"></div>

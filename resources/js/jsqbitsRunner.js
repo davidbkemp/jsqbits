@@ -1,4 +1,5 @@
 var ALL = jsqbits.ALL;
+
 $(function() {
 
     $('#run').click(function() {
@@ -25,8 +26,35 @@ $(function() {
         });
     });
 
+    function clear() {
+       $('#code').val('');
+       $('#result').text('');
+    }
+
     $('#clear').click(function() {
-        $('#code').val('');
-        $('#result').text('');
+        clear();
+    });
+
+    var selectedExample = 'none';
+
+    $('#example').change(function(event) {
+        var newSelection = $(this).attr('value');
+        if (newSelection === 'none') {
+            selectedExample = newSelection;
+            return;
+        }
+        if ($('#code').val() !== '') {
+            if (!confirm("WARNING: This action will clear your existing code.")) {
+                $(this).attr('value', selectedExample);
+                return;
+            }
+        }
+        selectedExample = newSelection;
+        clear();
+
+        $.get("examples/" + newSelection + ".js", function(data) {
+            $('#code').val(data);
+          })
+          .error(function() { alert("Sorry. Something went wrong."); });
     });
 });

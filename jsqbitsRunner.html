@@ -21,25 +21,26 @@
     <a href="http://davidbkemp.github.com/jsqbits/jsqbitsManual.html">jsqbits user manual</a>.
 </p>
 
-<textarea id="code" rows="15">
-/*
- * Deutsch's Algorithm: Determine the value of (f(0) + f(1) % 2) with a single invocation of f (where f is a single bit function)
- */
+<textarea id="code" rows="15"></textarea>
 
-var deutsch = function(f) {
-   return jsqbits('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL).measure(1).result;
-};
-
-//var f = function(x) {return 1;};
-//var f = function(x) {return 0;};
-//var f = function(x) {return x;};
-var f = function(x) {return (x + 1) % 2;};
-
-"(f(0) + f(1)) % 2 = " + deutsch(f)
-</textarea>
-<div class="buttons">
-    <button id="run">Run</button>
-    <button id="clear">Clear</button>
+<div>
+    <div class="buttons">
+        <button id="run">Run</button>
+        <button id="clear">Clear</button>
+    </div>
+    <div class="examples">
+        <span>Load example: </span>
+        <select id="example">
+            <option value="none">Please Select...</option>
+            <option value="bernsteinVazirani">Bernstein Vazirani Algorithm</option>
+            <option value="deutsch">Deutsch's Algorithm</option>
+            <option value="deutschJozsa">Deutsch-Jozsa Algorithm</option>
+            <option value="quantumTeleportation">Quantum Teleportation</option>
+            <option value="simonsAlg">Simon's Algorithm</option>
+            <option value="simpleSearch">Simple search algorithm</option>
+            <option value="superDenseCoding">Super Dense Coding</option>
+        </select>
+    </div>
 </div>
 <div class="result">
     <div id="result"></div>

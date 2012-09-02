@@ -38,10 +38,14 @@ p {
     font-size: 1em;
 }
 
+.buttons {
+    display: inline-block;
+}
+
 button {
     margin-top: 1em;
     font-size: 80%;
-    margin-right: 1.15%;
+    margin-right: 1em;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -56,6 +60,13 @@ button {
 
 #run:active {
     color: rgba(7, 26, 145, 0.7);
+}
+
+.examples {
+    display: inline-block;
+    border: 1px solid black;
+    padding: 0.5em;
+    margin-top: 1em;
 }
 
 .result {

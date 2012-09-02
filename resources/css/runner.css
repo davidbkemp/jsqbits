@@ -97,6 +97,12 @@ button {
     padding-left: 1em;
 }
 
+.social {
+    position: absolute;
+    top: 1.5em;
+    right: 5%;
+}
+
 @media screen and (min-width: 600px) {
     .commandlist {
         font-size: 0.875em

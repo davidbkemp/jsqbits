@@ -9,19 +9,6 @@
     <script type="text/javascript" src="jsqbits.js"></script>
     <script type="text/javascript" src="jsqbitsmath.js"></script>
     <script type="text/javascript" src="resources/js/jsqbitsRunner.js"></script>
-    <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-29684858-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
 </head>
 <body>
 <h1>jsqbits runner</h1>
@@ -70,15 +57,16 @@ var f = function(x) {return (x + 1) % 2;};
             <div class='row'><div class="method">x(targetBits)</div><div class="desc">Pauli X</div></div>
             <div class='row'><div class="method">y(targetBits)</div><div class="desc">Pauli Y</div></div>
             <div class='row'><div class="method">z(targetBits)</div><div class="desc">Pauli Z</div></div>
-            <div class='row'><div class="method">s(targetBits)</div><div class="desc">Phase gate</div></div>
-            <div class='row'><div class="method">t(targetBits)</div><div class="desc">T gate</div></div>
+            <div class='row'><div class="method">r(targetBits, angle)</div><div class="desc">Phase shift gate</div></div>
+            <div class='row'><div class="method">s(targetBits)</div><div class="desc">Phase gate: r(&pi;/2)</div></div>
+            <div class='row'><div class="method">t(targetBits)</div><div class="desc">T gate: r(&pi;/4)</div></div>
             <div class='row'><div class="method">hadamard(targetBits)</div><div class="desc">Hadamard</div></div>
             <div class='row'><div class="method">not(targetBits)</div><div class="desc">Not</div></div>
+    </div>
+    <div class="commandlist second">
             <div class='row'><div class="method">rotateX(targetBits, angle)</div><div class="desc">Rotate about X</div></div>
             <div class='row'><div class="method">rotateY(targetBits, angle)</div><div class="desc">Rotate about Y</div></div>
             <div class='row'><div class="method">rotateZ(targetBits, angle)</div><div class="desc">Rotate about Z</div></div>
-    </div>
-    <div class="commandlist second">
             <div class='row'><div class="method">controlledHadamard(controlBits, targetBits))</div><div class="desc">Controlled Hadamard</div></div>
             <div class='row'><div class="method">cnot(controlBits, targetBits)</div><div class="desc">Controlled Not</div></div>
             <div class='row'><div class="method">controlledX(controlBits, targetBits)</div><div class="desc">Controlled Pauli X</div></div>

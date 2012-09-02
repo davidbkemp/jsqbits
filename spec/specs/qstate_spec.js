@@ -426,6 +426,28 @@ describe('QState', function() {
         });
     });
 
+    describe('#controlledR', function() {
+       it("does nothing when the control bit is zero", function() {
+           var originalState = jsqbits('|000>').hadamard(0);
+           var x = originalState.controlledR(2, 0, Math.PI/4);
+           expect(x.toString()).toBe(originalState.toString());
+       });
+       it("shifts the phase by e^(i angle) when the control bit is one", function() {
+           var originalState = jsqbits('|100>').hadamard(0);
+           var x = originalState.controlledR(2, 0, Math.PI/4);
+           expect(x.toString()).toBe("0.7071 |100> + 0.5+0.5i |101>");
+       });
+    });
+
+
+    describe('#r', function() {
+       it("shifts the phase by the specified angle e^(i angle)", function() {
+           var originalState = jsqbits('|0>').hadamard(0);
+           var x = originalState.r(0, Math.PI/4);
+           expect(x.toString()).toBe("0.7071 |0> + 0.5+0.5i |1>");
+       });
+    });
+
     describe('#not', function() {
         it("is an alias for x()", function() {
             expect(jsqbits.QState.prototype.not).toBe(jsqbits.QState.prototype.x);

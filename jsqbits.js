@@ -377,7 +377,7 @@ function jsqbits(bitString) {
     };
 
     jsqbits.QState.prototype.controlledZRotation = function(controlBits, targetBits, angle) {
-        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle, to controlledZRotation()');
+        validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and an angle to controlledZRotation()');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             var halfAngle = angle / 2;
             var cos = real(Math.cos(halfAngle));
@@ -392,6 +392,24 @@ function jsqbits(bitString) {
         validateArgs(arguments, 2, 2, 'Must supply target bits and angle to rotateZ.');
         return this.controlledZRotation(null, targetBits, angle);
     };
+
+    jsqbits.QState.prototype.controlledR = function(controlBits, targetBits, angle) {
+        validateArgs(arguments, 3, 3, 'Must supply control and target bits, and an angle to controlledR().');
+        return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
+            var cos = real(Math.cos(angle));
+            var i_sin = complex(0, Math.sin(angle));
+            var newAmplitudeOf0 = amplitudeOf0;
+            var newAmplitudeOf1 = amplitudeOf1.multiply(cos.add(i_sin));
+            return {amplitudeOf0: newAmplitudeOf0, amplitudeOf1: newAmplitudeOf1};
+        });
+    };
+
+    jsqbits.QState.prototype.r = function(targetBits, angle) {
+        validateArgs(arguments, 2, 2, 'Must supply target bits and angle to r().');
+        return this.controlledR(null, targetBits, angle);
+    };
+
+    jsqbits.QState.prototype.R = jsqbits.QState.prototype.r;
 
     jsqbits.QState.prototype.controlledX = function(controlBits, targetBits) {
         validateArgs(arguments, 2, 2, 'Must supply control and target bits to cnot() / controlledX().');
@@ -439,6 +457,7 @@ function jsqbits(bitString) {
     jsqbits.QState.prototype.Z = jsqbits.QState.prototype.z;
 
     jsqbits.QState.prototype.controlledS = function(controlBits, targetBits) {
+//        Note this could actually be implemented as controlledR(controlBits, targetBits, PI/2)
         validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledS().');
         return this.controlledApplicatinOfqBitOperator(controlBits, targetBits, function(amplitudeOf0, amplitudeOf1){
             return {amplitudeOf0: amplitudeOf0, amplitudeOf1: amplitudeOf1.multiply(complex(0, 1))};
@@ -453,6 +472,7 @@ function jsqbits(bitString) {
     jsqbits.QState.prototype.S = jsqbits.QState.prototype.s;
 
     jsqbits.QState.prototype.controlledT =  (function() {
+//        Note this could actually be implemented as controlledR(controlBits, targetBits, PI/4)
         var expPiOn4 = complex(1 / Math.sqrt(2), 1 / Math.sqrt(2));
         return function(controlBits, targetBits) {
             validateArgs(arguments, 2, 2, 'Must supply control and target bits to controlledT().');

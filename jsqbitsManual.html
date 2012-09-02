@@ -3,10 +3,10 @@
 <head>
     <title>jsqbits User Manual</title>
     <meta name="keywords" content="quantum, quantum programming, quantum computer, simulator">
-    <link rel="stylesheet" type="text/css" href="resources-1.2/css/jsqbits.css" />
-    <script src="resources-1.2/js/jquery-1.7.1.min.js"></script>
-    <script src="resources-1.2/js/jsqbits.js"></script>
-    <script src="resources-1.2/js/jsqbitsManual.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources-1.3/css/jsqbits.css" />
+    <script src="resources-1.3/js/jquery-1.7.1.min.js"></script>
+    <script src="resources-1.3/js/jsqbits.js"></script>
+    <script src="resources-1.3/js/jsqbitsManual.js"></script>
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
@@ -136,6 +136,7 @@ new jsqbits.QState(4, a)
         <li>x(targetBits)</li>
         <li>y(targetBits)</li>
         <li>z(targetBits)</li>
+        <li>r(targetBits, angle)</li>
         <li>s(targetBits)</li>
         <li>t(targetBits)</li>
         <li>hadamard(targetBits)</li>
@@ -262,11 +263,24 @@ var state2 = state1.x(1);
     </table>
 
     <p>
-        There are also the S and T operators (phase gate and &pi;/8 gate respectively):
+        The R operator is also known as the "phase shift" operator.
+        It leaves the |0> state unchanged, but modifies the amplitude of the |1> state by e<sup>i&theta;</sup>,
+        There are also the S and T operators (also known as the phase gate and &pi;/8 gate respectively),
+        which are equivalent to r(&pi;/2) and r(&pi;/4) respectively.
     </p>
 
     <table class="samples">
         <tbody>
+        <tr>
+            <td class="code" id="r0">jsqbits("|00>").r(0, Math.PI/3)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="r0">|00></td>
+        </tr>
+        <tr>
+            <td class="code" id="r1">jsqbits("|01>").r(0, Math.PI/3)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="r1">0.5+0.866i |01></td>
+        </tr>
         <tr>
             <td class="code" id="s0">jsqbits("|00>").s(0)</td>
             <td>gives</td>
@@ -340,6 +354,7 @@ var state2 = state1.x(1);
         <li>controlledX(controlBits, targetBits)</li>
         <li>controlledY(controlBits, targetBits)</li>
         <li>controlledZ(controlBits, targetBits)</li>
+        <li>controlledR(controlBits, targetBits, angle)</li>
         <li>controlledS(controlBits, targetBits)</li>
         <li>controlledT(controlBits, targetBits)</li>
         <li>controlledHadamard(controlBits, targetBits)</li>
@@ -408,7 +423,7 @@ var state2 = state1.x(1);
     </table>
 
     <p>
-        In addition to controlledX(), there are controlledY(), controlledZ(), controlledS(), controlledT(),
+        In addition to controlledX(), there are controlledY(), controlledZ(), controlledR(), controlledS(), controlledT(),
         and controlledHadamard() functions.
         The function cnot() is an alias for controlledX().
         There are also controlledXRotation(), controlledYRotation(), and controlledZRotation() functions.

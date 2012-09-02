@@ -3,12 +3,14 @@
     <title>jsqbits runner</title>
     <meta name="keywords" content="quantum, quantum programming, quantum computer, simulator">
     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-    <link rel="stylesheet" type="text/css" href="resources-1.2/css/reset.css" />
-    <link rel="stylesheet" type="text/css" href="resources-1.2/css/runner.css" />
-    <script type="text/javascript" src="resources-1.2/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="resources-1.2/js/jsqbits.js"></script>
-    <script type="text/javascript" src="resources-1.2/js/jsqbitsmath.js"></script>
-    <script type="text/javascript" src="resources-1.2/js/jsqbitsRunner.js"></script>
+    <link rel="canonical" href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">
+    <link rel="stylesheet" type="text/css" href="resources-1.3/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="resources-1.3/css/runner.css" />
+    <script type="text/javascript" src="resources-1.3/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="resources-1.3/js/jsqbits.js"></script>
+    <script type="text/javascript" src="resources-1.3/js/jsqbitsmath.js"></script>
+    <script type="text/javascript" src="resources-1.3/js/jsqbitsRunner.js"></script>
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
@@ -70,15 +72,16 @@ var f = function(x) {return (x + 1) % 2;};
             <div class='row'><div class="method">x(targetBits)</div><div class="desc">Pauli X</div></div>
             <div class='row'><div class="method">y(targetBits)</div><div class="desc">Pauli Y</div></div>
             <div class='row'><div class="method">z(targetBits)</div><div class="desc">Pauli Z</div></div>
-            <div class='row'><div class="method">s(targetBits)</div><div class="desc">Phase gate</div></div>
-            <div class='row'><div class="method">t(targetBits)</div><div class="desc">T gate</div></div>
+            <div class='row'><div class="method">r(targetBits, angle)</div><div class="desc">Phase shift gate</div></div>
+            <div class='row'><div class="method">s(targetBits)</div><div class="desc">Phase gate: r(&pi;/2)</div></div>
+            <div class='row'><div class="method">t(targetBits)</div><div class="desc">T gate: r(&pi;/4)</div></div>
             <div class='row'><div class="method">hadamard(targetBits)</div><div class="desc">Hadamard</div></div>
             <div class='row'><div class="method">not(targetBits)</div><div class="desc">Not</div></div>
+    </div>
+    <div class="commandlist second">
             <div class='row'><div class="method">rotateX(targetBits, angle)</div><div class="desc">Rotate about X</div></div>
             <div class='row'><div class="method">rotateY(targetBits, angle)</div><div class="desc">Rotate about Y</div></div>
             <div class='row'><div class="method">rotateZ(targetBits, angle)</div><div class="desc">Rotate about Z</div></div>
-    </div>
-    <div class="commandlist second">
             <div class='row'><div class="method">controlledHadamard(controlBits, targetBits))</div><div class="desc">Controlled Hadamard</div></div>
             <div class='row'><div class="method">cnot(controlBits, targetBits)</div><div class="desc">Controlled Not</div></div>
             <div class='row'><div class="method">controlledX(controlBits, targetBits)</div><div class="desc">Controlled Pauli X</div></div>
@@ -92,5 +95,13 @@ var f = function(x) {return (x + 1) % 2;};
             <div class='row'><div class="method">jsqbits.Complex.add,subtract,multiply,negate</div><div class="desc">Some Complex methods</div></div>
     </div>
 </div>
+<div class="social"><g:plusone size="medium" annotation="none"></g:plusone></div>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
 </body>
 </html>

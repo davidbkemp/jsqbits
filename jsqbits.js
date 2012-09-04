@@ -111,6 +111,17 @@ function jsqbits(bitString) {
         return state;
     };
 
+    function createControlBitMask(controlBits) {
+        var controlBitMask = null;
+        if (controlBits) {
+            controlBitMask = 0;
+            for (var i = 0; i < controlBits.length; i++) {
+                controlBitMask += (1 << controlBits[i]);
+            }
+        }
+        return controlBitMask;
+    }
+
     jsqbits.Complex = function(real, imaginary) {
         validateArgs(arguments, 1, 2, 'Must supply a real, and optionally an imaginary, argument to Complex()');
         imaginary = imaginary || 0;
@@ -489,6 +500,34 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.T = jsqbits.QState.prototype.t;
 
+    jsqbits.QState.prototype.controlledSwap = function(controlBits, targetBit1, targetBit2) {
+        validateArgs(arguments, 3, 3, "Must supply controlBits, targetBit1, and targetBit2 to controlledSwap()");
+        var newAmplitudes = {};
+        if (!isNull(controlBits)) {
+            controlBits = convertBitQualifierToBitArray(controlBits, this.numBits());
+        }
+//        TODO: make sure targetBit1 and targetBit2 are not contained in controlBits.
+        var controlBitMask = createControlBitMask(controlBits);
+        var bit1Mask = 1 << targetBit1;
+        var bit2Mask = 1 << targetBit2;
+        this.each(function(stateWithAmplitude){
+            var state = stateWithAmplitude.asNumber();
+            var newState = state;
+            if (isNull(controlBits) || ((state & controlBitMask) === controlBitMask)) {
+                var newBit2 = ((state & bit1Mask) >> targetBit1) << targetBit2;
+                var newBit1 = ((state & bit2Mask) >>  targetBit2) << targetBit1;
+                newState = (state & ~bit1Mask & ~bit2Mask) | newBit1 | newBit2;
+            }
+            newAmplitudes[newState] = stateWithAmplitude.amplitude;
+        });
+        return new jsqbits.QState(this.numBits(), newAmplitudes);
+    };
+
+    jsqbits.QState.prototype.swap = function(targetBit1, targetBit2) {
+        validateArgs(arguments, 2, 2, "Must supply targetBit1 and targetBit2 to swap()");
+        return this.controlledSwap(null, targetBit1, targetBit2);
+    };
+
     /**
      * Toffoli takes one or more control bits (conventionally two) and one target bit.
      */
@@ -504,6 +543,7 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = (function() {
 
+//        TODO: I think this is only ever called with arrays, not bit ranges!!!
         var validateTargetBitRangesDontOverlap = function(controlBits, targetBits) {
             if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
                 throw "control and target bits must not be the same nor overlap";
@@ -514,14 +554,7 @@ function jsqbits(bitString) {
             var newAmplitudes = {};
             var statesThatCanBeSkipped = {};
             var targetBitMask = 1 << targetBit;
-            var controlBitMask = null;
-            if (controlBits) {
-                controlBitMask = 0;
-                for (var i = 0; i < controlBits.length; i++) {
-                    controlBitMask += (1 << controlBits[i]);
-                }
-            }
-
+            var controlBitMask = createControlBitMask(controlBits);
             qState.each(function(stateWithAmplitude) {
                 var state = stateWithAmplitude.asNumber();
                 if (statesThatCanBeSkipped[stateWithAmplitude.index]) return;
@@ -652,6 +685,38 @@ function jsqbits(bitString) {
         var numBitsMeasured = bitRange.to - bitRange.from + 1;
         var newState = new jsqbits.QState(this.numBits(), newAmplitudes).normalize();
         return new jsqbits.Measurement(numBitsMeasured, measurementOutcome, newState);
+    };
+
+    jsqbits.QState.prototype.qft = function(targetBits) {
+
+        var qft = function(qstate, targetBits) {
+            var bitIndex = targetBits[0];
+            if (targetBits.length > 1) {
+                targetBits = targetBits.slice(1);
+                var M = 1 << targetBits.length;
+                var baseAngle = 2 * Math.PI / M;
+                qstate = qft(qstate, targetBits);
+                for(var index = 0; index < targetBits.length; index++) {
+                    var otherBitIndex = targetBits[index];
+                    var angle = baseAngle * (1 << index);
+                    qstate = qstate.controlledR(bitIndex, otherBitIndex, angle);
+                }
+            }
+            return qstate.hadamard(bitIndex);
+        }
+
+        var reverseBits = function(qstate, targetBits) {
+            while (targetBits.length > 2) {
+                qstate = qstate.swap(targetBits[0], targetBits[targetBits.length - 1]);
+                targetBits = targetBits.slice(1, targetBits.length - 1);
+            }
+            return qstate;
+        };
+
+        validateArgs(arguments, 1, 1, 'Must supply bits to be measured to qft().');
+        var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits());
+        var newState = qft(this, targetBitArray);
+        return reverseBits(newState, targetBitArray);
     };
 
     jsqbits.QState.prototype.eql = function(other) {

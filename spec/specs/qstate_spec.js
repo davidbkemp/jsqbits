@@ -448,6 +448,21 @@ describe('QState', function() {
        });
     });
 
+    describe('#controlledSwap', function() {
+        it("does nothing when the control bit is zero", function() {
+            expect(jsqbits("|010>").controlledSwap(2,1,0).toString()).toBe("|010>");
+        });
+        it("swaps the target bits when the control bit is one", function() {
+            expect(jsqbits("|110>").controlledSwap(2,1,0).toString()).toBe("|101>");
+        });
+    });
+
+    describe('#swap', function() {
+        it("swaps the target bits", function() {
+            expect(jsqbits("|10>").swap(1,0).toString()).toBe("|01>");
+        });
+    });
+
     describe('#not', function() {
         it("is an alias for x()", function() {
             expect(jsqbits.QState.prototype.not).toBe(jsqbits.QState.prototype.x);

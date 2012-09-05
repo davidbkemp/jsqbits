@@ -30,6 +30,8 @@ You may also wish to try reading the (work in progress) [Introduction to Quantum
 
 TODO
 -----
+* Document Swap and Quantum Fourier Transform
+* Fix validation of bit-qualifier overlaps.
 * Support easy creation of |+> and |-> states.
 * Document QState.each()
 * Fix exceptions to follow a more standard pattern
@@ -37,10 +39,6 @@ TODO
 * Include a 'remainingQbits' field on measurement outcomes.
 * JSLint?
 * Coverage?
-
-Future releases
-----------------
-* Quantum Fourier Transform
 * Shor's Algorithm
 * Grover's Algorithm
 * Mermin-Peres magic square

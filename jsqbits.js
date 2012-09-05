@@ -692,21 +692,18 @@ function jsqbits(bitString) {
         var qft = function(qstate, targetBits) {
             var bitIndex = targetBits[0];
             if (targetBits.length > 1) {
-                targetBits = targetBits.slice(1);
-                var M = 1 << targetBits.length;
-                var baseAngle = 2 * Math.PI / M;
-                qstate = qft(qstate, targetBits);
-                for(var index = 0; index < targetBits.length; index++) {
+                qstate = qft(qstate, targetBits.slice(1));
+                for(var index = 1; index < targetBits.length; index++) {
                     var otherBitIndex = targetBits[index];
-                    var angle = baseAngle * (1 << index);
+                    var angle = 2 * Math.PI / (1 << (index + 1));
                     qstate = qstate.controlledR(bitIndex, otherBitIndex, angle);
                 }
             }
             return qstate.hadamard(bitIndex);
-        }
+        };
 
         var reverseBits = function(qstate, targetBits) {
-            while (targetBits.length > 2) {
+            while (targetBits.length > 1) {
                 qstate = qstate.swap(targetBits[0], targetBits[targetBits.length - 1]);
                 targetBits = targetBits.slice(1, targetBits.length - 1);
             }

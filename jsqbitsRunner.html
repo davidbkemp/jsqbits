@@ -1,15 +1,17 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>jsqbits runner</title>
+    <meta charset="UTF-8">
     <meta name="keywords" content="quantum, quantum programming, quantum computer, simulator">
     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     <link rel="canonical" href="http://davidbkemp.github.com/jsqbits/jsqbitsRunner.html">
-    <link rel="stylesheet" type="text/css" href="resources-1.4/css/reset.css" />
-    <link rel="stylesheet" type="text/css" href="resources-1.4/css/runner.css" />
-    <script type="text/javascript" src="resources-1.4/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="resources-1.4/js/jsqbits.js"></script>
-    <script type="text/javascript" src="resources-1.4/js/jsqbitsmath.js"></script>
-    <script type="text/javascript" src="resources-1.4/js/jsqbitsRunner.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources-1.4.1/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="resources-1.4.1/css/runner.css" />
+    <script type="text/javascript" src="resources-1.4.1/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="resources-1.4.1/js/jsqbits.js"></script>
+    <script type="text/javascript" src="resources-1.4.1/js/jsqbitsmath.js"></script>
+    <script type="text/javascript" src="resources-1.4.1/js/jsqbitsRunner.js"></script>
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
@@ -77,6 +79,7 @@
             <div class='row'><div class="method">t(targetBits)</div><div class="desc">T gate: r(&pi;/4)</div></div>
             <div class='row'><div class="method">hadamard(targetBits)</div><div class="desc">Hadamard</div></div>
             <div class='row'><div class="method">not(targetBits)</div><div class="desc">Not</div></div>
+            <div class='row'><div class="method">swap(bit1, bit2)</div><div class="desc">Swap two bits</div></div>
     </div>
     <div class="commandlist second">
             <div class='row'><div class="method">rotateX(targetBits, angle)</div><div class="desc">Rotate about X</div></div>
@@ -89,11 +92,40 @@
             <div class='row'><div class="method">toffoli(controlBit, controlBit, ..., targetBit)</div><div class="desc">Toffoli</div></div>
             <div class='row'><div class="method">applyFunction(inputBits, targetBits, function)</div><div class="desc">Apply a function</div></div>
             <div class='row'><div class="method">tensorProduct(otherQState)</div><div class="desc">Tensor product</div></div>
+            <div class='row'><div class="method">qft(targetBits)</div><div class="desc">Quantum Fourier Transform</div></div>
             <div class='row'><div class="method">amplitude(basisState)</div><div class="desc">Get an amplitude</div></div>
             <div class='row'><div class="method">measure(targetBits)</div><div class="desc">Make a measurement</div></div>
             <div class='row'><div class="method">jsqbits.complex(real, imaginary)</div><div class="desc">Create a complex number</div></div>
             <div class='row'><div class="method">jsqbits.Complex.add,subtract,multiply,negate</div><div class="desc">Some Complex methods</div></div>
     </div>
 </div>
+
+<h4>Note:</h4>
+<ul>
+    <li>
+        There are "controlled" versions of many operators such as controlledSwap, controlledX, controlledY, etc.
+        For all of these, the controlBits must be specified before the target bits.
+        (There is presently no controlled version of qft).
+    </li>
+    <li>
+        Most of the bit specifiers can be single numbers (0 being least significant),
+        arrays of numbers,
+        bit ranges (e.g. <code>{from: 5, to:15}</code>,
+        or the constant <code>jsqbits.ALL</code>.
+        Exceptions to this include <code>measure</code> and <code>applyFunction</code> as these
+        cannot currently take arrays.
+        Also, while the <code>controlledSwap</code> method is
+        able to take the various types of bit specifiers as control bits,
+        it (and the <swap>swap</swap>) operator can only take single numbers for the two bits to be swapped.
+    </li>
+</ul>
+<p>
+    For more details, see the
+    <a href="http://davidbkemp.github.com/jsqbits/jsqbitsManual.html">jsqbits user manual</a>.
+</p>
+<small>
+    Copyright 2012 David Kemp. Licensed under
+    <a href="http://www.apache.org/licenses/LICENSE-2.0">the Apache License, Version 2.0</a>.
+</small>
 </body>
 </html>

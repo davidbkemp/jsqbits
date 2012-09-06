@@ -3,10 +3,11 @@
 <head>
     <title>jsqbits User Manual</title>
     <meta name="keywords" content="quantum, quantum programming, quantum computer, simulator">
-    <link rel="stylesheet" type="text/css" href="resources-1.4/css/jsqbits.css" />
-    <script src="resources-1.4/js/jquery-1.7.1.min.js"></script>
-    <script src="resources-1.4/js/jsqbits.js"></script>
-    <script src="resources-1.4/js/jsqbitsManual.js"></script>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="resources-1.4.1/css/jsqbits.css" />
+    <script src="resources-1.4.1/js/jquery-1.7.1.min.js"></script>
+    <script src="resources-1.4.1/js/jsqbits.js"></script>
+    <script src="resources-1.4.1/js/jsqbitsManual.js"></script>
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
@@ -146,7 +147,7 @@ new jsqbits.QState(4, a)
         <li>rotateZ(targetBits, angle)</li>
     </ul>
     <p>
-        A number of operators operate on a single qbit (the Pauli operators and the Hadamard gate).
+        A number of operators operate on a single qubit.
         For these, you must specify the index of the bit to be operated on, with the right most bit being bit 0,
         and the left most bit being bit n-1 for an n bit state.
         As a convenience, you can also specify a range of bits using an object with "from" and "to" properties,
@@ -185,7 +186,7 @@ new jsqbits.QState(4, a)
     </table>
 
     <p>
-        All qbit manipulations return a new QState and leave the original one untouched.
+        All qubit manipulations return a new QState and leave the original one untouched.
         Consider the following code:
     </p>
 
@@ -305,7 +306,7 @@ var state2 = state1.x(1);
     </table>
         
     <p>
-    Other single qbit operators are those that rotate around the X, Y, and Z axis of the Bloch sphere.
+    Other single qubit operators are those that rotate around the X, Y, and Z axis of the Bloch sphere.
     These take an angle and apply the operation
     e<sup>-i&theta;X/2</sup>,
     e<sup>-i&theta;Y/2</sup> or
@@ -364,7 +365,7 @@ var state2 = state1.x(1);
         <li>controlledZRotation(controlBits, targetBits, angle)</li>
     </ul>
     <p>
-        There are controlled versions of all the single qbit operators.
+        There are controlled versions of all the single qubit operators.
         For these you must specify control bits as well as target bits.
         As with the target bits, the control bits may be a single bit index,
         a range of bits using an object with "from" and "to" properties,
@@ -434,6 +435,31 @@ var state2 = state1.x(1);
             <td class="code" id="controlledXRotation">jsqbits("|010>").controlledXRotation(1, 0, Math.PI/2)</td>
             <td>gives</td>
             <td class="code" data-sampleref="controlledXRotation">0.7071 |010> - 0.7071i |011></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="section" id="swapOperators">
+    <h2>Swap</h2>
+    <ul class="code index">
+        <li>swap(bit1, bit2)</li>
+        <li>controlledSwap(controlBits, bit1, bit2)</li>
+    </ul>
+    <p>
+        The swap and controlledSwap operators allow you to swap two qubits:
+    </p>
+    <table class="samples">
+        <tbody>
+        <tr>
+            <td class="code" id="swap">jsqbits("|1110>").swap(1, 0)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="swap">|1101></td>
+        </tr>
+        <tr>
+            <td class="code" id="controlledSwap">jsqbits("|1110>").controlledSwap([2,3], 0, 1)</td>
+            <td>gives</td>
+            <td class="code" data-sampleref="controlledSwap">|1101></td>
         </tr>
         </tbody>
     </table>
@@ -528,6 +554,21 @@ jsqbits("|100>").hadamard([0,1]).measure(0)
         </tr>
         </tbody>
     </table>
+</div>
+
+<div class="section" id="qft">
+    <h2>Quantum Fourier Transform</h2>
+    <ul class="code index">
+        <li>qft(targetBits)</li>
+    </ul>
+    <p>
+        The <code>qft</code> method is a convenience method for computing the quantum fourier transform of a set of qubits.
+        It is implemented on top of other more primitive operators, such as the Hadarmard and phase shift.
+    </p>
+    <p>
+        <span class="code" id="qftSample">jsqbits("|100>").qft([1,2])</span> will result in
+        <span class="code" data-sampleref="qftSample">0.5 |000> - 0.5 |010> + 0.5 |100> - 0.5 |110></span>.
+    </p>
 </div>
 
 <div class='section' id='applyFunction'>

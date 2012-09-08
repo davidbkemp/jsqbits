@@ -43,4 +43,34 @@ describe("jsqbitsmath", function() {
         });
     });
 
+    describe("continuedFraction", function() {
+        it("should compute the continued fraction of 1/3", function() {
+            var results = jsqbitsmath.continuedFraction(1/3, 0.0001);
+            expect(results.numerator).toEqual(1);
+            expect(results.denominator).toEqual(3);
+            expect(results.quotients).toEqual([0,3]);
+        });
+
+        it("should compute the continued fraction of 11/13", function() {
+            var results = jsqbitsmath.continuedFraction(11/13, 0.0001);
+            expect(results.numerator).toEqual(11);
+            expect(results.denominator).toEqual(13);
+            expect(results.quotients).toEqual([0,1,5,2]);
+        });
+
+        it("should stop when the desired accuracy is reached", function() {
+            var results = jsqbitsmath.continuedFraction(Math.PI, 0.000001);
+            expect(results.numerator).toEqual(355);
+            expect(results.denominator).toEqual(113);
+            expect(results.quotients).toEqual([3,7,15,1]);
+        });
+
+        it("should work for negative numbers", function() {
+            var results = jsqbitsmath.continuedFraction(-Math.PI, 0.000001);
+            expect(results.numerator).toEqual(-355);
+            expect(results.denominator).toEqual(113);
+            expect(results.quotients).toEqual([-3,-7,-15,-1]);
+        });
+    });
+
 });

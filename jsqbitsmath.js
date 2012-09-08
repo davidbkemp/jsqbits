@@ -22,6 +22,40 @@ var jsqbitsmath = jsqbitsmath || {};
 
 (function() {
 
+    function roundToZero(value) {
+        return value >=0 ? Math.floor(value) : Math.ceil(value);
+    }
+
+    // TODO: Make this not use recursion!
+    function continuedFraction(target, value, precision, quotients, twoAgo, oneAgo) {
+        if (Math.abs(target - (oneAgo.numerator / oneAgo.denominator)) <= precision) {
+            var numerator = oneAgo.numerator;
+            var denominator = oneAgo.denominator;
+            if (oneAgo.denominator < 0) {
+                numerator *= -1;
+                denominator *= -1;
+            }
+            return {quotients: quotients, numerator: numerator, denominator: denominator};
+        }
+
+        var recip = 1/value;
+        var quotient = roundToZero(recip);
+        var remainder = recip - quotient;
+        quotients.push(quotient);
+        return continuedFraction(target, remainder, precision, quotients, oneAgo, {numerator: quotient * oneAgo.numerator + twoAgo.numerator, denominator: quotient * oneAgo.denominator + twoAgo.denominator});
+    }
+
+    jsqbitsmath.continuedFraction = (function() {
+        return function(value, precision) {
+            if (Math.abs(value) >= 1) {
+                var firstValue = roundToZero(value);
+                var remainder = value - firstValue;
+                return continuedFraction(value, remainder, precision, [firstValue], {numerator: 1, denominator: 0}, {numerator: firstValue, denominator: 1});
+            }
+            return  continuedFraction(value, value, precision, [0], {numerator: 1, denominator: 0}, {numerator: 0, denominator: 1});
+        };
+    })();
+
     /**
      * Find the null space in modulus 2 arithmetic of a matrix of binary values
      * @param a matrix of binary values represented using an array of numbers

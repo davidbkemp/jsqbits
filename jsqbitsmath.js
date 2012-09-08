@@ -26,9 +26,27 @@ var jsqbitsmath = jsqbitsmath || {};
         return value >=0 ? Math.floor(value) : Math.ceil(value);
     }
 
-    // TODO: Make this not use recursion!
-    function continuedFraction(target, value, precision, quotients, twoAgo, oneAgo) {
-        if (Math.abs(target - (oneAgo.numerator / oneAgo.denominator)) <= precision) {
+
+    /**
+     * Find the continued fraction representation of a number.
+     * @param the value to be converted to a continued faction.
+     * @param the precision with which to compute (eg. 0.01 will compute values until the fraction is at least as precise as 0.01).
+     * @return An object {quotients: quotients, numerator: numerator, denominator: denominator}
+     */
+    jsqbitsmath.continuedFraction = (function() {
+        function continuedFraction(target, value, precision, firstValue) {
+            var twoAgo = {numerator: 1, denominator: 0};
+            var oneAgo = {numerator: firstValue, denominator: 1};
+            var quotients = [firstValue];
+            while (Math.abs(target - (oneAgo.numerator / oneAgo.denominator)) > precision) {
+                var reciprical = 1/value;
+                var quotient = roundToZero(reciprical);
+                value = reciprical - quotient;
+                quotients.push(quotient);
+                var current = {numerator: quotient * oneAgo.numerator + twoAgo.numerator, denominator: quotient * oneAgo.denominator + twoAgo.denominator};
+                twoAgo = oneAgo;
+                oneAgo = current;
+            }
             var numerator = oneAgo.numerator;
             var denominator = oneAgo.denominator;
             if (oneAgo.denominator < 0) {
@@ -38,21 +56,13 @@ var jsqbitsmath = jsqbitsmath || {};
             return {quotients: quotients, numerator: numerator, denominator: denominator};
         }
 
-        var recip = 1/value;
-        var quotient = roundToZero(recip);
-        var remainder = recip - quotient;
-        quotients.push(quotient);
-        return continuedFraction(target, remainder, precision, quotients, oneAgo, {numerator: quotient * oneAgo.numerator + twoAgo.numerator, denominator: quotient * oneAgo.denominator + twoAgo.denominator});
-    }
-
-    jsqbitsmath.continuedFraction = (function() {
         return function(value, precision) {
             if (Math.abs(value) >= 1) {
                 var firstValue = roundToZero(value);
                 var remainder = value - firstValue;
-                return continuedFraction(value, remainder, precision, [firstValue], {numerator: 1, denominator: 0}, {numerator: firstValue, denominator: 1});
+                return continuedFraction(value, remainder, precision, firstValue);
             }
-            return  continuedFraction(value, value, precision, [0], {numerator: 1, denominator: 0}, {numerator: 0, denominator: 1});
+            return  continuedFraction(value, value, precision, 0);
         };
     })();
 

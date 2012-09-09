@@ -52,7 +52,7 @@ $(function() {
         selectedExample = newSelection;
         clear();
 
-        $.get("examples/" + newSelection + ".js", function(data) {
+        $.get("examples/" + newSelection + ".js.example", function(data) {
             $('#code').val(data);
           })
           .error(function() { alert("Sorry. Something went wrong."); });

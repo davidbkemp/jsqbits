@@ -22,8 +22,12 @@ function findPeriod(f) {
     return Math.pow(2, numInBits)/gcd;
 }
 
-var input = prompt("Please enter a function where f(x) = f(x+r) for some r that is a factor of 1024", "function(x) {return x % 4;}");
-var f;
-eval("f = " + input);
-var period = findPeriod(f);
+function promptAndFindPeriod() {
+    var input = prompt("Please enter a function where f(x) = f(x+r) for some r that is a factor of 1024", "function(x) {return x % 4;}");
+    var f;
+    eval("f = " + input);
+    var period = findPeriod(f);
+    return period;
+}
+var period = promptAndFindPeriod();
 "The period of your function r = " + period;

@@ -40,8 +40,13 @@ function findPeriod(f) {
     return "Failed!";
 }
 
-var input = prompt("Please enter a function where f(x) = f(x+r) for some r less than " + outputRange + " (could take a minute or so!)", "function(x) {return x % 5;}");
-var f;
-eval("f = " + input);
-var period = findPeriod(f);
+function promptAndFindPeriod() {
+    var input = prompt("Please enter a function where f(x) = f(x+r) for some r less than " + outputRange + " (could take a minute or so!)", "function(x) {return x % 5;}");
+    var f;
+    eval("f = " + input);
+    var period = findPeriod(f);
+    return period;
+}
+
+var period = promptAndFindPeriod();
 "The period of your function r = " + period;

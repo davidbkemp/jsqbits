@@ -22,6 +22,69 @@ var jsqbitsmath = jsqbitsmath || {};
 
 (function() {
 
+    function roundToZero(value) {
+        return value >=0 ? Math.floor(value) : Math.ceil(value);
+    }
+
+    /**
+     * Greatest common divisor
+     */
+    jsqbitsmath.gcd = function(a, b) {
+        while(b !== 0) {
+            var c = a % b;
+            a = b;
+            b = c;
+        }
+        return a;
+    };
+
+    /**
+     * Least common multiple
+     */
+    jsqbitsmath.lcm = function(a, b) {
+        return a * b / jsqbitsmath.gcd(a, b);
+    };
+
+    /**
+     * Find the continued fraction representation of a number.
+     * @param the value to be converted to a continued faction.
+     * @param the precision with which to compute (eg. 0.01 will compute values until the fraction is at least as precise as 0.01).
+     * @return An object {quotients: quotients, numerator: numerator, denominator: denominator} where quotients is
+     * an array of the quotients making up the continued fraction whose value is within the specified precision of the targetValue,
+     * and where numerator and denominator are the integer values to which the continued fraction evaluates.
+     */
+    jsqbitsmath.continuedFraction = function(targetValue, precision) {
+        var firstValue, remainder;
+        if (Math.abs(targetValue) >= 1) {
+            firstValue = roundToZero(targetValue);
+            remainder = targetValue - firstValue;
+        } else {
+            firstValue = 0;
+            remainder = targetValue;
+        }
+        var twoAgo = {numerator: 1, denominator: 0};
+        var oneAgo = {numerator: firstValue, denominator: 1};
+        var quotients = [firstValue];
+
+        while (Math.abs(targetValue - (oneAgo.numerator / oneAgo.denominator)) > precision) {
+            var reciprocal = 1 / remainder;
+            var quotient = roundToZero(reciprocal);
+            remainder = reciprocal - quotient;
+            quotients.push(quotient);
+            var current = {numerator: quotient * oneAgo.numerator + twoAgo.numerator, denominator: quotient * oneAgo.denominator + twoAgo.denominator};
+            twoAgo = oneAgo;
+            oneAgo = current;
+        }
+
+        var numerator = oneAgo.numerator;
+        var denominator = oneAgo.denominator;
+        if (oneAgo.denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
+        return {quotients: quotients, numerator: numerator, denominator: denominator};
+    };
+
     /**
      * Find the null space in modulus 2 arithmetic of a matrix of binary values
      * @param a matrix of binary values represented using an array of numbers

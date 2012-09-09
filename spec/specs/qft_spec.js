@@ -55,14 +55,16 @@ describe('QState.qft (Quantum Fourier Transform)', function() {
     });
 
     it('Should find the frequency of a simple periodic function', function(){
-//        Do this 10 times since it is random :-)
         var inputBits = {from: 2, to:4};
         var outBits = {from:0, to:1};
+        var gcd = 0;
+//        Do this 10 times since it is random :-)
         for (var i = 0; i < 10; i ++) {
             var qstate = jsqbits("|00000>").hadamard(inputBits);
             qstate = qstate.applyFunction(inputBits, outBits, function(x) {return x % 4});
             var result = qstate.qft(inputBits).measure(inputBits).result;
-            expect(result % 2).toEqual(0);
+            gcd = jsqbitsmath.gcd(gcd, result);
         }
+        expect(gcd).toEqual(2);
     });
 });

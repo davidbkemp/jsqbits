@@ -30,7 +30,6 @@ You may also wish to try reading the (work in progress) [Introduction to Quantum
 
 TODO
 -----
-* Document Swap and Quantum Fourier Transform
 * Fix validation of bit-qualifier overlaps.
 * Support easy creation of |+> and |-> states.
 * Document QState.each()

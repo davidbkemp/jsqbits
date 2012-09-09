@@ -43,6 +43,29 @@ describe("jsqbitsmath", function() {
         });
     });
 
+    describe("gcd", function() {
+        it("should compute the greatest common divisor of 27 and 18 as 9", function() {
+            expect(jsqbitsmath.gcd(27, 18)).toEqual(9);
+            expect(jsqbitsmath.gcd(18, 27)).toEqual(9);
+        });
+        it("should compute the greatest common divisor of 27 and 12 as 3", function() {
+            expect(jsqbitsmath.gcd(27, 12)).toEqual(3);
+            expect(jsqbitsmath.gcd(12, 27)).toEqual(3);
+        });
+    });
+
+
+    describe("lcm", function() {
+        it("should compute the least common multiple of 7 and 6 as 42", function() {
+            expect(jsqbitsmath.lcm(7, 6)).toEqual(42);
+            expect(jsqbitsmath.lcm(6, 7)).toEqual(42);
+        });
+        it("should compute the least common multiple of 9 and 18 as 18", function() {
+            expect(jsqbitsmath.lcm(9, 18)).toEqual(18);
+            expect(jsqbitsmath.lcm(18, 9)).toEqual(18);
+        });
+    });
+
     describe("continuedFraction", function() {
         it("should compute the continued fraction of 1/3", function() {
             var results = jsqbitsmath.continuedFraction(1/3, 0.0001);

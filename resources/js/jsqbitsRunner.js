@@ -21,12 +21,12 @@ $(function() {
     });
 
     function clearConsole() {
+        $('#result').text('');
         $('#console').html('');
     }
 
     function clear() {
        $('#code').val('');
-       $('#result').text('');
        clearConsole();
     }
 

@@ -21,12 +21,12 @@ $(function() {
     });
 
     function clearConsole() {
+        $('#result').text('');
         $('#console').html('');
     }
 
     function clear() {
        $('#code').val('');
-       $('#result').text('');
        clearConsole();
     }
 
@@ -39,7 +39,7 @@ $(function() {
         var selectedExample = $(this).attr('value');
         if (selectedExample === 'none') return;
 
-        $.get("resources-1.7/examples/" + selectedExample + ".js.example", function(data) {
+        $.get("resources-1.7.1/examples/" + selectedExample + ".js.example", function(data) {
             clear();
             $('#code').val(data);
           })

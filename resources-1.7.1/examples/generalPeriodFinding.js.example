@@ -14,11 +14,13 @@ function findPeriod(f, callback) {
     var inputBits = {from: numOutBits, to: numOutBits + numInBits - 1};
     var attempts = 0;
     var successes = 0;
-    var bestPeriodSoFar = 1;
+    var bestSoFar = 1;
+    var bestSoFarIsAPeriod = false;
+    var f0 = f(0);
 
     function continueFindingPeriod() {
         if (successes === numOutBits || attempts === 2 * numOutBits) {
-            callback(bestPeriodSoFar);
+            callback(bestSoFar);
             return;
         }
 
@@ -31,14 +33,22 @@ function findPeriod(f, callback) {
         var candidate = continuedFraction.denominator;
         print("Candidate period: " + candidate);
         // Reduce the chances of getting the wrong answer by ignoring obviously wrong results!
-        var lcm;
-        if (candidate <= outputRange && candidate > 1 && ((lcm = jsqbitsmath.lcm(candidate, bestPeriodSoFar)) <= outputRange)) {
-            print("This is a good candidate.");
-            bestPeriodSoFar = lcm;
-            successes++;
+        if (candidate <= outputRange && candidate > 1) {
+            var lcm = jsqbitsmath.lcm(candidate, bestSoFar)
+            if (lcm <= outputRange) {
+                print("This is a good candidate.");
+                bestSoFar = lcm;
+                if (f(bestSoFar) === f0) bestSoFarIsAPeriod = true;
+                successes++;
+            } else if(!bestSoFarIsAPeriod && f(candidate) === f0) {
+                print("This is a much better candidate");
+                bestSoFar = candidate;
+                bestSoFarIsAPeriod = true;
+                successes++;
+            }
         }
         attempts++;
-        print("Best period so far: " + bestPeriodSoFar + ". Attempts: " + attempts + ". Good candidates: " + successes);
+        print("Best period so far: " + bestSoFar + ". Attempts: " + attempts + ". Good candidates: " + successes);
         // Yield control for a millisecond to give the browser a chance to print to the console.
         setTimeout(continueFindingPeriod, 1);
     }
@@ -54,7 +64,6 @@ findPeriod(f, function(period) {
         } else {
             print("Could not find period.  Best effort was: " + period);
         }
-
     }
 );
 

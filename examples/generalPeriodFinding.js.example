@@ -1,4 +1,3 @@
-
 /**
  * General case of the "Period Finding" problem.
  * For any function where f(x) = f(x + r), this algorithm will find r.
@@ -9,44 +8,54 @@ var numInBits = 2 * numOutBits;
 var inputRange = Math.pow(2,numInBits);
 var outputRange = Math.pow(2,numOutBits);
 
-function singleGoAtFindPeriod(f) {
+function findPeriod(f, callback) {
     var accuracyRequiredForContinuedFraction = 1/(2 * outputRange * outputRange);
     var outBits = {from: 0, to: numOutBits - 1};
     var inputBits = {from: numOutBits, to: numOutBits + numInBits - 1};
-    var lcm = 1;
-//        Do this multiple times as we will get multiples of the desired result.
-    for (var i = 0; i < 8; i ++) {
+    var attempts = 0;
+    var successes = 0;
+    var bestPeriodSoFar = 1;
+
+    function continueFindingPeriod() {
+        if (successes === numOutBits || attempts === 2 * numOutBits) {
+            callback(bestPeriodSoFar);
+            return;
+        }
+
         var qstate = new jsqbits.QState(numInBits + numOutBits).hadamard(inputBits);
         qstate = qstate.applyFunction(inputBits, outBits, f);
-//        We do not need to measure the outBits, but it does speed up the simulation.
+        // We do not need to measure the outBits, but it does speed up the simulation.
         qstate = qstate.measure(outBits).newState;
         var result = qstate.qft(inputBits).measure(inputBits).result;
         var continuedFraction = jsqbitsmath.continuedFraction(result/inputRange, accuracyRequiredForContinuedFraction);
-        var newLcm = jsqbitsmath.lcm(continuedFraction.denominator, lcm);
-//        Reduce the chances of getting the wrong answer by ignoring obviously wrong results!
-        if (newLcm <= outputRange) lcm = newLcm;
-    }
-    return lcm;
-}
-
-function findPeriod(f) {
-//    Period finding is not guaranteed, and so we need to have a few goes.. give up after 3:
-    for(var i = 0; i < 3; i++) {
-        var r = singleGoAtFindPeriod(f);
-        if (f(0) === f(r)) {
-            return r;
+        var candidate = continuedFraction.denominator;
+        print("Candidate period: " + candidate);
+        // Reduce the chances of getting the wrong answer by ignoring obviously wrong results!
+        var lcm;
+        if (candidate <= outputRange && candidate > 1 && ((lcm = jsqbitsmath.lcm(candidate, bestPeriodSoFar)) <= outputRange)) {
+            print("This is a good candidate.");
+            bestPeriodSoFar = lcm;
+            successes++;
         }
+        attempts++;
+        print("Best period so far: " + bestPeriodSoFar + ". Attempts: " + attempts + ". Good candidates: " + successes);
+        // Yield control for a millisecond to give the browser a chance to print to the console.
+        setTimeout(continueFindingPeriod, 1);
     }
-    return "Failed!";
+
+    continueFindingPeriod();
 }
 
-function promptAndFindPeriod() {
-    var input = prompt("Please enter a function where f(x) = f(x+r) for some r less than " + outputRange + " (could take a minute or so!)", "function(x) {return x % 5;}");
-    var f;
-    eval("f = " + input);
-    var period = findPeriod(f);
-    return period;
-}
+var f = promptForFunction("Enter a function where f(x) = f(x+r) for some r less than " + outputRange, "function(x) {return x % 16;}");
 
-var period = promptAndFindPeriod();
-"The period of your function r = " + period;
+findPeriod(f, function(period) {
+        if (f(0) === f(period)) {
+            print("The period of your function is " + period);
+        } else {
+            print("Could not find period.  Best effort was: " + period);
+        }
+
+    }
+);
+
+

@@ -22,7 +22,7 @@ var jsqbitsmath = jsqbitsmath || {};
 
 (function() {
 
-    function roundToZero(value) {
+    function roundTowardsZero(value) {
         return value >=0 ? Math.floor(value) : Math.ceil(value);
     }
 
@@ -56,7 +56,7 @@ var jsqbitsmath = jsqbitsmath || {};
     jsqbitsmath.continuedFraction = function(targetValue, precision) {
         var firstValue, remainder;
         if (Math.abs(targetValue) >= 1) {
-            firstValue = roundToZero(targetValue);
+            firstValue = roundTowardsZero(targetValue);
             remainder = targetValue - firstValue;
         } else {
             firstValue = 0;
@@ -68,7 +68,7 @@ var jsqbitsmath = jsqbitsmath || {};
 
         while (Math.abs(targetValue - (oneAgo.numerator / oneAgo.denominator)) > precision) {
             var reciprocal = 1 / remainder;
-            var quotient = roundToZero(reciprocal);
+            var quotient = roundTowardsZero(reciprocal);
             remainder = reciprocal - quotient;
             quotients.push(quotient);
             var current = {numerator: quotient * oneAgo.numerator + twoAgo.numerator, denominator: quotient * oneAgo.denominator + twoAgo.denominator};

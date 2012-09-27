@@ -4,8 +4,10 @@
  * send it to Bob, and Bob can decode it with the help of his entangled qubit.
  */
 
-var superDense = function(input) {
+function superDense(input) {
     var state = jsqbits('|00>').add(jsqbits('|11>')).normalize();
+
+    print("Initial Bell State: " + state);
 
 //            Alice prepares her qbit
     var alice = 1;
@@ -16,13 +18,15 @@ var superDense = function(input) {
         state = state.x(alice);
     }
 
+    print("State after Alice prepares her qubit (the first one): " + state);
 //            Alice sends her qbit to Bob
     var bob = 0;
     state = state.cnot(alice, bob).hadamard(alice);
+
+    print("State after Bob receives Alice's qubit and 'decodes' it: " + state);
     return state.measure(ALL).asBitString();
 };
 
-//superDense('00');
-//superDense('01');
-//superDense('10');
-superDense('11');
+var input = prompt("Two bit string to send", "10");
+var result = superDense(input);
+print("Decoded string is: " + result);

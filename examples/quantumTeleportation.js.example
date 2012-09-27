@@ -4,7 +4,7 @@
  * by sending just two classical bits.
  */
 
-var applyTeleportation = function(state) {
+function applyTeleportation(state) {
     var alicesMeasurement = state.cnot(2, 1).hadamard(2).measure({from: 1, to: 2});
     var resultingState = alicesMeasurement.newState;
     if (alicesMeasurement.result & 1) {
@@ -23,6 +23,8 @@ var stateToBeTransmitted0 = jsqbits("|0>").multiply(jsqbits.complex(0.5, 0.5));
 var stateToBeTransmitted1 = jsqbits("|1>").multiply(jsqbits.complex(0, Math.sqrt(0.5)));
 var stateToBeTransmitted = stateToBeTransmitted0.add(stateToBeTransmitted1);
 
+print("State to be transmitted: " + stateToBeTransmitted);
+
 // The quantum computer is initialized as a three qubit system with bits 0 and 1 being the bell state qbits shared by Alice and Bob
 // and bit 2 being the qubit to be transmitted.
 
@@ -40,4 +42,4 @@ var finalState = applyTeleportation(initialState);
 // If we had some way of projecting onto bit 0, we would have
 // stateToBeTransmitted0 |0> + stateToBeTransmitted1 |1>
 
-finalState
+print("Final state: " + finalState);

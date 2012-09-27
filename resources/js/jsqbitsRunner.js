@@ -3,58 +3,58 @@ var ALL = jsqbits.ALL;
 $(function() {
 
     $('#run').click(function() {
-        $('#result').fadeOut(function() {
-            $('#result').text('');
-            var result;
-            try {
-                result = eval($('#code').get(0).value);
-                if ((typeof result === 'object') && result.toString) {
-                    result = result.toString();
-                } else if (typeof result === 'number') {
-                    result = '' + result;
-                }
-            } catch (e) {
-                result = e.message ? e.message : e;
+        clearConsole();
+        var result;
+        try {
+            result = eval($('#code').get(0).value);
+            if ((typeof result === 'object') && result.toString) {
+                result = result.toString();
+            } else if (typeof result === 'number') {
+                result = '' + result;
             }
-            if (result === null) {
-                result = 'null';
-            } else if (result === undefined) {
-                result = 'undefined';
-            }
+        } catch (e) {
+            result = e.message ? e.message : e;
+        }
+        if (result) {
             $('#result').text(result);
-            $('#result').fadeIn();
-        });
+        }
     });
+
+    function clearConsole() {
+        $('#console').html('');
+    }
 
     function clear() {
        $('#code').val('');
        $('#result').text('');
+       clearConsole();
     }
 
     $('#clear').click(function() {
         clear();
+        $('#example').attr('value', 'none');
     });
 
-    var selectedExample = 'none';
-
     $('#example').change(function(event) {
-        var newSelection = $(this).attr('value');
-        if (newSelection === 'none') {
-            selectedExample = newSelection;
-            return;
-        }
-        if ($('#code').val() !== '') {
-            if (!confirm("WARNING: This action will clear your existing code.")) {
-                $(this).attr('value', selectedExample);
-                return;
-            }
-        }
-        selectedExample = newSelection;
-        clear();
+        var selectedExample = $(this).attr('value');
+        if (selectedExample === 'none') return;
 
-        $.get("examples/" + newSelection + ".js.example", function(data) {
+        $.get("examples/" + selectedExample + ".js.example", function(data) {
+            clear();
             $('#code').val(data);
           })
           .error(function() { alert("Sorry. Something went wrong."); });
     });
 });
+
+
+function print(str) {
+    $("#console").append($("<div>").text(str));
+}
+
+function promptForFunction(message, example) {
+    var input = prompt(message, example);
+    var f;
+    eval("f = " + input);
+    return f;
+}

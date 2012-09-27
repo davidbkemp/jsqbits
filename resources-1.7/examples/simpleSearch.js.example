@@ -4,9 +4,7 @@
  * the simple search function can determine which it is with only a single invocation.
  */
 
-var createOracle = function(match) { return function(x) {return x == match ? 1 : 0} };
-
-var simpleSearch = function(f) {
+function simpleSearch(f) {
     var inputBits = {from: 1, to: 2};
     return jsqbits('|001>')
             .hadamard(ALL)
@@ -19,9 +17,6 @@ var simpleSearch = function(f) {
             .result;
 };
 
-//var oracle = createOracle(0);
-//var oracle = createOracle(1);
-//var oracle = createOracle(2);
-var oracle = createOracle(3);
+var f = promptForFunction("Enter a function f: f(x) = 1 for a single x between 0 and 3, and f(x) = 0 otherwise", "function(x) {return x === 2 ? 1 : 0}");
 
-simpleSearch(oracle)
+print("f(x) = 1 for x = " + simpleSearch(f));

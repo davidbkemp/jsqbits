@@ -4,7 +4,7 @@
  */
 
 
-var singleRunOfSimonsCircuit = function(f, numbits) {
+function singleRunOfSimonsCircuit(f, numbits) {
     var inputBits = {from: numbits, to: 2 * numbits - 1};
     var targetBits = {from: 0, to: numbits - 1};
     var qbits = new jsqbits.QState(2 * numbits)
@@ -14,7 +14,7 @@ var singleRunOfSimonsCircuit = function(f, numbits) {
     return qbits.measure(inputBits).result;
 }
 
-var findPotentialSolution = function(f, numBits) {
+function findPotentialSolution(f, numBits) {
     var nullSpace = null;
     var results = [];
     var estimatedNumberOfIndependentSolutions = 0;
@@ -34,7 +34,7 @@ var findPotentialSolution = function(f, numBits) {
     return nullSpace[0];
 }
 
-var simonsAlgorithm = function(f, numBits) {
+function simonsAlgorithm(f, numBits) {
     var solution = findPotentialSolution(f, numBits);
     return (f(0) === f(solution)) ? solution : 0;
  };
@@ -77,10 +77,7 @@ var testFunction1010 = (function() {
     };
 })();
 
-[simonsAlgorithm(testFunction000, 3),
-    simonsAlgorithm(testFunction011, 3).toString(2),
-    simonsAlgorithm(testFunction110, 3).toString(2),
-    simonsAlgorithm(testFunction1010, 4).toString(2)]
-
-
-
+print("The special string for testFunction000 is " + simonsAlgorithm(testFunction000, 3).toString(2));
+print("The special string for testFunction011 is " + simonsAlgorithm(testFunction011, 3).toString(2));
+print("The special string for testFunction110 is " + simonsAlgorithm(testFunction110, 3).toString(2));
+print("The special string for testFunction1010 is " + simonsAlgorithm(testFunction1010, 4).toString(2));

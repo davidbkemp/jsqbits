@@ -39,7 +39,7 @@ $(function() {
         var selectedExample = $(this).attr('value');
         if (selectedExample === 'none') return;
 
-        $.get("resources-1.7.1/examples/" + selectedExample + ".js.example", function(data) {
+        $.get("resources-1.7.2/examples/" + selectedExample + ".js.example", function(data) {
             clear();
             $('#code').val(data);
           })

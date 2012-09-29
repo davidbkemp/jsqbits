@@ -1,6 +1,10 @@
 /**
  * General case of the "Period Finding" problem.
  * For any function where f(x) = f(x + r), this algorithm will find r.
+ * Examples are:
+ *  function(x) {return x % 17;}
+ *  function(x) {return 30 + Math.round(30 * Math.sin(Math.PI * x / 10));}
+ *  function(x) {return (x % 17) == 0 ? 1 : 0;} // NOTE: This often fails!
  */
 
 var numOutBits = 6;
@@ -31,7 +35,7 @@ function findPeriod(f, callback) {
         var result = qstate.qft(inputBits).measure(inputBits).result;
         var continuedFraction = jsqbitsmath.continuedFraction(result/inputRange, accuracyRequiredForContinuedFraction);
         var candidate = continuedFraction.denominator;
-        print("Candidate period: " + candidate);
+        print("Candidate: " + candidate);
         // Reduce the chances of getting the wrong answer by ignoring obviously wrong results!
         if (candidate <= outputRange && candidate > 1) {
             var lcm = jsqbitsmath.lcm(candidate, bestSoFar)
@@ -48,9 +52,9 @@ function findPeriod(f, callback) {
             }
         }
         attempts++;
-        print("Best period so far: " + bestSoFar + ". Attempts: " + attempts + ". Good candidates: " + successes);
+        print("Least common multiple: " + bestSoFar + ". Attempts: " + attempts + ". Good candidates: " + successes);
         // Yield control for a millisecond to give the browser a chance to print to the console.
-        setTimeout(continueFindingPeriod, 1);
+        setTimeout(continueFindingPeriod, 50);
     }
 
     continueFindingPeriod();

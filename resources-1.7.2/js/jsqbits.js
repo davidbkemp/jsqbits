@@ -24,7 +24,7 @@ function jsqbits(bitString) {
 
 (function() {
 
-    var validateArgs = function(args, minimum) {
+    function validateArgs(args, minimum) {
         var maximum = 10000;
         var message = 'Must supply at least ' + minimum + ' parameters.';
         if (arguments.length > 4) throw "Internal error: too many arguments to validateArgs";
@@ -37,8 +37,8 @@ function jsqbits(bitString) {
         if (args.length < minimum || args.length > maximum) {
             throw message;
         }
-    };
-
+    }
+    
     var parseBitString = function(bitString) {
         // Strip optional 'ket' characters to support |0101>
         bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
@@ -543,12 +543,18 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.controlledApplicatinOfqBitOperator = (function() {
 
-//        TODO: I think this is only ever called with arrays, not bit ranges!!!
-        var validateTargetBitRangesDontOverlap = function(controlBits, targetBits) {
-            if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
-                throw "control and target bits must not be the same nor overlap";
+        function validateTargetBitRangesDontOverlap(controlBits, targetBits) {
+            // TODO: Find out if it would sometimes be faster to put one of the bit collections into a hash-set first.
+            // Also consider allowing validation to be disabled.
+            for (var i = 0; i < controlBits.length; i++) {
+                var controlBit = controlBits[i];
+                for (var j = 0; j < targetBits.length; j++) {
+                    if (controlBit === targetBits[j]) {
+                        throw "control and target bits must not be the same nor overlap";
+                    }
+                }
             }
-        };
+        }
 
         var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
             var newAmplitudes = {};
@@ -593,25 +599,18 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.applyFunction = (function() {
 
-        var validateBitRangesAreDistinct = function(controlBits, targetBits) {
-            // TODO: Find out if it would sometimes be faster to put one of the bit collections into a hash-set first.
-            // Also consider allowing validation to be disabled.
-            for (var i = 0; i < controlBits.length; i++) {
-                var controlBit = controlBits[i];
-                for (var j = 0; j < targetBits.length; i++) {
-                    if (controlBit === targetBits[j]) {
-                        throw "control and target bits must not be the same nor overlap";
-                    }
-                }
+        function validateTargetBitRangesDontOverlap(controlBits, targetBits) {
+            if ((controlBits.to >= targetBits.from) && (targetBits.to >= controlBits.from)) {
+                throw "control and target bits must not be the same nor overlap";
             }
-        };
+        }
 
         return function(inputBits, targetBits, functionToApply) {
             validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and functionToApply to applyFunction().');
             var qState = this;
             var inputBitRange = convertBitQualifierToBitRange(inputBits, this.numBits());
             var targetBitRange = convertBitQualifierToBitRange(targetBits, this.numBits());
-            validateBitRangesAreDistinct(inputBitRange, targetBitRange);
+            validateTargetBitRangesDontOverlap(inputBitRange, targetBitRange);
             var newAmplitudes = {};
             var statesThatCanBeSkipped = {};
             var highBitMask = (1 << (inputBitRange.to + 1)) - 1;

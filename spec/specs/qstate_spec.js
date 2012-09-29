@@ -123,6 +123,13 @@ describe('QState', function() {
              expect(x.amplitude('|1010>')).toBeApprox(real(0.2));
              expect(x.amplitude('|1011>')).toBeApprox(real(0.3));
          });
+        it("throws an error when the control and target bits overlap", function() {
+            var testFunction = function(){return {amplitudeOf0: real(0), amplitudeOf1: real(0)}};
+            var badFunctionInvocation = function() {
+                jsqbits("0000").controlledApplicatinOfqBitOperator({from:0, to:2}, {from:2, to:3}, testFunction);
+            };
+            expect(badFunctionInvocation).toThrow("control and target bits must not be the same nor overlap");
+        });
     });
 
     describe('#x', function() {
@@ -540,6 +547,12 @@ describe('QState', function() {
             var f = function(x) { return parseInt('1101', 2); };
             var x = jsqbits('|1011>').applyFunction(3, {from: 0, to: 2}, f);
             expect(x).toEql(jsqbits('|1110>'));
+        });
+        it("throws exception when target and control bits overlap", function() {
+            var badFunctionInvocation = function() {
+              jsqbits("0000").applyFunction({from:0, to:2}, {from: 2, to:3}, function(x){return x;});
+            };
+            expect(badFunctionInvocation).toThrow("control and target bits must not be the same nor overlap");
         });
     });
 

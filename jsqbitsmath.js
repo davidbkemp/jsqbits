@@ -27,6 +27,19 @@ var jsqbitsmath = jsqbitsmath || {};
     }
 
     /**
+     * Return x^y mod m
+     */
+    jsqbitsmath.powerMod = function(x, y, m) {
+        if (y === 0) return 1;
+        if (y === 1) return x;
+        var halfY = Math.floor(y / 2);
+        var powerHalfY = jsqbitsmath.powerMod(x, halfY, m);
+        var result = (powerHalfY * powerHalfY) % m;
+        if (y % 2 === 1) result = (x * result) % m;
+        return result;
+    };
+
+    /**
      * Greatest common divisor
      */
     jsqbitsmath.gcd = function(a, b) {

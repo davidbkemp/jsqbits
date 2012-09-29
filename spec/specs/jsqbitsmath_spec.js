@@ -3,6 +3,21 @@ describe("jsqbitsmath", function() {
         this.addMatchers(jsqbits.JasmineMatchers);
     });
 
+    describe("#powerMod", function(){
+        it("should return 1 for x^0 mod 35", function() {
+            expect(jsqbitsmath.powerMod(2, 0, 35)).toBe(1);
+        });
+        it("should give 16 for 2^4 mod 35", function(){
+            expect(jsqbitsmath.powerMod(2, 4, 35)).toBe(16);
+        });
+        it("should give 32 for 2^5 mod 35", function(){
+            expect(jsqbitsmath.powerMod(2, 5, 35)).toBe(32);
+        });
+        it("should give 11 for 3^4 mod 70", function(){
+            expect(jsqbitsmath.powerMod(3, 4, 70)).toBe(11);
+        });
+    });
+
     describe("#nullSpace", function() {
         it("should solve Ax=0 (single solution)", function() {
             var a = [

@@ -1,9 +1,7 @@
 /*
  * Shor's factoring algorithm.
- * TODO: Check to see if n is a prime power.
+ * See https://cs.uwaterloo.ca/~watrous/lecture-notes/519/11.pdf
  */
-
-
 
 function computeOrder(a, n, numOutBits, callback) {
     var numInBits = 2 * numOutBits;
@@ -24,11 +22,13 @@ function computeOrder(a, n, numOutBits, callback) {
             callback("failed");
             return;
         }
+
         var qstate = new jsqbits.QState(numInBits + numOutBits).hadamard(inputBits);
         qstate = qstate.applyFunction(inputBits, outBits, f);
         // We do not need to measure the outBits, but it does speed up the simulation.
         qstate = qstate.measure(outBits).newState;
         var result = qstate.qft(inputBits).measure(inputBits).result;
+        
         var continuedFraction = jsqbitsmath.continuedFraction(result/inputRange, accuracyRequiredForContinuedFraction);
         var candidate = continuedFraction.denominator;
         print("Candidate order: " + candidate);
@@ -96,7 +96,15 @@ function factor(n, callback) {
     }
 
     if (n % 2 === 0) {
+        print("Is even.  No need for any quantum computing!")
         callback(2);
+        return;
+    }
+
+    var powerFactor = jsqbitsmath.powerFactor(n);
+    if (powerFactor > 1) {
+        print("Is a power factor.  No need for anything quantum!")
+        callback(powerFactor);
         return;
     }
 

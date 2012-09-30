@@ -38,5 +38,4 @@ TODO
 * Include a 'remainingQbits' field on measurement outcomes.
 * JSLint?
 * Coverage?
-* Grover's Algorithm
 * Mermin-Peres magic square

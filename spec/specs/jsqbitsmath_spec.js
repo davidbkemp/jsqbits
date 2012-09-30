@@ -18,6 +18,18 @@ describe("jsqbitsmath", function() {
         });
     });
 
+    describe("#primePowerFactor", function(){
+        it("should return 0 for 35", function() {
+            expect(jsqbitsmath.powerFactor(35)).toBe(0);
+        });
+        it("should return 2 for 2^6", function() {
+            expect(jsqbitsmath.powerFactor(Math.pow(2,6))).toBe(2);
+        });
+        it("should return 5 for 5^6", function() {
+            expect(jsqbitsmath.powerFactor(Math.pow(5,6))).toBe(5);
+        });
+    });
+
     describe("#nullSpace", function() {
         it("should solve Ax=0 (single solution)", function() {
             var a = [

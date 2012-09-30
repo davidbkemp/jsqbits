@@ -26,6 +26,10 @@ var jsqbitsmath = jsqbitsmath || {};
         return value >=0 ? Math.floor(value) : Math.ceil(value);
     }
 
+    function approximatelyInteger(x) {
+        return Math.abs(x - Math.round(x)) < 0.0000001;
+    }
+    
     /**
      * Return x^y mod m
      */
@@ -37,6 +41,26 @@ var jsqbitsmath = jsqbitsmath || {};
         var result = (powerHalfY * powerHalfY) % m;
         if (y % 2 === 1) result = (x * result) % m;
         return result;
+    };
+
+    /**
+     * Return x such that n = x^y for some prime number x, or otherwise return 0.
+     */
+    jsqbitsmath.powerFactor = function(n) {
+        var log2n = Math.log(n)/Math.log(2);
+        // Try values of root_y(n) starting at log2n and working your way down to 2.
+        var y = Math.floor(log2n);
+        if (log2n === y) {
+            return 2;
+        }
+        y--;
+        for(; y > 1; y--) {
+            var x = Math.pow(n, 1/y);
+            if (approximatelyInteger(x)) {
+                return Math.round(x);
+            }
+        }
+        return 0;
     };
 
     /**

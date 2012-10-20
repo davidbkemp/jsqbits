@@ -39,24 +39,24 @@ function jsqbits(bitString) {
         }
     }
     
-    var parseBitString = function(bitString) {
+    function parseBitString(bitString) {
         // Strip optional 'ket' characters to support |0101>
         bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
         return {value: parseInt(bitString, 2), length: bitString.length};
-    };
+    }
 
-    var sparseAssign = function(array, index, value) {
+    function sparseAssign(array, index, value) {
         // Try to avoid assigning values and try to make zero exactly zero.
         if (value.magnitude() > jsqbits.roundToZero) {
             array[index] = value;
         }
-    };
+    }
 
-    var isNull = function(x) {
+    function isNull(x) {
         return x === null || x === undefined;
-    };
+    }
 
-    var convertBitQualifierToBitRange = function(bits, numBits) {
+    function convertBitQualifierToBitRange(bits, numBits) {
         if (isNull(bits)) {
             throw "bit qualification must be supplied";
         } else if (bits === jsqbits.ALL) {
@@ -71,9 +71,9 @@ function jsqbits(bitString) {
         } else {
             throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
         }
-    };
+    }
 
-    var bitRangeAsArray = function(low, high) {
+    function bitRangeAsArray(low, high) {
         if (low > high) {
             throw "bit range must have 'from' being less than or equal to 'to'";
         }
@@ -82,9 +82,9 @@ function jsqbits(bitString) {
             result.push(i);
         }
         return result;
-    };
+    }
 
-    var convertBitQualifierToBitArray = function(bits, numBits) {
+    function convertBitQualifierToBitArray(bits, numBits) {
         if (isNull(bits)) {
             throw "bit qualification must be supplied";
         }
@@ -101,15 +101,15 @@ function jsqbits(bitString) {
             return bitRangeAsArray(bits.from, bits.to);
         }
         throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";
-    };
+    }
 
-    var padState = function(state, numBits) {
+    function padState(state, numBits) {
         var paddingLength = numBits - state.length;
         for (var i = 0; i < paddingLength; i++) {
             state = '0' + state;
         }
         return state;
-    };
+    }
 
     function createControlBitMask(controlBits) {
         var controlBitMask = null;
@@ -556,7 +556,7 @@ function jsqbits(bitString) {
             }
         }
 
-        var applyToOneBit = function(controlBits, targetBit, qbitFunction, qState) {
+        function applyToOneBit(controlBits, targetBit, qbitFunction, qState) {
             var newAmplitudes = {};
             var statesThatCanBeSkipped = {};
             var targetBitMask = 1 << targetBit;
@@ -578,7 +578,7 @@ function jsqbits(bitString) {
             });
 
             return new jsqbits.QState(qState.numBits(), newAmplitudes);
-        };
+        }
 
         return function(controlBits, targetBits, qbitFunction) {
             validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and qbitFunction to controlledApplicatinOfqBitOperator().');
@@ -688,7 +688,7 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.qft = function(targetBits) {
 
-        var qft = function(qstate, targetBits) {
+        function qft(qstate, targetBits) {
             var bitIndex = targetBits[0];
             if (targetBits.length > 1) {
                 qstate = qft(qstate, targetBits.slice(1));
@@ -699,15 +699,15 @@ function jsqbits(bitString) {
                 }
             }
             return qstate.hadamard(bitIndex);
-        };
+        }
 
-        var reverseBits = function(qstate, targetBits) {
+        function reverseBits(qstate, targetBits) {
             while (targetBits.length > 1) {
                 qstate = qstate.swap(targetBits[0], targetBits[targetBits.length - 1]);
                 targetBits = targetBits.slice(1, targetBits.length - 1);
             }
             return qstate;
-        };
+        }
 
         validateArgs(arguments, 1, 1, 'Must supply bits to be measured to qft().');
         var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits());
@@ -733,24 +733,24 @@ function jsqbits(bitString) {
 
     jsqbits.QState.prototype.toString = (function() {
 
-        var formatAmplitude = function(amplitude, formatFlags) {
+        function formatAmplitude(amplitude, formatFlags) {
             var amplitudeString = amplitude.format(formatFlags);
             return amplitudeString === '1' ? '' : amplitudeString + " ";
-        };
+        }
 
-        var compareStatesWithAmplitudes = function(a, b)
+        function compareStatesWithAmplitudes(a, b)
         {
             return a.asNumber() - b.asNumber();
-        };
+        }
 
-        var sortedNonZeroStates = function(qState) {
+        function sortedNonZeroStates(qState) {
             var nonZeroStates = [];
             qState.each(function(stateWithAmplitude){
                 nonZeroStates.push(stateWithAmplitude);
             });
             nonZeroStates.sort(compareStatesWithAmplitudes);
             return nonZeroStates;
-        };
+        }
 
         return function() {
             var result, formatFlags, nonZeroStates, stateWithAmplitude, i;

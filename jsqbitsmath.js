@@ -22,14 +22,6 @@ var jsqbitsmath = jsqbitsmath || {};
 
 (function() {
 
-    function roundTowardsZero(value) {
-        return value >=0 ? Math.floor(value) : Math.ceil(value);
-    }
-
-    function approximatelyInteger(x) {
-        return Math.abs(x - Math.round(x)) < 0.0000001;
-    }
-    
     /**
      * Return x^y mod m
      */
@@ -134,7 +126,7 @@ var jsqbitsmath = jsqbitsmath || {};
          * Try to make row pivotRowIndex / column colIndex a pivot
          * swapping rows if necessary.
          */
-        var attemptToMakePivot = function(a, colIndex, pivotRowIndex) {
+        function attemptToMakePivot(a, colIndex, pivotRowIndex) {
             var colBitMask = 1 << colIndex;
             if (colBitMask & a[pivotRowIndex]) return;
             for (var rowIndex = pivotRowIndex + 1; rowIndex < a.length; rowIndex ++) {
@@ -145,13 +137,13 @@ var jsqbitsmath = jsqbitsmath || {};
                     return;
                 }
             }
-        };
+        }
 
         /**
          * Reduce 'a' to reduced row echelon form,
          * and keep track of which columns are pivot columns in pivotColumnIndexes.
          */
-        var makeReducedRowEchelonForm = function(a, width, pivotColumnIndexes) {
+        function makeReducedRowEchelonForm(a, width, pivotColumnIndexes) {
             var pivotRowIndex = 0;
             for (var pivotColIndex = width - 1; pivotColIndex >= 0; pivotColIndex--) {
                 attemptToMakePivot(a, pivotColIndex, pivotRowIndex);
@@ -162,12 +154,12 @@ var jsqbitsmath = jsqbitsmath || {};
                     pivotRowIndex++;
                 }
             }
-        };
+        }
 
         /**
          * Zero out the values above and below the pivot (using mod 2 arithmetic).
          */
-        var zeroOutAboveAndBelow = function(a, pivotColIndex, pivotRowIndex) {
+        function zeroOutAboveAndBelow(a, pivotColIndex, pivotRowIndex) {
             var pivotRow = a[pivotRowIndex];
             var colBitMask = 1 << pivotColIndex;
             for (var rowIndex = 0; rowIndex < a.length; rowIndex++) {
@@ -175,12 +167,12 @@ var jsqbitsmath = jsqbitsmath || {};
                     a[rowIndex] = a[rowIndex] ^ pivotRow;
                 }
             }
-        };
+        }
 
         /**
          * Add to results, special solutions corresponding to the specified non-pivot column colIndex.
          */
-        var specialSolutionForColumn = function(a, pivotColumnIndexes, colIndex, pivotNumber) {
+        function specialSolutionForColumn(a, pivotColumnIndexes, colIndex, pivotNumber) {
             var columnMask = 1 << colIndex;
             var specialSolution = columnMask;
             for (var rowIndex = 0; rowIndex < pivotNumber; rowIndex++) {
@@ -189,12 +181,12 @@ var jsqbitsmath = jsqbitsmath || {};
                 }
             }
             return specialSolution;
-        };
+        }
 
         /**
          * Find the special solutions to the mod-2 equation Ax=0 for matrix a.
          */
-        var specialSolutions = function(a, width, pivotColumnIndexes) {
+        function specialSolutions(a, width, pivotColumnIndexes) {
             var results = [];
             var pivotNumber = 0;
             var nextPivotColumnIndex = pivotColumnIndexes[pivotNumber];
@@ -207,7 +199,7 @@ var jsqbitsmath = jsqbitsmath || {};
                 }
             }
             return results;
-        };
+        }
 
         return function(a, width) {
             a = cloneArray(a);
@@ -217,12 +209,20 @@ var jsqbitsmath = jsqbitsmath || {};
         };
     })();
 
-    var cloneArray = function(a) {
+    function roundTowardsZero(value) {
+        return value >=0 ? Math.floor(value) : Math.ceil(value);
+    }
+
+    function approximatelyInteger(x) {
+        return Math.abs(x - Math.round(x)) < 0.0000001;
+    }
+
+    function cloneArray(a) {
         var result = [];
         for (var i = 0; i < a.length; i++) {
             result[i] = a[i];
         }
         return result;
-    };
+    }
 
 })();

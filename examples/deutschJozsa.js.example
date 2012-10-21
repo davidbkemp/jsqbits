@@ -31,6 +31,6 @@ function createBalancedFunction() {
     return function(x) { return nums[x] < 4 ? 0 : 1 };
 };
 
-print("deutschJozsa(function(x) { return 0; }) equals " + deutschJozsa(function(x) { return 0; }));
-print("deutschJozsa(function(x) { return 1; }) equals " + deutschJozsa(function(x) { return 1; }));
-print("deutschJozsa(balancedFunction) equals " + deutschJozsa(createBalancedFunction()));
+log("deutschJozsa(function(x) { return 0; }) equals " + deutschJozsa(function(x) { return 0; }));
+log("deutschJozsa(function(x) { return 1; }) equals " + deutschJozsa(function(x) { return 1; }));
+log("deutschJozsa(balancedFunction) equals " + deutschJozsa(createBalancedFunction()));

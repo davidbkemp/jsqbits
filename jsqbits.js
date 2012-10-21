@@ -24,104 +24,6 @@ function jsqbits(bitString) {
 
 (function() {
 
-    function validateArgs(args, minimum) {
-        var maximum = 10000;
-        var message = 'Must supply at least ' + minimum + ' parameters.';
-        if (arguments.length > 4) throw "Internal error: too many arguments to validateArgs";
-        if (arguments.length === 4) {
-            maximum = arguments[2];
-            message = arguments[3];
-        } else if (arguments.length === 3) {
-            message = arguments[2];
-        }
-        if (args.length < minimum || args.length > maximum) {
-            throw message;
-        }
-    }
-    
-    function parseBitString(bitString) {
-        // Strip optional 'ket' characters to support |0101>
-        bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
-        return {value: parseInt(bitString, 2), length: bitString.length};
-    }
-
-    function sparseAssign(array, index, value) {
-        // Try to avoid assigning values and try to make zero exactly zero.
-        if (value.magnitude() > jsqbits.roundToZero) {
-            array[index] = value;
-        }
-    }
-
-    function isNull(x) {
-        return x === null || x === undefined;
-    }
-
-    function convertBitQualifierToBitRange(bits, numBits) {
-        if (isNull(bits)) {
-            throw "bit qualification must be supplied";
-        } else if (bits === jsqbits.ALL) {
-            return {from: 0, to: numBits - 1};
-        } else if (typeof bits === 'number') {
-            return {from: bits, to: bits};
-        } else if (!isNull(bits.from) && !isNull(bits.to)) {
-            if (bits.from > bits.to) {
-                throw "bit range must have 'from' being less than or equal to 'to'";
-            }
-            return bits;
-        } else {
-            throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
-        }
-    }
-
-    function bitRangeAsArray(low, high) {
-        if (low > high) {
-            throw "bit range must have 'from' being less than or equal to 'to'";
-        }
-        var result = [];
-        for (var i = low; i <= high; i++) {
-            result.push(i);
-        }
-        return result;
-    }
-
-    function convertBitQualifierToBitArray(bits, numBits) {
-        if (isNull(bits)) {
-            throw "bit qualification must be supplied";
-        }
-        if (bits instanceof Array) {
-            return bits;
-        }
-        if (typeof bits === 'number') {
-            return [bits];
-        }
-        if (bits === jsqbits.ALL) {
-            return bitRangeAsArray(0, numBits - 1);
-        }
-        if (!isNull(bits.from) && !isNull(bits.to)) {
-            return bitRangeAsArray(bits.from, bits.to);
-        }
-        throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";
-    }
-
-    function padState(state, numBits) {
-        var paddingLength = numBits - state.length;
-        for (var i = 0; i < paddingLength; i++) {
-            state = '0' + state;
-        }
-        return state;
-    }
-
-    function createControlBitMask(controlBits) {
-        var controlBitMask = null;
-        if (controlBits) {
-            controlBitMask = 0;
-            for (var i = 0; i < controlBits.length; i++) {
-                controlBitMask += (1 << controlBits[i]);
-            }
-        }
-        return controlBitMask;
-    }
-
     jsqbits.Complex = function(real, imaginary) {
         validateArgs(arguments, 1, 2, 'Must supply a real, and optionally an imaginary, argument to Complex()');
         imaginary = imaginary || 0;
@@ -765,4 +667,103 @@ function jsqbits(bitString) {
             return result;
         };
     })();
+
+    function validateArgs(args, minimum) {
+        var maximum = 10000;
+        var message = 'Must supply at least ' + minimum + ' parameters.';
+        if (arguments.length > 4) throw "Internal error: too many arguments to validateArgs";
+        if (arguments.length === 4) {
+            maximum = arguments[2];
+            message = arguments[3];
+        } else if (arguments.length === 3) {
+            message = arguments[2];
+        }
+        if (args.length < minimum || args.length > maximum) {
+            throw message;
+        }
+    }
+
+    function parseBitString(bitString) {
+        // Strip optional 'ket' characters to support |0101>
+        bitString = bitString.replace(/^\|/,'').replace(/>$/,'');
+        return {value: parseInt(bitString, 2), length: bitString.length};
+    }
+
+    function sparseAssign(array, index, value) {
+        // Try to avoid assigning values and try to make zero exactly zero.
+        if (value.magnitude() > jsqbits.roundToZero) {
+            array[index] = value;
+        }
+    }
+
+    function isNull(x) {
+        return x === null || x === undefined;
+    }
+
+    function convertBitQualifierToBitRange(bits, numBits) {
+        if (isNull(bits)) {
+            throw "bit qualification must be supplied";
+        } else if (bits === jsqbits.ALL) {
+            return {from: 0, to: numBits - 1};
+        } else if (typeof bits === 'number') {
+            return {from: bits, to: bits};
+        } else if (!isNull(bits.from) && !isNull(bits.to)) {
+            if (bits.from > bits.to) {
+                throw "bit range must have 'from' being less than or equal to 'to'";
+            }
+            return bits;
+        } else {
+            throw "bit qualification must be either: a number, jsqbits.ALL, or {from: n, to: m}";
+        }
+    }
+
+    function bitRangeAsArray(low, high) {
+        if (low > high) {
+            throw "bit range must have 'from' being less than or equal to 'to'";
+        }
+        var result = [];
+        for (var i = low; i <= high; i++) {
+            result.push(i);
+        }
+        return result;
+    }
+
+    function convertBitQualifierToBitArray(bits, numBits) {
+        if (isNull(bits)) {
+            throw "bit qualification must be supplied";
+        }
+        if (bits instanceof Array) {
+            return bits;
+        }
+        if (typeof bits === 'number') {
+            return [bits];
+        }
+        if (bits === jsqbits.ALL) {
+            return bitRangeAsArray(0, numBits - 1);
+        }
+        if (!isNull(bits.from) && !isNull(bits.to)) {
+            return bitRangeAsArray(bits.from, bits.to);
+        }
+        throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";
+    }
+
+    function padState(state, numBits) {
+        var paddingLength = numBits - state.length;
+        for (var i = 0; i < paddingLength; i++) {
+            state = '0' + state;
+        }
+        return state;
+    }
+
+    function createControlBitMask(controlBits) {
+        var controlBitMask = null;
+        if (controlBits) {
+            controlBitMask = 0;
+            for (var i = 0; i < controlBits.length; i++) {
+                controlBitMask += (1 << controlBits[i]);
+            }
+        }
+        return controlBitMask;
+    }
+
 })();

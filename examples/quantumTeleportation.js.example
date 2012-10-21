@@ -23,7 +23,7 @@ var stateToBeTransmitted0 = jsqbits("|0>").multiply(jsqbits.complex(0.5, 0.5));
 var stateToBeTransmitted1 = jsqbits("|1>").multiply(jsqbits.complex(0, Math.sqrt(0.5)));
 var stateToBeTransmitted = stateToBeTransmitted0.add(stateToBeTransmitted1);
 
-print("State to be transmitted: " + stateToBeTransmitted);
+log("State to be transmitted: " + stateToBeTransmitted);
 
 // The quantum computer is initialized as a three qubit system with bits 0 and 1 being the bell state qbits shared by Alice and Bob
 // and bit 2 being the qubit to be transmitted.
@@ -42,4 +42,4 @@ var finalState = applyTeleportation(initialState);
 // If we had some way of projecting onto bit 0, we would have
 // stateToBeTransmitted0 |0> + stateToBeTransmitted1 |1>
 
-print("Final state: " + finalState);
+log("Final state: " + finalState);

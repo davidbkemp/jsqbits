@@ -6,12 +6,12 @@
 var numBits = 8;
 var range = 1 << numBits;
 var inputBits = {from: 1, to: numBits};
-var maxAmplifications = Math.floor(Math.sqrt(range) * Math.PI / 4);
+var requiredNumberOfAmplifications = Math.floor(Math.sqrt(range) * Math.PI / 4);
 var attempts = 0;
 
 function search(f, callBack) {
     if (attempts === 6) {
-        print("Giving up after " + attempts + " attempts");
+        log("Giving up after " + attempts + " attempts");
         callBack("failed");
         return;
     }
@@ -21,13 +21,13 @@ function search(f, callBack) {
     var amplications = 0;
 
     function amplify() {
-        if (amplications++ === maxAmplifications ) {
+        if (amplications++ === requiredNumberOfAmplifications ) {
             var result = qstate.measure(inputBits).result;
             if (f(result) === 1) {
                 callBack(result);
                 return;
             }
-            print("Failed result: " + result);
+            log("Failed result: " + result);
             search(f, callBack);
             return;
         }
@@ -35,7 +35,7 @@ function search(f, callBack) {
         qstate = qstate.applyFunction(inputBits, 0, f);
         // Reflect about the mean
         qstate = qstate.hadamard(inputBits).applyFunction(inputBits, 0, function(x){return x === 0 ? 1 : 0;}).hadamard(inputBits);
-        print("Amplified " + amplications + " times.");
+        log("Amplified " + amplications + " times.");
         setTimeout(amplify, 50);
     }
 
@@ -47,6 +47,6 @@ var f = promptForFunction("Enter a function: f(x) = 1 for only one x less than "
 
 var startTime = new Date();
 search(f, function(result) {
-    print("The desired value is " + result);
-    print("Time taken in seconds: " + ((new Date().getTime()) - startTime.getTime()) / 1000);
+    log("The desired value is " + result);
+    log("Time taken in seconds: " + ((new Date().getTime()) - startTime.getTime()) / 1000);
 });

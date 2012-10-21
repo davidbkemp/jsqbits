@@ -77,7 +77,7 @@ var testFunction1010 = (function() {
     };
 })();
 
-print("The special string for testFunction000 is " + simonsAlgorithm(testFunction000, 3).toString(2));
-print("The special string for testFunction011 is " + simonsAlgorithm(testFunction011, 3).toString(2));
-print("The special string for testFunction110 is " + simonsAlgorithm(testFunction110, 3).toString(2));
-print("The special string for testFunction1010 is " + simonsAlgorithm(testFunction1010, 4).toString(2));
+log("The special string for testFunction000 is " + simonsAlgorithm(testFunction000, 3).toString(2));
+log("The special string for testFunction011 is " + simonsAlgorithm(testFunction011, 3).toString(2));
+log("The special string for testFunction110 is " + simonsAlgorithm(testFunction110, 3).toString(2));
+log("The special string for testFunction1010 is " + simonsAlgorithm(testFunction1010, 4).toString(2));

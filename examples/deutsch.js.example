@@ -10,4 +10,4 @@ function deutsch(f) {
 
 var f = promptForFunction("Enter a function that maps {0,1} to {0,1}", "function(x) {return (x + 1) % 2;}");
 
-print("(f(0) + f(1)) mod 2 = " + deutsch(f));
+log("(f(0) + f(1)) mod 2 = " + deutsch(f));

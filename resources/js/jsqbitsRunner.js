@@ -48,7 +48,7 @@ $(function() {
 });
 
 
-function print(str) {
+function log(str) {
     $("#console").append($("<div>").text(str));
 }
 

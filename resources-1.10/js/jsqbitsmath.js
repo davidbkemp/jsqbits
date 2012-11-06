@@ -18,9 +18,12 @@
  * For documentation, and the latest version, see http://www.jsqbits.org/
  */
 
+/*jshint curly:false, eqnull:true, bitwise:false */
+
 var jsqbitsmath = jsqbitsmath || {};
 
 (function() {
+    "use strict";
 
     /**
      * Return x^y mod m

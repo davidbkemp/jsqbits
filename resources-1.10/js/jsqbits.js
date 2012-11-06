@@ -18,11 +18,15 @@
  * For documentation, and the latest version, see http://www.jsqbits.org/
  */
 
+/*jshint curly:false, eqnull:true, bitwise:false */
+
 function jsqbits(bitString) {
+    "use strict";
     return jsqbits.QState.fromBits(bitString);
 }
 
 (function() {
+    "use strict";
 
     jsqbits.Complex = function(real, imaginary) {
         validateArgs(arguments, 1, 2, 'Must supply a real, and optionally an imaginary, argument to Complex()');
@@ -70,7 +74,7 @@ function jsqbits(bitString) {
     jsqbits.Complex.prototype.format = function(options) {
         var realValue = this.real();
         var imaginaryValue = this.imaginary();
-        if (options && !isNull(options.decimalPlaces)) {
+        if (options && options.decimalPlaces != null) {
             var roundingMagnitude = Math.pow(10, options.decimalPlaces);
             realValue = Math.round(realValue * roundingMagnitude) /roundingMagnitude;
             imaginaryValue = Math.round(imaginaryValue * roundingMagnitude) /roundingMagnitude;
@@ -405,7 +409,7 @@ function jsqbits(bitString) {
     jsqbits.QState.prototype.controlledSwap = function(controlBits, targetBit1, targetBit2) {
         validateArgs(arguments, 3, 3, "Must supply controlBits, targetBit1, and targetBit2 to controlledSwap()");
         var newAmplitudes = {};
-        if (!isNull(controlBits)) {
+        if (controlBits != null) {
             controlBits = convertBitQualifierToBitArray(controlBits, this.numBits());
         }
 //        TODO: make sure targetBit1 and targetBit2 are not contained in controlBits.
@@ -415,7 +419,7 @@ function jsqbits(bitString) {
         this.each(function(stateWithAmplitude){
             var state = stateWithAmplitude.asNumber();
             var newState = state;
-            if (isNull(controlBits) || ((state & controlBitMask) === controlBitMask)) {
+            if (controlBits == null || ((state & controlBitMask) === controlBitMask)) {
                 var newBit2 = ((state & bit1Mask) >> targetBit1) << targetBit2;
                 var newBit1 = ((state & bit2Mask) >>  targetBit2) << targetBit1;
                 newState = (state & ~bit1Mask & ~bit2Mask) | newBit1 | newBit2;
@@ -469,7 +473,7 @@ function jsqbits(bitString) {
                 statesThatCanBeSkipped[state ^ targetBitMask] = true;
                 var indexOf1 = state | targetBitMask;
                 var indexOf0 = indexOf1 - targetBitMask;
-                if (isNull(controlBits) || ((state & controlBitMask) === controlBitMask)) {
+                if (controlBits == null || ((state & controlBitMask) === controlBitMask)) {
                     var result = qbitFunction(qState.amplitude(indexOf0), qState.amplitude(indexOf1));
                     sparseAssign(newAmplitudes, indexOf0, result.amplitudeOf0);
                     sparseAssign(newAmplitudes, indexOf1, result.amplitudeOf1);
@@ -486,7 +490,7 @@ function jsqbits(bitString) {
             validateArgs(arguments, 3, 3, 'Must supply control bits, target bits, and qbitFunction to controlledApplicatinOfqBitOperator().');
             var targetBitArray = convertBitQualifierToBitArray(targetBits, this.numBits());
             var controlBitArray = null;
-            if (!isNull(controlBits)) {
+            if (controlBits != null) {
                 controlBitArray = convertBitQualifierToBitArray(controlBits, this.numBits());
                 validateTargetBitRangesDontOverlap(controlBitArray, targetBitArray);
             }
@@ -696,18 +700,14 @@ function jsqbits(bitString) {
         }
     }
 
-    function isNull(x) {
-        return x === null || x === undefined;
-    }
-
     function convertBitQualifierToBitRange(bits, numBits) {
-        if (isNull(bits)) {
+        if (bits == null) {
             throw "bit qualification must be supplied";
         } else if (bits === jsqbits.ALL) {
             return {from: 0, to: numBits - 1};
         } else if (typeof bits === 'number') {
             return {from: bits, to: bits};
-        } else if (!isNull(bits.from) && !isNull(bits.to)) {
+        } else if (bits.from != null && bits.to != null) {
             if (bits.from > bits.to) {
                 throw "bit range must have 'from' being less than or equal to 'to'";
             }
@@ -729,7 +729,7 @@ function jsqbits(bitString) {
     }
 
     function convertBitQualifierToBitArray(bits, numBits) {
-        if (isNull(bits)) {
+        if (bits == null) {
             throw "bit qualification must be supplied";
         }
         if (bits instanceof Array) {
@@ -741,7 +741,7 @@ function jsqbits(bitString) {
         if (bits === jsqbits.ALL) {
             return bitRangeAsArray(0, numBits - 1);
         }
-        if (!isNull(bits.from) && !isNull(bits.to)) {
+        if (bits.from != null && bits.to != null) {
             return bitRangeAsArray(bits.from, bits.to);
         }
         throw "bit qualification must be either: a number, an array or numbers, jsqbits.ALL, or {from: n, to: m}";

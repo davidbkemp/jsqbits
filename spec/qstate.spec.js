@@ -1,9 +1,13 @@
+var jsqbits = require('../lib/jsqbits').jsqbits;
+var jsqbitsJasmineMatchers = require('./matchers').jsqbitsJasmineMatchers;
+
+
 describe('QState', function() {
     var complex = jsqbits.complex;
     var real = jsqbits.real;
 
     beforeEach(function() {
-        this.addMatchers(jsqbits.JasmineMatchers);
+        this.addMatchers(jsqbitsJasmineMatchers);
     });
 
     describe('new', function(){

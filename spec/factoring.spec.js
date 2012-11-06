@@ -1,3 +1,6 @@
+var jsqbits = require('../lib/jsqbits').jsqbits;
+var jsqbitsmath = require('../lib/jsqbitsmath').jsqbitsmath;
+
 describe("Shor's algorithm", function() {
     it("should factor 35", function() {
 

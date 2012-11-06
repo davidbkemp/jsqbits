@@ -1,6 +1,9 @@
+var jsqbitsmath = require('../lib/jsqbitsmath').jsqbitsmath;
+var jsqbitsJasmineMatchers = require('./matchers').jsqbitsJasmineMatchers;
+
 describe("jsqbitsmath", function() {
     beforeEach(function() {
-        this.addMatchers(jsqbits.JasmineMatchers);
+        this.addMatchers(jsqbitsJasmineMatchers);
     });
 
     describe("#powerMod", function(){

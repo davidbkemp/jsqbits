@@ -1,7 +1,11 @@
+var jsqbits = require('../lib/jsqbits').jsqbits;
+var jsqbitsmath = require('../lib/jsqbitsmath').jsqbitsmath;
+var jsqbitsJasmineMatchers = require('./matchers').jsqbitsJasmineMatchers;
+
 describe('Simple Quantum Algorithms', function() {
     var ALL = jsqbits.ALL;
     beforeEach(function() {
-        this.addMatchers(jsqbits.JasmineMatchers);
+        this.addMatchers(jsqbitsJasmineMatchers);
     });
 
     describe("Super dense coding", function() {

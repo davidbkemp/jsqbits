@@ -1,3 +1,5 @@
+var jsqbits = require('../lib/jsqbits').jsqbits;
+var jsqbitsJasmineMatchers = require('./matchers').jsqbitsJasmineMatchers;
 
 describe('Complex', function() {
     var complex = function(real, imaginary) {
@@ -11,7 +13,7 @@ describe('Complex', function() {
         w = complex(-4, 3);
         x = complex(1, 3);
         y = complex(10, 30);
-        this.addMatchers(jsqbits.JasmineMatchers);
+        this.addMatchers(jsqbitsJasmineMatchers);
     });
 
     describe("construction", function() {

@@ -1,3 +1,6 @@
+var jsqbits = require('../lib/jsqbits').jsqbits;
+var jsqbitsmath = require('../lib/jsqbitsmath').jsqbitsmath;
+
 describe('QState.qft (Quantum Fourier Transform)', function() {
     var complex = jsqbits.complex;
     var real = jsqbits.real;

@@ -18,26 +18,25 @@
  * For documentation, and the latest version, see http://www.jsqbits.org/
  */
 
-/*global jQuery:true, jsqbits:true, prompt:true, alert:true, ALL:true, log:true, promptForFunction:true */
-/*jshint evil:true, curly:false, eqnull:true, bitwise:false */
+/*jshint evil:true, eqnull:true, eqeqeq:true, forin:true, immed:true, latedef:true, newcap:true, noarg:true, nonew:true, regexp:true, undef:true, unused:true, strict:true, trailing:true */
+/*global jQuery, jsqbits, prompt, alert  */
 
-ALL = jsqbits.ALL;
 
-log = function (str) {
+(function (global, $) {
     "use strict";
-    jQuery("#console").append(jQuery("<div>").text(str));
-};
 
-promptForFunction  = function (message, example) {
-    "use strict";
-    var input = prompt(message, example);
-    var f;
-    eval("f = " + input);
-    return f;
-};
+    global.ALL = jsqbits.ALL;
 
-(function ($) {
-    "use strict";
+    global.log = function (str) {
+        jQuery("#console").append(jQuery("<div>").text(str));
+    };
+
+    global.promptForFunction  = function (message, example) {
+        var input = prompt(message, example);
+        var f;
+        eval("f = " + input);
+        return f;
+    };
 
     function clearConsole() {
         $('#result').text('');
@@ -86,4 +85,4 @@ promptForFunction  = function (message, example) {
         });
     });
 
-})(jQuery);
+})(this, jQuery);

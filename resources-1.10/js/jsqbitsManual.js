@@ -1,5 +1,8 @@
-(function($) {
+/*jshint evil:true, eqnull:true, eqeqeq:true, forin:true, immed:true, latedef:true, newcap:true, noarg:true, nonew:true, regexp:true, undef:true, unused:true, strict:true, trailing:true */
+/*global jQuery */
 
+(function($) {
+    "use strict";
 
 //    Find code samples and compare the actual output with the stated output.
     $(function() {

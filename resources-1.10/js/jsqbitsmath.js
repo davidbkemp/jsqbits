@@ -18,9 +18,15 @@
  * For documentation, and the latest version, see http://www.jsqbits.org/
  */
 
-/*jshint curly:false, eqnull:true, bitwise:false */
+/*jshint eqnull:true, eqeqeq:true, forin:true, immed:true, latedef:true, newcap:true, noarg:true, nonew:true, regexp:true, undef:true, unused:true, strict:true, trailing:true */
+/*global module:true */
 
 var jsqbitsmath = jsqbitsmath || {};
+
+/* Allow this module to used within node and stand-alone. */
+if (typeof module !== 'undefined') {
+    module.exports = jsqbitsmath;
+}
 
 (function() {
     "use strict";

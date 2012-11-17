@@ -1,5 +1,5 @@
-var jsqbitsmath = require('../lib/jsqbitsmath').jsqbitsmath;
-var jsqbitsJasmineMatchers = require('./matchers').jsqbitsJasmineMatchers;
+var jsqbitsmath = require('../lib/index').jsqbitsmath;
+var jsqbitsJasmineMatchers = require('./matchers');
 
 describe("jsqbitsmath", function() {
     beforeEach(function() {

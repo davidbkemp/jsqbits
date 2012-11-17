@@ -1,8 +1,4 @@
-var jsqbitsJasmineMatchers =  {};
-
-exports.jsqbitsJasmineMatchers = jsqbitsJasmineMatchers;
-
-jsqbitsJasmineMatchers.toBeApprox = function(expected) {
+exports.toBeApprox = function(expected) {
 
 
     this.message = function() {
@@ -14,7 +10,7 @@ jsqbitsJasmineMatchers.toBeApprox = function(expected) {
         Math.abs(this.actual.imaginary() - expected.imaginary()) < 0.0001
 };
 
-jsqbitsJasmineMatchers.toEql =
+exports.toEql =
     (function() {
         var arraysAreEql = function(a1, a2) {
             var i;

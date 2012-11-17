@@ -1,5 +1,5 @@
-var jsqbits = require('../lib/jsqbits').jsqbits;
-var jsqbitsmath = require('../lib/jsqbitsmath').jsqbitsmath;
+var jsqbits = require('../lib/index').jsqbits;
+var jsqbitsmath = require('../lib/index').jsqbitsmath;
 
 describe('QState.qft (Quantum Fourier Transform)', function() {
     var complex = jsqbits.complex;

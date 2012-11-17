@@ -1,6 +1,6 @@
-var jsqbits = require('../lib/jsqbits').jsqbits;
-var jsqbitsmath = require('../lib/jsqbitsmath').jsqbitsmath;
-var jsqbitsJasmineMatchers = require('./matchers').jsqbitsJasmineMatchers;
+var jsqbits = require('../lib/index').jsqbits;
+var jsqbitsmath = require('../lib/index').jsqbitsmath;
+var jsqbitsJasmineMatchers = require('./matchers');
 
 describe('Simple Quantum Algorithms', function() {
     var ALL = jsqbits.ALL;

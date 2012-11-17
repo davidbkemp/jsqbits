@@ -1,5 +1,5 @@
-var jsqbits = require('../lib/jsqbits').jsqbits;
-var jsqbitsJasmineMatchers = require('./matchers').jsqbitsJasmineMatchers;
+var jsqbits = require('../lib/index').jsqbits;
+var jsqbitsJasmineMatchers = require('./matchers');
 
 describe('Complex', function() {
     var complex = function(real, imaginary) {

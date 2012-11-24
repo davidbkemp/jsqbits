@@ -28,7 +28,7 @@ function computeOrder(a, n, numOutBits, callback) {
     // Determine the period of f (i.e. find r such that f(x) = f(x+r).
     function findPeriod() {
 
-        // NOTE: Here we take advantage of the fact that, for Shor's algorithm, we know that f(x) = f(x+i) ONLY when i is an integer multiple of r.
+        // NOTE: Here we take advantage of the fact that, for Shor's algorithm, we know that f(x) = f(x+i) ONLY when i is an integer multiple of the rank r.
         if (f(bestSoFar) === f0) {
             log("The period of " + a + "^x mod " + n + " is " + bestSoFar);
             callback(bestSoFar);

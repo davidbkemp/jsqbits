@@ -12,7 +12,7 @@
     "use strict";
     var jsqbits = require(__dirname + '/../lib/index').jsqbits;
 
-    exports.deutschJozsa = function (f) {
+    var deutschJozsa = exports.deutschJozsa = function (f) {
         var inputBits = {from: 1, to: 3};
         var result = jsqbits('|0001>')
                 .hadamard(jsqbits.ALL)
@@ -32,15 +32,15 @@
         }
     }
 
-    exports.createBalancedFunction = function() {
+    var createBalancedFunction = exports.createBalancedFunction = function() {
         // Return 0 for exactly half the possible inputs and 1 for the rest.
         var nums = [0,1,2,3,4,5,6,7];
         shuffle(nums);
         return function(x) { return nums[x] < 4 ? 0 : 1; };
     };
 
-    console.log("deutschJozsa(function(x) { return 0; }) equals " + exports.deutschJozsa(function() { return 0; }));
-    console.log("deutschJozsa(function(x) { return 1; }) equals " + exports.deutschJozsa(function() { return 1; }));
-    console.log("deutschJozsa(function(x) { return x; }) equals " + exports.deutschJozsa(function(x) { return x; }));
-    console.log("deutschJozsa(balancedFunction) equals " + exports.deutschJozsa(exports.createBalancedFunction()));
+    console.log("deutschJozsa(function(x) { return 0; }) equals " + deutschJozsa(function() { return 0; }));
+    console.log("deutschJozsa(function(x) { return 1; }) equals " + deutschJozsa(function() { return 1; }));
+    console.log("deutschJozsa(function(x) { return x; }) equals " + deutschJozsa(function(x) { return x; }));
+    console.log("deutschJozsa(balancedFunction) equals " + deutschJozsa(createBalancedFunction()));
 })();

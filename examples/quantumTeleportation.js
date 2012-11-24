@@ -11,7 +11,7 @@
     "use strict";
     var jsqbits = require(__dirname + '/../lib/index').jsqbits;
 
-    exports.applyTeleportation = function(state) {
+    var applyTeleportation = exports.applyTeleportation = function(state) {
         var alicesMeasurement = state.cnot(2, 1).hadamard(2).measure({from: 1, to: 2});
         var resultingState = alicesMeasurement.newState;
         if (alicesMeasurement.result & 1) {
@@ -39,7 +39,7 @@
     var initialState = stateToBeTransmitted.tensorProduct(bellState);
 
     // Now apply the Teleportation algorithm
-    var finalState = exports.applyTeleportation(initialState);
+    var finalState = applyTeleportation(initialState);
 
     // By this stage, only bit zero has not been measured and it should have the same state the original state to be transmitted.
     // The other two bits will have random values but will be in definite states.

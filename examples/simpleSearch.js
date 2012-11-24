@@ -11,7 +11,7 @@
     "use strict";
     var jsqbits = require(__dirname + '/../lib/index').jsqbits;
 
-    exports.simpleSearch = function(f) {
+    var simpleSearch = exports.simpleSearch = function(f) {
         var inputBits = {from: 1, to: 2};
         return jsqbits('|001>')
                 .hadamard(jsqbits.ALL)
@@ -26,6 +26,6 @@
 
 
     var f = function(x) {return x === 2 ? 1 : 0;};
-    console.log("f(x) = 1 for x = " + exports.simpleSearch(f));
+    console.log("f(x) = 1 for x = " + simpleSearch(f));
     
 })();

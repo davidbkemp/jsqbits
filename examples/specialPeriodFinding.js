@@ -13,14 +13,13 @@
     var jsqbitsmath = require(__dirname + '/../lib/index').jsqbitsmath;
 
 
-    // The number of qubits in the quantum circuit used as "input" and "output" bits to f are numInBits and numOutBits respectively.
-    // This number determines the size of the quantum circuit.  It will have 2 * numOutBits qubits.
-    // It limits the size of r for which we can find the period to 2^numOutBits.
-    var numOutBits = 10;
-    // For the special case where r is a power of 2, we can use the same number of input qubits as output qubits.
-    var numInBits = numOutBits;
-
-    exports.findPeriod = function(f) {
+    var findPeriod = exports.findPeriod = function(f, upperLimit) {
+        // The number of qubits in the quantum circuit used as "input" and "output" bits to f are numInBits and numOutBits respectively.
+        // This number determines the size of the quantum circuit.  It will have 2 * numOutBits qubits.
+        // It limits the size of r for which we can find the period to 2^numOutBits.
+        // For the special case where r is a power of 2, we can use the same number of input qubits as output qubits.
+        var numOutBits = Math.ceil(Math.log(upperLimit)/Math.log(2));
+        var numInBits = numOutBits;
         var outBits = {from: 0, to: numOutBits - 1};
         var inputBits = {from: numOutBits, to: numOutBits + numInBits - 1};
         // gcd is the greatest common divisor of all the frequency samples found so far.
@@ -45,6 +44,8 @@
 
 //    var f = promptForFunction("Enter a function where f(x) = f(x+r) for some r that is a factor of " + Math.pow(2, numOutBits), "function(x) {return x % 16;}");
     var f = function(x) { return x % 16; };
+    // Provide a guarantee on the upper limit of the period.
+    var upperLimit = 32;
 
-    console.log("The period of your function is " + exports.findPeriod(f));
+    console.log("The period of your function is " + findPeriod(f, upperLimit));
 })();

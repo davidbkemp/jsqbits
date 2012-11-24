@@ -11,7 +11,7 @@
     "use strict";
     var jsqbits = require(__dirname + '/../lib/index').jsqbits;
 
-    exports.superDense = function (input) {
+    var superDense = exports.superDense = function (input) {
         var state = jsqbits('|00>').add(jsqbits('|11>')).normalize();
 
         console.log("Initial Bell State: " + state);
@@ -36,7 +36,7 @@
 
 //    var input = prompt("Two bit string to send", "10");
     var input = "10";
-    var result = exports.superDense(input);
+    var result = superDense(input);
     console.log("Decoded string is: " + result);
 
 })();

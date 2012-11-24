@@ -10,13 +10,13 @@
     "use strict";
     var jsqbits = require(__dirname + '/../lib/index').jsqbits;
 
-    exports.deutsch = function(f) {
+    var deutsch = exports.deutsch = function(f) {
        return jsqbits('|01>').hadamard(jsqbits.ALL).applyFunction(1, 0, f).hadamard(jsqbits.ALL).measure(1).result;
     };
 
     var f = function(x) {return (x + 1) % 2;};
 
-    console.log("(f(0) + f(1)) mod 2 = " + exports.deutsch(f));
+    console.log("(f(0) + f(1)) mod 2 = " + deutsch(f));
 })();
 
 

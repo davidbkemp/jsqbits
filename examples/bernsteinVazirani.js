@@ -12,7 +12,7 @@
 
     var jsqbits = require(__dirname + '/../lib/index').jsqbits;
 
-    exports.bernsteinVazirani = function (f, numbits) {
+    var bernsteinVazirani = exports.bernsteinVazirani = function (f, numbits) {
         //  Create a |-> state as the target qubit.
         var targetQubit = jsqbits("|0>").subtract(jsqbits("|1>")).normalize();
         var inputQubits = new jsqbits.QState(numbits);
@@ -28,7 +28,7 @@
             .asBitString();
     };
 
-    exports.createHiddenStringFunction = function(hiddenString) {
+    var createHiddenStringFunction = exports.createHiddenStringFunction = function(hiddenString) {
         var hiddenStringAsNumber = parseInt(hiddenString, 2);
         return function(x) {
             var product = x & hiddenStringAsNumber;
@@ -41,7 +41,7 @@
         };
     };
 
-    var f = exports.createHiddenStringFunction("01101");
-    console.log("Hidden string is: " + exports.bernsteinVazirani(f, 5));
+    var f = createHiddenStringFunction("01101");
+    console.log("Hidden string is: " + bernsteinVazirani(f, 5));
 
 })();

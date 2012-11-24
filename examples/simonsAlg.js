@@ -41,7 +41,7 @@
         return nullSpace[0];
     }
 
-    exports.simonsAlgorithm = function (f, numBits) {
+    var simonsAlgorithm = exports.simonsAlgorithm = function (f, numBits) {
         if(arguments.length !== 2) throw new Error("Must supply a function and number of bits");
         var solution = findPotentialSolution(f, numBits);
         return (f(0) === f(solution)) ? solution : 0;
@@ -84,8 +84,6 @@
             return mapping[x];
         };
     })();
-
-    var simonsAlgorithm = exports.simonsAlgorithm;
 
     console.log("The special string for testFunction000 is " + simonsAlgorithm(testFunction000, 3).toString(2));
     console.log("The special string for testFunction011 is " + simonsAlgorithm(testFunction011, 3).toString(2));

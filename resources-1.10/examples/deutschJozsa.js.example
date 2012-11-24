@@ -2,6 +2,7 @@
  * Deutsch-Jozsa Algorithm
  * Given a function over n bits that returns 0 or 1, and is guaranteed to be either constant or balanced
  * the Deutsch-Jozsa algorithm determines whether it is constant or balanced after only one invocation of the function.
+ * Returns true if the function is constant.
  */
 
 function deutschJozsa(f) {
